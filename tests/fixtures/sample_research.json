@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-06-12T12:00:00Z",
+  "entities": [
+    {
+      "name": "Berghain",
+      "type": "club",
+      "status": "active",
+      "district": "Friedrichshain",
+      "active_since": "2004",
+      "last_event_date": "2026-06-07",
+      "online": {
+        "instagram": {"handle": "berghain_ostgut", "followers": 250000},
+        "website": {"url": "https://www.berghain.berlin"}
+      },
+      "events": {
+        "ra_profile_url": "https://ra.co/clubs/2",
+        "ra_followers": 120000,
+        "events_last_3_months": 13,
+        "events_last_6_months": 26
+      },
+      "press": {
+        "major_features": ["RA Feature", "Rolling Stone"],
+        "international_mentions": ["The Guardian"]
+      },
+      "community": {
+        "reddit_threads": ["https://reddit.com/r/Berghain_Community/1"],
+        "community_sentiment_hint": "positive"
+      },
+      "networking": {"booked_djs": ["Ben Klock", "Marcel Dettmann"], "international_booking": true},
+      "policy_safety": {"safer_spaces_communicated": "yes", "queer_friendly": "yes"},
+      "labels_podcasts": {"own_label": "yes"},
+      "cultural_recognition": {"clubcommission_member": true},
+      "sources": [{"url": "https://www.berghain.berlin", "accessed_at": "2026-06-12"}],
+      "last_verification": "2026-06-12T12:00:00Z"
+    },
+    {
+      "name": "Frische Crew",
+      "type": "collective",
+      "status": "emerging",
+      "active_since": "2025",
+      "last_event_date": "2026-06-01",
+      "events": {"events_last_3_months": 3},
+      "online": {"instagram": {"handle": "frischecrew", "followers": 1800}},
+      "sources": [{"url": "https://instagram.com/frischecrew"}],
+      "last_verification": "2026-06-12T12:00:00Z"
+    },
+    {
+      "name": "Kaputtes Objekt",
+      "type": "club",
+      "status": 42
+    }
+  ]
+}

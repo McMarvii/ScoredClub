@@ -1,0 +1,32 @@
+{
+  "scoring": {
+    "weights": {
+      "event_activity": 0.20,
+      "online_reach": 0.20,
+      "press": 0.15,
+      "community": 0.15,
+      "networking": 0.10,
+      "continuity": 0.10,
+      "safety": 0.10
+    },
+    "bonus_per_item": 5,
+    "bonus_cap": 15,
+    "malus_per_incident": 5,
+    "malus_cap": 15,
+    "tier_thresholds": { "top": 75, "mid": 50, "emerging": 25 },
+    "inactive_after_days": 180
+  },
+  "alerts": {
+    "score_change_threshold": 10,
+    "webhook_url": null
+  },
+  "sources": {
+    "clubcommission_url": "https://www.clubcommission.de/clubs",
+    "ra_graphql_url": "https://ra.co/graphql",
+    "extra_sources": []
+  },
+  "run": {
+    "next_run_interval_days": 30,
+    "output_dir": "output"
+  }
+}

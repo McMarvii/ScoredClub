@@ -1,0 +1,24 @@
+{
+  "entities": [
+    {"entity_id": "berghain", "name": "Berghain", "type": "club", "status": "active", "district": "Friedrichshain", "address": "Am Wriezener Bahnhof, 10243 Berlin", "active_since": "2004", "aliases": ["Berghain/Panorama Bar", "Panorama Bar"]},
+    {"entity_id": "tresor", "name": "Tresor", "type": "club", "status": "active", "district": "Mitte", "address": "Köpenicker Str. 70, 10179 Berlin", "active_since": "1991", "aliases": ["Tresor.Berlin", "Tresor Club"]},
+    {"entity_id": "sisyphos", "name": "Sisyphos", "type": "club", "status": "active", "district": "Lichtenberg", "address": "Hauptstraße 15, 10317 Berlin", "active_since": "2009", "aliases": ["Sisyphos Berlin"]},
+    {"entity_id": "about-blank", "name": "://about blank", "type": "club", "status": "active", "district": "Friedrichshain", "address": "Markgrafendamm 24c, 10245 Berlin", "active_since": "2010", "aliases": ["about blank", "aboutblank"]},
+    {"entity_id": "club-der-visionaere", "name": "Club der Visionaere", "type": "club", "status": "active", "district": "Kreuzberg", "address": "Am Flutgraben 1, 12435 Berlin", "active_since": "2002", "aliases": ["CDV"]},
+    {"entity_id": "rso-berlin", "name": "RSO.Berlin", "type": "club", "status": "active", "district": "Schöneweide", "address": "Schnellerstraße 137, 12439 Berlin", "active_since": "2021", "aliases": ["RSO", "Revier Südost"]},
+    {"entity_id": "else", "name": "ELSE", "type": "club", "status": "active", "district": "Treptow", "address": "An den Treptowers 10, 12435 Berlin", "active_since": "2014", "aliases": ["ELSE Berlin"]},
+    {"entity_id": "oxi", "name": "OXI", "type": "club", "status": "active", "district": "Lichtenberg", "address": "Herzbergstraße 123, 10365 Berlin", "active_since": "2022", "aliases": ["OXI Berlin", "OXI Garten"]},
+    {"entity_id": "wilde-renate", "name": "Wilde Renate", "type": "club", "status": "active", "district": "Friedrichshain", "address": "Alt-Stralau 70, 10245 Berlin", "active_since": "2007", "aliases": ["Salon zur Wilden Renate", "Renate"]},
+    {"entity_id": "kitkat-club", "name": "KitKat Club", "type": "club", "status": "active", "district": "Mitte", "address": "Köpenicker Str. 76, 10179 Berlin", "active_since": "1994", "aliases": ["KitKat", "KitKatClub"]},
+    {"entity_id": "ritter-butzke", "name": "Ritter Butzke", "type": "club", "status": "active", "district": "Kreuzberg", "address": "Ritterstraße 26, 10969 Berlin", "active_since": "2007", "aliases": ["RitterButzke"]},
+    {"entity_id": "lokschuppen-berlin", "name": "Lokschuppen Berlin", "type": "club", "status": "active", "district": "Pankow", "address": "RAW-Gelände / Pankow", "active_since": "2019", "aliases": ["Lokschuppen"]},
+    {"entity_id": "aeden", "name": "ÆDEN", "type": "club", "status": "active", "district": "Kreuzberg", "address": "Schleusenufer 3, 10997 Berlin", "active_since": "2020", "aliases": ["AEDEN", "Aeden Berlin"]},
+    {"entity_id": "ost-berlin", "name": "OST Berlin", "type": "club", "status": "active", "district": "Friedrichshain", "address": "Revaler Str. 99, 10245 Berlin", "active_since": "2023", "aliases": ["OST"]},
+    {"entity_id": "zenner", "name": "Zenner", "type": "club", "status": "active", "district": "Treptow", "address": "Alt-Treptow 14-17, 12435 Berlin", "active_since": "2021", "aliases": ["Zenner Berlin", "Zenner Eierschale"]},
+    {"entity_id": "rave-the-planet", "name": "Rave The Planet", "type": "collective", "status": "active", "district": null, "active_since": "2019", "aliases": ["Rave The Planet Parade"]},
+    {"entity_id": "clubcommission-berlin", "name": "Clubcommission Berlin", "type": "collective", "status": "active", "district": null, "active_since": "2000", "aliases": ["Clubcommission"]},
+    {"entity_id": "staub-berlin", "name": "STAUB Berlin", "type": "series", "status": "active", "district": null, "active_since": "2014", "aliases": ["STAUB"]},
+    {"entity_id": "symbiotikka", "name": "Symbiotikka", "type": "series", "status": "active", "district": "Mitte", "active_since": "2017", "aliases": ["Symbiotikka KitKat"]},
+    {"entity_id": "klubnacht", "name": "Klubnacht", "type": "series", "status": "active", "district": "Friedrichshain", "active_since": "2004", "aliases": ["Berghain Klubnacht"]}
+  ]
+}
