@@ -1,0 +1,56 @@
+# Berlin Techno Intelligence Report
+**Erstellt:** {{ generated_at }}
+**Nächster geplanter Run:** {{ next_run }}
+**Gesamtanzahl Entitäten:** {{ entities | length }}
+**Neu hinzugekommen seit letztem Run:** {{ new_entities | length }}
+
+***
+{% for tier_name, tier_label in tiers %}
+{% set tier_entities = entities | selectattr("tier", "equalto", tier_name) | list %}
+## {{ tier_label }}
+{% if not tier_entities %}
+_Keine Entitäten in dieser Kategorie._
+{% else %}
+{% for e in tier_entities %}
+### {{ e.profile.name }}
+- **Typ:** {{ type_labels[e.profile.type.value] }}
+- **Score:** {{ "%.0f" | format(e.breakdown.total) }}/100{% if e.delta is not none %} (Δ {{ "%+.1f" | format(e.delta) }} seit letztem Run){% endif %}
+- **Status:** {{ e.profile.status.value }}
+{% if e.profile.address %}- **Adresse / Hauptort:** {{ e.profile.address }}
+{% endif %}{% if e.profile.district %}- **Bezirk:** {{ e.profile.district }}
+{% endif %}{% if e.profile.geo.lat and e.profile.geo.lon %}- **Geo:** [{{ e.profile.geo.lat }}, {{ e.profile.geo.lon }}]
+{% endif %}{% if e.profile.active_since %}- **Aktiv seit:** {{ e.profile.active_since }}
+{% endif %}{% if e.profile.last_event_date %}- **Letztes Event:** {{ e.profile.last_event_date }}
+{% endif %}{% if e.profile.online.instagram.handle %}- **Instagram:** @{{ e.profile.online.instagram.handle | replace("@", "") }}{% if e.profile.online.instagram.followers %} (ca. {{ "{:,}".format(e.profile.online.instagram.followers).replace(",", ".") }} Follower{% if e.profile.online.instagram.posts_per_month %}, ~{{ e.profile.online.instagram.posts_per_month | round | int }} Posts/Monat{% endif %}){% endif %}
+{% endif %}{% if e.profile.events.ra_profile_url %}- **RA-Profil:** {{ e.profile.events.ra_profile_url }}{% if e.profile.events.ra_followers %} ({{ "{:,}".format(e.profile.events.ra_followers).replace(",", ".") }} Follower){% endif %}
+{% endif %}{% if e.profile.events.events_last_3_months is not none %}- **Events (letzte 3 Monate):** {{ e.profile.events.events_last_3_months }} Events
+{% endif %}{% if e.profile.press.major_features %}- **Presse-Highlights:** {{ e.profile.press.major_features | join("; ") }}
+{% endif %}{% if e.profile.community.community_sentiment_hint.value != "unknown" %}- **Community-Resonanz:** {{ sentiment_labels[e.profile.community.community_sentiment_hint.value] }}
+{% endif %}- **Safety & Awareness:** {{ e.safety_summary }}
+- **Score-Detail:** A {{ e.breakdown.points["A_event_activity"] }} | B {{ e.breakdown.points["B_online_reach"] }} | C {{ e.breakdown.points["C_press_presence"] }} | D {{ e.breakdown.points["D_community_resonance"] }} | E {{ e.breakdown.points["E_scene_networking"] }} | F {{ e.breakdown.points["F_continuity"] }} | G {{ e.breakdown.points["G_safety_inclusivity"] }} | Bonus +{{ e.breakdown.bonus | round | int }} | Malus -{{ e.breakdown.malus | round | int }}
+{% if e.breakdown.bonus_items %}- **Besonderheiten:** {{ e.breakdown.bonus_items | join("; ") }}
+{% endif %}{% if e.breakdown.malus_items %}- **Kritische Punkte:** {{ e.breakdown.malus_items | join("; ") }}
+{% endif %}{% if e.profile.notes %}- **Notizen:** {{ e.profile.notes }}
+{% endif %}{% if e.profile.sources %}- **Quellen:** {% for s in e.profile.sources %}{{ s.url }}{% if not loop.last %}, {% endif %}{% endfor %}
+{% endif %}{% if e.profile.last_verification %}- **Letzte Verifizierung:** {{ e.profile.last_verification.date() }}
+{% endif %}
+{% endfor %}
+{% endif %}
+***
+{% endfor %}
+## Zusammenfassung
+
+1. **Gesamtanzahl gefundener Entitäten:** {{ entities | length }}
+2. **Top 5 Clubs nach Score:**
+{% for e in top_clubs %}   {{ loop.index }}. {{ e.profile.name }} — {{ "%.0f" | format(e.breakdown.total) }}/100
+{% endfor %}3. **Top 5 Kollektive / Reihen nach Score:**
+{% for e in top_collectives %}   {{ loop.index }}. {{ e.profile.name }} — {{ "%.0f" | format(e.breakdown.total) }}/100
+{% endfor %}4. **Neu entdeckte Entitäten:**
+{% if new_entities %}{% for e in new_entities %}   - {{ e.profile.name }} ({{ type_labels[e.profile.type.value] }}, Score {{ "%.0f" | format(e.breakdown.total) }})
+{% endfor %}{% else %}   - keine
+{% endif %}5. **Alerts (starke Score-/Status-Änderungen):**
+{% if alerts %}{% for a in alerts %}   - {{ a.message }}
+{% endfor %}{% else %}   - keine
+{% endif %}6. **Empfehlungen:**
+{% for r in recommendations %}   - {{ r }}
+{% endfor %}

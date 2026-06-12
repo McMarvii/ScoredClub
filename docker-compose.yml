@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # SQLite default; switch to Postgres with the profile below:
+      # DATABASE_URL: postgresql+psycopg2://scoredclub:scoredclub@postgres:5432/scoredclub
+      DATABASE_URL: sqlite:///data/scoredclub.db
+      # SCOREDCLUB_WEBHOOK_URL: https://hooks.example.com/alerts
+    volumes:
+      - ./output:/app/output
+      - ./data:/app/data
+
+  # Optional PostgreSQL backend: docker compose --profile postgres up
+  postgres:
+    image: postgres:16-alpine
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_USER: scoredclub
+      POSTGRES_PASSWORD: scoredclub
+      POSTGRES_DB: scoredclub
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scoredclub"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
