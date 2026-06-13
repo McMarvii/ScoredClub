@@ -213,7 +213,20 @@
         "malus": 0.0,
         "base": 72.8,
         "total": 87.8,
-        "tier": "TOP-TIER"
+        "tier": "TOP-TIER",
+        "confidence": 85.7,
+        "dimension_confidence": {
+          "A_event_activity": 100.0,
+          "B_online_reach": 100.0,
+          "C_press_presence": 75.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 100.0,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 33.3
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 87.8
       },
       "trend": {
         "direction": "new",
@@ -440,7 +453,20 @@
         "malus": 0.0,
         "base": 71.1,
         "total": 86.1,
-        "tier": "TOP-TIER"
+        "tier": "TOP-TIER",
+        "confidence": 83.3,
+        "dimension_confidence": {
+          "A_event_activity": 100.0,
+          "B_online_reach": 100.0,
+          "C_press_presence": 75.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 66.7,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 33.3
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 86.1
       },
       "trend": {
         "direction": "new",
@@ -659,7 +685,20 @@
         "malus": 0.0,
         "base": 58.25,
         "total": 68.25,
-        "tier": "MID-TIER"
+        "tier": "MID-TIER",
+        "confidence": 74.9,
+        "dimension_confidence": {
+          "A_event_activity": 66.7,
+          "B_online_reach": 100.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 0.0,
+          "E_scene_networking": 100.0,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 33.3
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 78.53
       },
       "trend": {
         "direction": "new",
@@ -885,7 +924,20 @@
         "malus": 5.0,
         "base": 66.25,
         "total": 66.25,
-        "tier": "MID-TIER"
+        "tier": "MID-TIER",
+        "confidence": 80.8,
+        "dimension_confidence": {
+          "A_event_activity": 100.0,
+          "B_online_reach": 100.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 100.0,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 0.0
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 73.61
       },
       "trend": {
         "direction": "new",
@@ -1098,7 +1150,20 @@
         "malus": 0.0,
         "base": 48.35,
         "total": 63.35,
-        "tier": "MID-TIER"
+        "tier": "MID-TIER",
+        "confidence": 73.8,
+        "dimension_confidence": {
+          "A_event_activity": 100.0,
+          "B_online_reach": 50.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 66.7,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 33.3
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 63.35
       },
       "trend": {
         "direction": "new",
@@ -1316,7 +1381,20 @@
         "malus": 5.0,
         "base": 63.15,
         "total": 63.15,
-        "tier": "MID-TIER"
+        "tier": "MID-TIER",
+        "confidence": 83.1,
+        "dimension_confidence": {
+          "A_event_activity": 100.0,
+          "B_online_reach": 100.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 66.7,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 66.7
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 63.15
       },
       "trend": {
         "direction": "new",
@@ -1540,7 +1618,20 @@
         "malus": 0.0,
         "base": 49.2,
         "total": 59.2,
-        "tier": "MID-TIER"
+        "tier": "MID-TIER",
+        "confidence": 73.2,
+        "dimension_confidence": {
+          "A_event_activity": 33.3,
+          "B_online_reach": 100.0,
+          "C_press_presence": 100.0,
+          "D_community_resonance": 0.0,
+          "E_scene_networking": 66.7,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 33.3
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 67.88
       },
       "trend": {
         "direction": "new",
@@ -1742,7 +1833,20 @@
         "malus": 0.0,
         "base": 53.15,
         "total": 58.15,
-        "tier": "MID-TIER"
+        "tier": "MID-TIER",
+        "confidence": 71.4,
+        "dimension_confidence": {
+          "A_event_activity": 66.7,
+          "B_online_reach": 100.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 33.3,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 0.0
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 64.06
       },
       "trend": {
         "direction": "new",
@@ -1952,7 +2056,20 @@
         "malus": 0.0,
         "base": 47.8,
         "total": 57.8,
-        "tier": "MID-TIER"
+        "tier": "MID-TIER",
+        "confidence": 74.3,
+        "dimension_confidence": {
+          "A_event_activity": 0.0,
+          "B_online_reach": 100.0,
+          "C_press_presence": 100.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 33.3,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 100.0
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 69.75
       },
       "trend": {
         "direction": "new",
@@ -2155,7 +2272,20 @@
         "malus": 0.0,
         "base": 50.3,
         "total": 55.3,
-        "tier": "MID-TIER"
+        "tier": "MID-TIER",
+        "confidence": 85.4,
+        "dimension_confidence": {
+          "A_event_activity": 100.0,
+          "B_online_reach": 100.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 100.0,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 66.7
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 55.3
       },
       "trend": {
         "direction": "new",
@@ -2368,7 +2498,20 @@
         "malus": 0.0,
         "base": 48.4,
         "total": 53.4,
-        "tier": "MID-TIER"
+        "tier": "MID-TIER",
+        "confidence": 67.9,
+        "dimension_confidence": {
+          "A_event_activity": 0.0,
+          "B_online_reach": 100.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 0.0,
+          "E_scene_networking": 100.0,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 66.7
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 79.46
       },
       "trend": {
         "direction": "new",
@@ -2576,7 +2719,20 @@
         "malus": 0.0,
         "base": 42.95,
         "total": 52.95,
-        "tier": "MID-TIER"
+        "tier": "MID-TIER",
+        "confidence": 85.4,
+        "dimension_confidence": {
+          "A_event_activity": 100.0,
+          "B_online_reach": 100.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 100.0,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 66.7
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 52.95
       },
       "trend": {
         "direction": "new",
@@ -2818,7 +2974,20 @@
         "malus": 15.0,
         "base": 62.45,
         "total": 52.45,
-        "tier": "MID-TIER"
+        "tier": "MID-TIER",
+        "confidence": 85.7,
+        "dimension_confidence": {
+          "A_event_activity": 100.0,
+          "B_online_reach": 100.0,
+          "C_press_presence": 75.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 66.7,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 66.7
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 52.45
       },
       "trend": {
         "direction": "new",
@@ -3026,7 +3195,20 @@
         "malus": 0.0,
         "base": 37.7,
         "total": 47.7,
-        "tier": "EMERGING"
+        "tier": "EMERGING",
+        "confidence": 79.0,
+        "dimension_confidence": {
+          "A_event_activity": 66.7,
+          "B_online_reach": 50.0,
+          "C_press_presence": 100.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 66.7,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 100.0
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 47.7
       },
       "trend": {
         "direction": "new",
@@ -3239,7 +3421,20 @@
         "malus": 0.0,
         "base": 34.05,
         "total": 44.05,
-        "tier": "EMERGING"
+        "tier": "EMERGING",
+        "confidence": 68.2,
+        "dimension_confidence": {
+          "A_event_activity": 0.0,
+          "B_online_reach": 100.0,
+          "C_press_presence": 75.0,
+          "D_community_resonance": 0.0,
+          "E_scene_networking": 100.0,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 33.3
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 62.38
       },
       "trend": {
         "direction": "new",
@@ -3446,7 +3641,20 @@
         "malus": 0.0,
         "base": 35.65,
         "total": 40.65,
-        "tier": "EMERGING"
+        "tier": "EMERGING",
+        "confidence": 67.0,
+        "dimension_confidence": {
+          "A_event_activity": 0.0,
+          "B_online_reach": 50.0,
+          "C_press_presence": 75.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 66.7,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 100.0
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 49.56
       },
       "trend": {
         "direction": "new",
@@ -3648,7 +3856,20 @@
         "malus": 0.0,
         "base": 34.95,
         "total": 39.95,
-        "tier": "EMERGING"
+        "tier": "EMERGING",
+        "confidence": 78.4,
+        "dimension_confidence": {
+          "A_event_activity": 100.0,
+          "B_online_reach": 50.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 100.0,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 66.7
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 39.95
       },
       "trend": {
         "direction": "new",
@@ -3862,7 +4083,20 @@
         "malus": 0.0,
         "base": 29.05,
         "total": 39.05,
-        "tier": "INAKTIV/GESCHLOSSEN"
+        "tier": "INAKTIV/GESCHLOSSEN",
+        "confidence": 73.8,
+        "dimension_confidence": {
+          "A_event_activity": 66.7,
+          "B_online_reach": 50.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 100.0,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 66.7
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 39.05
       },
       "trend": {
         "direction": "new",
@@ -4076,7 +4310,20 @@
         "malus": 0.0,
         "base": 27.35,
         "total": 37.35,
-        "tier": "EMERGING"
+        "tier": "EMERGING",
+        "confidence": 61.2,
+        "dimension_confidence": {
+          "A_event_activity": 0.0,
+          "B_online_reach": 50.0,
+          "C_press_presence": 75.0,
+          "D_community_resonance": 0.0,
+          "E_scene_networking": 100.0,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 33.3
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 52.08
       },
       "trend": {
         "direction": "new",
@@ -4285,7 +4532,20 @@
         "malus": 0.0,
         "base": 28.55,
         "total": 33.55,
-        "tier": "EMERGING"
+        "tier": "EMERGING",
+        "confidence": 63.5,
+        "dimension_confidence": {
+          "A_event_activity": 0.0,
+          "B_online_reach": 100.0,
+          "C_press_presence": 75.0,
+          "D_community_resonance": 0.0,
+          "E_scene_networking": 66.7,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 0.0
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 56.91
       },
       "trend": {
         "direction": "new",
@@ -4490,7 +4750,20 @@
         "malus": 0.0,
         "base": 28.2,
         "total": 33.2,
-        "tier": "EMERGING"
+        "tier": "EMERGING",
+        "confidence": 59.5,
+        "dimension_confidence": {
+          "A_event_activity": 33.3,
+          "B_online_reach": 50.0,
+          "C_press_presence": 25.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 33.3,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 33.3
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 33.2
       },
       "trend": {
         "direction": "new",
@@ -4721,7 +4994,20 @@
         "malus": 10.0,
         "base": 29.6,
         "total": 29.6,
-        "tier": "INAKTIV/GESCHLOSSEN"
+        "tier": "INAKTIV/GESCHLOSSEN",
+        "confidence": 72.0,
+        "dimension_confidence": {
+          "A_event_activity": 33.3,
+          "B_online_reach": 50.0,
+          "C_press_presence": 100.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 66.7,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 66.7
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 29.6
       },
       "trend": {
         "direction": "new",
@@ -4929,7 +5215,20 @@
         "malus": 0.0,
         "base": 15.95,
         "total": 25.95,
-        "tier": "EMERGING"
+        "tier": "EMERGING",
+        "confidence": 54.2,
+        "dimension_confidence": {
+          "A_event_activity": 0.0,
+          "B_online_reach": 50.0,
+          "C_press_presence": 75.0,
+          "D_community_resonance": 0.0,
+          "E_scene_networking": 33.3,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 0.0
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 39.0
       },
       "trend": {
         "direction": "new",
@@ -5141,7 +5440,20 @@
         "malus": 5.0,
         "base": 28.2,
         "total": 23.2,
-        "tier": "INAKTIV/GESCHLOSSEN"
+        "tier": "INAKTIV/GESCHLOSSEN",
+        "confidence": 51.6,
+        "dimension_confidence": {
+          "A_event_activity": 0.0,
+          "B_online_reach": 0.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 0.0,
+          "E_scene_networking": 33.3,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 100.0
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 57.67
       },
       "trend": {
         "direction": "new",
@@ -5338,7 +5650,20 @@
         "malus": 0.0,
         "base": 19.5,
         "total": 19.5,
-        "tier": "INAKTIV/GESCHLOSSEN"
+        "tier": "INAKTIV/GESCHLOSSEN",
+        "confidence": 50.4,
+        "dimension_confidence": {
+          "A_event_activity": 0.0,
+          "B_online_reach": 0.0,
+          "C_press_presence": 50.0,
+          "D_community_resonance": 33.3,
+          "E_scene_networking": 33.3,
+          "F_continuity": 100.0,
+          "G_safety_inclusivity": 33.3
+        },
+        "freshness": 100.0,
+        "low_confidence": false,
+        "confidence_adjusted_total": 32.5
       },
       "trend": {
         "direction": "new",

@@ -41,7 +41,8 @@
 | `db/session.py` | Engine/Session aus `DATABASE_URL`, `init_db()`. |
 | `db/repo.py` | Upsert (mit Dedup/Merge), Queries, Snapshots, Alerts. |
 | `scoring/rubric.py` | Reine Funktionen pro Dimension A–G, Bonus/Malus. |
-| `scoring/engine.py` | Gewichtung, Gesamt-Score, Tier-Klassifizierung. |
+| `scoring/engine.py` | Gewichtung, Gesamt-Score, Tier-Klassifizierung, Konfidenz. |
+| `scoring/confidence.py` | Datenkonfidenz (Presence, Vollständigkeit, Frische) — confidence-aware. |
 | `trending.py` | Trend-Analyse über die Score-Historie (Richtung, Momentum, Ränge, Movers). |
 | `compare.py` | A/B-Vergleich zweier Scoring-Konfigurationen (Score-/Rang-Diff, Tier-Wechsel, Spearman). |
 | `collectors/` | `base` (Protokoll), `clubcommission`, `resident_advisor`, `reddit`, `llm_research` (agentischer Claude-Collector), `llm_ingest`. |

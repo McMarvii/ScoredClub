@@ -234,6 +234,13 @@ class ScoreBreakdown(_Base):
     base: float = 0.0
     total: float = 0.0
     tier: str = ""
+    # Confidence-awareness (additive; total/tier are unaffected).
+    confidence: float = 100.0  # overall 0-100 (completeness + freshness)
+    dimension_confidence: dict[str, float] = Field(default_factory=dict)  # dim -> presence %
+    freshness: float = 100.0
+    low_confidence: bool = False
+    # Relevance computed over the dimensions we actually have data for.
+    confidence_adjusted_total: float = 0.0
 
 
 def utcnow() -> datetime:

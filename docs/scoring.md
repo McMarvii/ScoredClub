@@ -167,6 +167,30 @@ Total = clamp(72.8 + 15 − 0, 0, 100) = 87.8  → TOP-TIER
 D = 0, weil in diesem Lauf keine Reddit-Threads recherchiert werden konnten — eine
 Datenfrage, kein Fehler im Modell.
 
+## Datenkonfidenz (confidence-aware)
+
+Der Score behandelt fehlende Daten als 0 — ein noch nicht recherchierter Club sieht damit
+aus wie ein wirklich kleiner. Damit man „niedrig, weil klein" von „niedrig, weil dünne
+Datenlage" unterscheiden kann, berechnet das System zusätzlich eine **Konfidenz** (0–100,
+`src/scoredclub/scoring/confidence.py`):
+
+- **Dimension-Presence** (A–G): Anteil der vorhandenen Eingangssignale je Dimension.
+- **Vollständigkeit:** gewichteter Mittelwert der Presence über alle Dimensionen.
+- **Frische:** aus `last_verification` (frisch = 100, verfällt mit dem Alter bis zu einem
+  Boden; fehlt sie ganz → niedriger Standardwert).
+- **Konfidenz** = Blend aus Vollständigkeit und Frische. Unter
+  `confidence.low_confidence_threshold` (Default 50) wird die Entität als
+  **⚠ geringe Datenbasis** markiert.
+
+Zusätzlich liefert der Breakdown einen **bereinigten Score**
+(`confidence_adjusted_total`): die Relevanz nur über die Dimensionen, für die tatsächlich
+Daten vorliegen (die Gewichte werden über die bekannten Dimensionen renormalisiert). So
+zieht ein fehlendes Feld den Score nicht fälschlich nach unten.
+
+> **Wichtig:** `total` und `tier` bleiben unverändert — Konfidenz ist rein additiv und dient
+> der Interpretation. Reports, CLI (`score`), API (`/entities/{id}` → `latest_breakdown`) und
+> Dashboard zeigen die Konfidenz an. Konfigurierbar unter `scoring.confidence`.
+
 ## Gewichte/Schwellen anpassen
 
 Alles ist über die [Konfiguration](configuration.md) justierbar, z. B. um Online-Reichweite

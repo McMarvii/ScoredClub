@@ -41,6 +41,22 @@ class TierThresholds(_Base):
     emerging: float = 25.0
 
 
+class ConfidenceConfig(_Base):
+    """How much we trust an entity's score, given data completeness + freshness."""
+
+    # Below this overall confidence (0-100) an entity is flagged low-confidence.
+    low_confidence_threshold: float = 50.0
+    # Verified within this many days -> full freshness.
+    freshness_full_days: int = 45
+    # Freshness never drops below this floor as data ages.
+    freshness_floor: float = 20.0
+    # Freshness assigned when last_verification is missing entirely.
+    unknown_verification_confidence: float = 30.0
+    # Blend of data completeness vs. freshness in the overall confidence.
+    completeness_weight: float = 0.7
+    freshness_weight: float = 0.3
+
+
 class ScoringConfig(_Base):
     weights: ScoringWeights = Field(default_factory=ScoringWeights)
     bonus_per_item: float = 5.0
@@ -49,6 +65,7 @@ class ScoringConfig(_Base):
     malus_cap: float = 15.0
     tier_thresholds: TierThresholds = Field(default_factory=TierThresholds)
     inactive_after_days: int = 180
+    confidence: ConfidenceConfig = Field(default_factory=ConfidenceConfig)
 
 
 class AlertsConfig(_Base):
