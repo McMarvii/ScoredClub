@@ -127,6 +127,7 @@ Details: [Datenerhebung](data-collection.md).
 | `DATABASE_URL` | `sqlite:///data/scoredclub.db` | SQLAlchemy-Verbindung. SQLite oder Postgres (`postgresql+psycopg2://user:pass@host/db`). |
 | `SCOREDCLUB_WEBHOOK_URL` | `alerts.webhook_url` | Webhook für Alerts. |
 | `SCOREDCLUB_CONFIG` | Standardpfad | Pfad zur Konfigurationsdatei. |
+| `SCOREDCLUB_API_KEY` | — | Aktiviert die Schreib-/Trigger-Endpunkte der API (`X-API-Key`). Ohne Key sind sie deaktiviert. |
 | `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET` | — | Reddit-OAuth-App; aktiviert den authentifizierten Reddit-Collector (Dimension D). |
 | `REDDIT_USER_AGENT` | Default-UA | Eindeutiger Reddit-User-Agent (von Reddit verlangt). |
 | `ANTHROPIC_API_KEY` | — | Für den agentischen LLM-Research-Collector (`llm.enabled`). |

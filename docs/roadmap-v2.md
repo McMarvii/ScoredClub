@@ -77,10 +77,13 @@ Migration deckt sich mit den Modellen). Siehe [Deployment](deployment.md) → Po
 - **Offen für v2-Vollausbau:** Postgres-spezifische JSONB-Spalten/Indizes (statt portablem
   `JSON`), CI-Job, der Migrationen gegen echtes Postgres testet.
 
-### 5. Voll-API mit Auth + Background-Jobs
-- Token-Auth (API-Key/OAuth), Rate-Limiting.
-- Schreib-/Trigger-Endpunkte: Run auslösen, Research einspielen, Entitäten verwalten.
-- Asynchrone Läufe (APScheduler/RQ/Celery) statt nur Cron.
+### 5. Voll-API mit Auth + Background-Jobs — 🟡 teilweise ausgeliefert
+- **API-Key-Auth + Schreib-/Trigger-Endpunkte → ✅ umgesetzt.** `SCOREDCLUB_API_KEY`
+  schützt `POST /ingest` (Research einspielen) und `POST /runs` (Lauf auslösen);
+  konstant-zeitiger Vergleich, ohne Key deaktiviert (503). Lese-Endpunkte bleiben offen.
+  Siehe [API](api.md) → Schreib-/Trigger-Endpunkte.
+- **Offen:** Rate-Limiting, OAuth/mehrere Keys, **asynchrone Läufe** (APScheduler/RQ/Celery)
+  statt synchron im Request, Entitäten-Management-Endpunkte.
 
 ### 6. Frontend-Ausbau
 - Dedizierte **Trending-Ansicht** (Sparklines, Leaderboard über Zeit).

@@ -1,12 +1,22 @@
-"""Read-only FastAPI app (no auth in V1 — intended for local/Docker use)."""
+"""FastAPI app.
+
+Read endpoints are public (intended for local/Docker use — put a reverse proxy
+in front to protect them if exposed). Write/trigger endpoints (ingest, run) are
+guarded by an API key: set ``SCOREDCLUB_API_KEY`` in the environment to enable
+them; without it they are disabled (503).
+"""
 
 from __future__ import annotations
 
+import hmac
+import os
+from datetime import date as date_type
 from pathlib import Path
 from typing import Iterator
 
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Body, Depends, FastAPI, Header, HTTPException, Query
 from fastapi.responses import PlainTextResponse
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -29,6 +39,25 @@ def db_session() -> Iterator[Session]:
         session.close()
 
 
+def require_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Key")) -> bool:
+    """Guard write endpoints. Disabled (503) unless SCOREDCLUB_API_KEY is set."""
+    configured = os.environ.get("SCOREDCLUB_API_KEY")
+    if not configured:
+        raise HTTPException(
+            status_code=503,
+            detail="Write API disabled: set SCOREDCLUB_API_KEY to enable.",
+        )
+    if not x_api_key or not hmac.compare_digest(x_api_key, configured):
+        raise HTTPException(status_code=401, detail="Invalid or missing API key.")
+    return True
+
+
+class RunRequest(BaseModel):
+    skip_collectors: bool = True
+    date: str | None = None
+    research: list | dict | None = None
+
+
 def _entity_summary(entity) -> dict:
     return {
         "entity_id": entity.entity_id,
@@ -45,6 +74,63 @@ def _entity_summary(entity) -> dict:
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok", "version": __version__}
+
+
+@app.post("/ingest")
+def ingest_endpoint(
+    payload: list | dict = Body(...),
+    _auth: bool = Depends(require_api_key),
+    session: Session = Depends(db_session),
+) -> dict:
+    """Validate and upsert research entities (array or {entities: [...]})."""
+    from scoredclub.collectors.llm_ingest import ingest_entries
+
+    entries = payload.get("entities") if isinstance(payload, dict) else payload
+    if not isinstance(entries, list):
+        raise HTTPException(
+            status_code=400, detail="Body must be a JSON array or an object with 'entities'."
+        )
+    report = ingest_entries(session, entries)
+    session.commit()
+    return {
+        "ok": report.ok,
+        "ingested": report.ingested,
+        "new_entities": report.new_entities,
+        "merged_entities": report.merged_entities,
+        "errors": report.errors,
+    }
+
+
+@app.post("/runs")
+def trigger_run(
+    body: RunRequest = Body(default_factory=RunRequest),
+    _auth: bool = Depends(require_api_key),
+    session: Session = Depends(db_session),
+) -> dict:
+    """Trigger a pipeline run (synchronous). Optionally ingest inline research first."""
+    from scoredclub.collectors.llm_ingest import ingest_entries
+    from scoredclub.pipeline.run import execute_run
+
+    if body.research is not None:
+        entries = body.research.get("entities") if isinstance(body.research, dict) else body.research
+        if isinstance(entries, list):
+            ingest_entries(session, entries)
+            session.commit()
+    try:
+        run_date = date_type.fromisoformat(body.date) if body.date else None
+    except ValueError:
+        raise HTTPException(status_code=400, detail="date must be ISO format YYYY-MM-DD.")
+    summary = execute_run(
+        session, _settings, research_file=None, skip_collectors=body.skip_collectors, run_date=run_date
+    )
+    return {
+        "run_id": summary.run_id,
+        "entities_tracked": summary.entities_tracked,
+        "new_entities": summary.new_entities,
+        "alerts": summary.alerts,
+        "report_md": summary.report_md,
+        "warnings": summary.warnings,
+    }
 
 
 @app.get("/entities")

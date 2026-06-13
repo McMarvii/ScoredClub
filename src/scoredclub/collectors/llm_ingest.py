@@ -60,16 +60,11 @@ def validate_entries(entries: list[dict]) -> tuple[list[EntityProfile], list[str
     return profiles, errors
 
 
-def ingest_file(
-    session: Session, path: str | Path, run_id: int | None = None, dry_run: bool = False
+def ingest_entries(
+    session: Session, entries: list[dict], run_id: int | None = None, dry_run: bool = False
 ) -> IngestReport:
+    """Validate and upsert already-parsed entries (e.g. from an API body)."""
     report = IngestReport()
-    try:
-        entries = load_research_file(path)
-    except (OSError, ValueError, json.JSONDecodeError) as exc:
-        report.errors.append(f"cannot read {path}: {exc}")
-        return report
-
     profiles, errors = validate_entries(entries)
     report.errors.extend(errors)
     if dry_run:
@@ -81,3 +76,15 @@ def ingest_file(
         report.ingested.append(entity.entity_id)
         (report.new_entities if is_new else report.merged_entities).append(entity.entity_id)
     return report
+
+
+def ingest_file(
+    session: Session, path: str | Path, run_id: int | None = None, dry_run: bool = False
+) -> IngestReport:
+    report = IngestReport()
+    try:
+        entries = load_research_file(path)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        report.errors.append(f"cannot read {path}: {exc}")
+        return report
+    return ingest_entries(session, entries, run_id=run_id, dry_run=dry_run)
