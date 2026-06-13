@@ -85,7 +85,8 @@ Details der Wirkung: [Scoring-Modell](scoring.md) (inkl. Datenkonfidenz).
 |-----------|-----------|
 | `clubcommission_url` | Startseite mit Members-Bereich. |
 | `ra_graphql_url` | Resident-Advisor-GraphQL-Endpunkt. |
-| `reddit_search_url` | Reddit-Such-API für den Enrichment-Collector. |
+| `reddit_search_url` | Öffentliche Reddit-Such-API (Public-Fallback). |
+| `reddit_oauth_token_url` / `reddit_oauth_search_url` | Reddit-OAuth-Endpunkte (genutzt, wenn `REDDIT_CLIENT_ID`/`REDDIT_CLIENT_SECRET` gesetzt sind). |
 | `reddit_enabled` | Reddit-Collector an/aus. |
 | `reddit_max_threads` | Max. Threads pro Entität. |
 | `extra_sources` | Reserviert für zusätzliche Quellen. |
@@ -126,6 +127,9 @@ Details: [Datenerhebung](data-collection.md).
 | `DATABASE_URL` | `sqlite:///data/scoredclub.db` | SQLAlchemy-Verbindung. SQLite oder Postgres (`postgresql+psycopg2://user:pass@host/db`). |
 | `SCOREDCLUB_WEBHOOK_URL` | `alerts.webhook_url` | Webhook für Alerts. |
 | `SCOREDCLUB_CONFIG` | Standardpfad | Pfad zur Konfigurationsdatei. |
+| `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET` | — | Reddit-OAuth-App; aktiviert den authentifizierten Reddit-Collector (Dimension D). |
+| `REDDIT_USER_AGENT` | Default-UA | Eindeutiger Reddit-User-Agent (von Reddit verlangt). |
+| `ANTHROPIC_API_KEY` | — | Für den agentischen LLM-Research-Collector (`llm.enabled`). |
 
 > **Sicherheitshinweis:** Geheimnisse (Webhook-URLs, künftige API-Tokens) gehören in
 > Umgebungsvariablen bzw. CI-Secrets, nicht in die eingecheckte Config.

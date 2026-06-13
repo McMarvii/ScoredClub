@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import httpx
+import pytest
 
 from scoredclub.collectors.clubcommission import ClubcommissionCollector, _name_from_slug
 from scoredclub.collectors.reddit import RedditCollector
@@ -8,6 +9,14 @@ from scoredclub.collectors.resident_advisor import ResidentAdvisorCollector
 from scoredclub.config import Settings
 from scoredclub.db import repo
 from scoredclub.schemas import EntityProfile
+
+
+@pytest.fixture(autouse=True)
+def _clear_reddit_env(monkeypatch):
+    # Default to the public Reddit path; OAuth tests opt in via setenv.
+    monkeypatch.delenv("REDDIT_CLIENT_ID", raising=False)
+    monkeypatch.delenv("REDDIT_CLIENT_SECRET", raising=False)
+    monkeypatch.delenv("REDDIT_USER_AGENT", raising=False)
 
 MEMBERS_HTML = """
 <html><body>
@@ -159,6 +168,63 @@ def test_reddit_enrichment_merges_into_existing_entity(session, monkeypatch):
     assert merged.community.reddit_threads == ["https://www.reddit.com/r/berlin/comments/a/berghain/"]
     # Existing data preserved.
     assert merged.district == "Friedrichshain"
+
+
+def test_reddit_oauth_used_when_creds_present(monkeypatch):
+    monkeypatch.setenv("REDDIT_CLIENT_ID", "id")
+    monkeypatch.setenv("REDDIT_CLIENT_SECRET", "secret")
+    payload = _reddit_payload({"subreddit": "berlin", "permalink": "/r/berlin/comments/a/x/"})
+    calls = {}
+
+    def fake_post(url, **kw):
+        calls["token_url"] = url
+        calls["auth"] = kw.get("auth")
+        return httpx.Response(200, json={"access_token": "tok123"}, request=httpx.Request("POST", url))
+
+    def fake_get(url, **kw):
+        calls["search_url"] = url
+        calls["headers"] = kw.get("headers", {})
+        return httpx.Response(200, json=payload, request=httpx.Request("GET", url))
+
+    monkeypatch.setattr(httpx, "post", fake_post)
+    monkeypatch.setattr(httpx, "get", fake_get)
+    collector = RedditCollector()
+    collector.request_delay = 0
+    result = collector.collect(Settings(), entities=[EntityProfile(name="Berghain", type="club")])
+
+    assert result.ok
+    assert result.profiles[0].community.reddit_threads == ["https://www.reddit.com/r/berlin/comments/a/x/"]
+    # Authenticated endpoint + bearer header were used.
+    assert calls["search_url"] == "https://oauth.reddit.com/search"
+    assert calls["headers"]["Authorization"] == "Bearer tok123"
+    assert calls["auth"] == ("id", "secret")
+
+
+def test_reddit_oauth_failure_falls_back_to_public(monkeypatch):
+    monkeypatch.setenv("REDDIT_CLIENT_ID", "id")
+    monkeypatch.setenv("REDDIT_CLIENT_SECRET", "secret")
+    payload = _reddit_payload({"subreddit": "techno", "permalink": "/r/techno/comments/b/y/"})
+    seen = {}
+
+    def fake_post(url, **kw):
+        raise httpx.ConnectError("token endpoint down")
+
+    def fake_get(url, **kw):
+        seen["url"] = url
+        seen["headers"] = kw.get("headers", {})
+        return httpx.Response(200, json=payload, request=httpx.Request("GET", url))
+
+    monkeypatch.setattr(httpx, "post", fake_post)
+    monkeypatch.setattr(httpx, "get", fake_get)
+    collector = RedditCollector()
+    collector.request_delay = 0
+    result = collector.collect(Settings(), entities=[EntityProfile(name="Tresor", type="club")])
+
+    # Token failed -> public endpoint, no bearer header; still produces results.
+    assert result.profiles[0].community.reddit_threads == ["https://www.reddit.com/r/techno/comments/b/y/"]
+    assert seen["url"] == "https://www.reddit.com/search.json"
+    assert "Authorization" not in seen["headers"]
+    assert any("OAuth token request failed" in w for w in result.warnings)
 
 
 def test_upsert_create_if_missing_false_skips_unmatched(session):

@@ -41,11 +41,15 @@ selbst befüllt. Damit entfällt der manuelle `research.json`-Schritt.
   Batching/Kostendeckel feiner steuern, Discovery-Modus (neue Entitäten finden), gegen
   echte API evaluieren.
 
-### 2. Echte API-Collectors
-- **Reddit-OAuth-App** → bringt Dimension D zuverlässig zum Leben.
-- **Resident Advisor** über authentifizierten Zugang oder einen gepflegten
-  Scraping-Dienst → echte Follower- und Event-Zahlen.
-- **Ticketing** (RA/Dice) → verlässliche Event-Aktivität (Dimension A).
+### 2. Echte API-Collectors — 🟡 teilweise ausgeliefert
+- **Reddit-OAuth-App → ✅ umgesetzt.** Der Reddit-Collector nutzt automatisch den
+  authentifizierten `oauth.reddit.com`-Endpunkt, wenn `REDDIT_CLIENT_ID`/`REDDIT_CLIENT_SECRET`
+  gesetzt sind (Public-Fallback sonst). Bringt Dimension D in Produktion zuverlässig zum
+  Leben. Siehe [Datenerhebung](data-collection.md) → Reddit-Collector.
+- **Resident Advisor** über authentifizierten Zugang oder einen gepflegten Scraping-Dienst
+  → echte Follower-/Event-Zahlen. **Offen** (kein öffentlicher Auth-Endpunkt; braucht
+  Zugang/Service-Key).
+- **Ticketing** (RA/Dice) → verlässliche Event-Aktivität (Dimension A). **Offen.**
 
 ### 3. Provenance & Confidence — ✅ v1 ausgeliefert (confidence-aware Scoring)
 Das Scoring ist jetzt **confidence-aware**: pro Entität werden Datenkonfidenz
