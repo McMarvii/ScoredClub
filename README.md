@@ -5,6 +5,12 @@ Kollektive, Labels und Partyreihen, berechnet einen Relevanz-Score (0–100), h�
 Score-Historie über Runs hinweg fest und erzeugt menschen- wie maschinenlesbare Reports
 inklusive Alerts bei starken Score- oder Status-Änderungen.
 
+> 📖 **Ausführliche Dokumentation:** [`docs/`](docs/README.md) — Installation, ein
+> komplettes [How-To](docs/howto.md), [Scoring-Modell](docs/scoring.md),
+> [Datenschema](docs/schema.md), [CLI](docs/cli.md), [API](docs/api.md),
+> [Dashboard](docs/frontend.md), [Konfiguration](docs/configuration.md),
+> [Deployment](docs/deployment.md) und [Troubleshooting](docs/troubleshooting.md).
+
 ## Architektur
 
 ```
