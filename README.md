@@ -112,6 +112,14 @@ Env-Variablen haben Vorrang:
 - `DATABASE_URL` — z. B. `postgresql+psycopg2://user:pass@host/db` (Default: SQLite)
 - `SCOREDCLUB_WEBHOOK_URL` — Webhook-Endpoint für Alerts (Slack/Matrix/Telegram-Bridge)
 
+## Dashboard (Frontend)
+
+Ein statisches, dauerhaft hostbares Web-Dashboard liegt unter `frontend/` (reines
+HTML/CSS/JS, kein Build-Schritt). Es visualisiert die Score-Daten mit Tier-/Typ-Filtern,
+Suche und Detail-Dialogen (Score-Breakdown A–G, Bonus/Malus, Quellen). Deployment via
+GitHub Pages (`.github/workflows/pages.yml`) oder jeden Static-Host. Details:
+[`frontend/README.md`](frontend/README.md).
+
 ## CI & Scheduling
 
 Zwei GitHub-Workflows liegen unter `.github/workflows/`:

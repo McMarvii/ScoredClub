@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="ScoredClub — Relevanz-Scoring der Berliner Techno-Szene (Clubs, Kollektive, Partyreihen)." />
+  <meta name="referrer" content="no-referrer" />
+  <title>ScoredClub — Berlin Techno Intelligence</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <h1>ScoredClub<span class="dot">.</span></h1>
+      <p class="tagline">Relevanz-Scoring der Berliner Techno-Szene — Clubs, Kollektive &amp; Partyreihen</p>
+      <dl class="meta" id="run-meta" aria-live="polite"></dl>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="cards" id="summary-cards" aria-label="Kennzahlen"></section>
+
+    <section class="controls" aria-label="Filter">
+      <input type="search" id="search" placeholder="Suche nach Name oder Bezirk…" autocomplete="off" />
+      <select id="filter-type" aria-label="Typ filtern">
+        <option value="">Alle Typen</option>
+        <option value="club">Club</option>
+        <option value="collective">Kollektiv</option>
+        <option value="series">Partyreihe</option>
+        <option value="label">Label</option>
+      </select>
+      <select id="filter-tier" aria-label="Tier filtern">
+        <option value="">Alle Tiers</option>
+        <option value="TOP-TIER">TOP-TIER</option>
+        <option value="MID-TIER">MID-TIER</option>
+        <option value="EMERGING">EMERGING</option>
+        <option value="INAKTIV/GESCHLOSSEN">Inaktiv / Geschlossen</option>
+      </select>
+      <select id="sort" aria-label="Sortierung">
+        <option value="score-desc">Score ↓</option>
+        <option value="score-asc">Score ↑</option>
+        <option value="name-asc">Name A–Z</option>
+      </select>
+    </section>
+
+    <p class="result-count" id="result-count" aria-live="polite"></p>
+    <section class="grid" id="entity-grid"></section>
+    <p class="empty" id="empty-state" hidden>Keine Entitäten passen zu den Filtern.</p>
+    <p class="error" id="error-state" hidden></p>
+  </main>
+
+  <div class="modal-backdrop" id="modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close" aria-label="Schließen">×</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Generiert von ScoredClub. Scores 0–100 nach gewichtetem Modell (A–G + Bonus − Malus). Daten ohne Gewähr.</p>
+    </div>
+  </footer>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
