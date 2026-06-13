@@ -68,6 +68,15 @@ function tierClass(tier) {
 
 const TREND_ARROW = { rising: "▲", falling: "▼", stable: "→", new: "✦" };
 
+// Confidence badge — flags how complete/fresh the data is (low = pink + ⚠).
+function confidenceBadge(e) {
+  const s = e.score;
+  if (!s || typeof s.confidence !== "number") return null;
+  const low = s.low_confidence === true;
+  const label = `Konfidenz ${Math.round(s.confidence)}%${low ? " ⚠" : ""}`;
+  return el("span", { class: `badge ${low ? "trend-falling" : "type"}`, text: label });
+}
+
 // Returns a trend badge node, or null when there is nothing meaningful to show.
 function trendBadge(e) {
   const t = e.trend;
@@ -142,6 +151,7 @@ function entityCard(e) {
     el("span", { class: "badge type", text: e.status || "unknown" }),
     igFollowers ? el("span", { class: "badge type", text: `IG ${igFollowers}` }) : null,
     trendBadge(e),
+    confidenceBadge(e),
   ]);
 
   const bars = el("div", { class: "bars" });
@@ -228,6 +238,15 @@ function openModal(e) {
   const ra = e.events && e.events.ra_profile_url;
   const raLink = safeLink(ra, "RA-Profil");
   if (raLink) kvRow(kv, "Resident Advisor", raLink);
+  if (typeof score.confidence === "number") {
+    const low = score.low_confidence === true;
+    let txt = `${Math.round(score.confidence)} %${low ? " — geringe Datenbasis ⚠" : ""}`;
+    if (typeof score.confidence_adjusted_total === "number" &&
+        Math.abs(score.confidence_adjusted_total - scoreOf(e)) >= 3) {
+      txt += ` · bereinigt ${Math.round(score.confidence_adjusted_total)}/100`;
+    }
+    kvRow(kv, "Datenkonfidenz", el("span", { text: txt }));
+  }
 
   const breakdown = el("div", {}, [el("h3", { text: "Score-Breakdown" })]);
   const points = score.points || {};

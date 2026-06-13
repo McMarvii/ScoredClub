@@ -66,8 +66,13 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
 | `malus_per_incident` / `malus_cap` | Punkte je Vorfall / Obergrenze. |
 | `tier_thresholds.{top,mid,emerging}` | Score-Schwellen der Tiers. |
 | `inactive_after_days` | Tage ohne Event, ab denen eine Entität als inaktiv gilt. |
+| `confidence.low_confidence_threshold` | Konfidenz, unter der „⚠ geringe Datenbasis" markiert wird (Default 50). |
+| `confidence.freshness_full_days` | Verifiziert innerhalb dieser Tage → volle Frische. |
+| `confidence.freshness_floor` | Untergrenze der Frische bei alten Daten. |
+| `confidence.unknown_verification_confidence` | Frische ohne `last_verification`. |
+| `confidence.completeness_weight` / `freshness_weight` | Blend Vollständigkeit ↔ Frische. |
 
-Details der Wirkung: [Scoring-Modell](scoring.md).
+Details der Wirkung: [Scoring-Modell](scoring.md) (inkl. Datenkonfidenz).
 
 ### `alerts`
 | Schlüssel | Bedeutung |

@@ -102,9 +102,11 @@ def score(
             entity.current_score = breakdown.total
             entity.tier = breakdown.tier
             points = " ".join(f"{k.split('_')[0]}={v}" for k, v in breakdown.points.items())
+            conf_flag = " ⚠low-conf" if breakdown.low_confidence else ""
             typer.echo(
                 f"{entity.entity_id:30s} {breakdown.total:6.1f} {breakdown.tier:22s} {points} "
-                f"bonus=+{breakdown.bonus:.0f} malus=-{breakdown.malus:.0f}"
+                f"bonus=+{breakdown.bonus:.0f} malus=-{breakdown.malus:.0f} "
+                f"conf={breakdown.confidence:.0f}%{conf_flag}"
             )
         session.commit()
 

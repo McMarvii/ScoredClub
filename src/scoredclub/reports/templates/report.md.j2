@@ -28,6 +28,7 @@ _Keine Entitäten in dieser Kategorie._
 {% endif %}{% if e.profile.community.community_sentiment_hint.value != "unknown" %}- **Community-Resonanz:** {{ sentiment_labels[e.profile.community.community_sentiment_hint.value] }}
 {% endif %}- **Safety & Awareness:** {{ e.safety_summary }}
 - **Score-Detail:** A {{ e.breakdown.points["A_event_activity"] }} | B {{ e.breakdown.points["B_online_reach"] }} | C {{ e.breakdown.points["C_press_presence"] }} | D {{ e.breakdown.points["D_community_resonance"] }} | E {{ e.breakdown.points["E_scene_networking"] }} | F {{ e.breakdown.points["F_continuity"] }} | G {{ e.breakdown.points["G_safety_inclusivity"] }} | Bonus +{{ e.breakdown.bonus | round | int }} | Malus -{{ e.breakdown.malus | round | int }}
+- **Datenkonfidenz:** {{ e.breakdown.confidence | round | int }}%{% if e.breakdown.low_confidence %} ⚠ geringe Datenbasis{% endif %}{% if (e.breakdown.confidence_adjusted_total - e.breakdown.total) | abs >= 3 %} · bereinigt (nur bekannte Dimensionen): {{ "%.0f" | format(e.breakdown.confidence_adjusted_total) }}/100{% endif %}
 {% if e.breakdown.bonus_items %}- **Besonderheiten:** {{ e.breakdown.bonus_items | join("; ") }}
 {% endif %}{% if e.breakdown.malus_items %}- **Kritische Punkte:** {{ e.breakdown.malus_items | join("; ") }}
 {% endif %}{% if e.profile.notes %}- **Notizen:** {{ e.profile.notes }}

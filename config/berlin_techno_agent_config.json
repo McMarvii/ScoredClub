@@ -14,7 +14,15 @@
     "malus_per_incident": 5,
     "malus_cap": 15,
     "tier_thresholds": { "top": 75, "mid": 50, "emerging": 25 },
-    "inactive_after_days": 180
+    "inactive_after_days": 180,
+    "confidence": {
+      "low_confidence_threshold": 50,
+      "freshness_full_days": 45,
+      "freshness_floor": 20,
+      "unknown_verification_confidence": 30,
+      "completeness_weight": 0.7,
+      "freshness_weight": 0.3
+    }
   },
   "alerts": {
     "score_change_threshold": 10,

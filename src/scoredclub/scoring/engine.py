@@ -6,6 +6,7 @@ from datetime import date
 
 from scoredclub.config import ScoringConfig
 from scoredclub.schemas import EntityProfile, EntityStatus, ScoreBreakdown
+from scoredclub.scoring import confidence as conf
 from scoredclub.scoring import rubric
 
 TIER_TOP = "TOP-TIER"
@@ -49,6 +50,23 @@ def score_entity(
     total = max(0.0, min(100.0, base + bonus - malus))
     tier = classify_tier(profile, total, config, today)
 
+    # --- confidence-awareness (additive; does not change total/tier) ---
+    ccfg = config.confidence
+    presence = conf.dimension_presence(profile)
+    completeness = conf.data_completeness(presence, weight_map)
+    freshness = conf.freshness(profile, ccfg, today)
+    confidence = conf.overall_confidence(completeness, freshness, ccfg)
+
+    # Relevance over the dimensions we actually have data for: renormalise the
+    # weights across present dimensions so a missing dimension isn't counted as 0.
+    present = [d for d in subscores if presence[d] > 0]
+    if present:
+        present_w = sum(weight_map[d] for d in present)
+        adj_base = sum(weight_map[d] * subscores[d] for d in present) / present_w
+    else:
+        adj_base = base
+    adjusted_total = max(0.0, min(100.0, adj_base + bonus - malus))
+
     return ScoreBreakdown(
         subscores=subscores,
         points=points,
@@ -59,6 +77,11 @@ def score_entity(
         base=round(base, 2),
         total=round(total, 2),
         tier=tier,
+        confidence=confidence,
+        dimension_confidence=presence,
+        freshness=freshness,
+        low_confidence=confidence < ccfg.low_confidence_threshold,
+        confidence_adjusted_total=round(adjusted_total, 2),
     )
 
 

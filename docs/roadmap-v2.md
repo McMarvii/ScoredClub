@@ -47,13 +47,18 @@ selbst befüllt. Damit entfällt der manuelle `research.json`-Schritt.
   Scraping-Dienst → echte Follower- und Event-Zahlen.
 - **Ticketing** (RA/Dice) → verlässliche Event-Aktivität (Dimension A).
 
-### 3. Provenance & Confidence pro Feld
-Jedes Feld bekommt Quelle, Konfidenz und Alter. Das Scoring wird **confidence-aware**:
-dünne/veraltete Daten werden als Unsicherheit markiert statt als „niedrige Relevanz".
+### 3. Provenance & Confidence — ✅ v1 ausgeliefert (confidence-aware Scoring)
+Das Scoring ist jetzt **confidence-aware**: pro Entität werden Datenkonfidenz
+(Vollständigkeit + Frische aus `last_verification`), Presence pro Dimension und ein
+**bereinigter Score** (Relevanz über bekannte Dimensionen) berechnet und überall angezeigt
+(Report, CLI, API, Dashboard). Dünne/veraltete Daten werden als „⚠ geringe Datenbasis"
+markiert statt als niedrige Relevanz.
 
-- Behebt das „fehlende Daten = niedriger Score"-Artefakt.
-- Schafft Vertrauen und Nachvollziehbarkeit.
-- Score-Decay über `last_verification` (Alter senkt Konfidenz).
+- **Status:** `scoring/confidence.py` + additive Felder im `ScoreBreakdown`
+  (`total`/`tier` unverändert). Siehe [Scoring-Modell](scoring.md) → Datenkonfidenz.
+- **Offen für v2-Vollausbau:** echte **Per-Feld-Provenance** (Quelle + Konfidenz je Feld,
+  nicht nur je Entität), Dedup-Review mit Quellenanzeige, gewichtete Imputation statt
+  reiner Renormalisierung.
 
 ---
 
