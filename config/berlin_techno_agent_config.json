@@ -36,5 +36,12 @@
     "momentum_window": 4,
     "stable_epsilon": 1.0,
     "movers_limit": 5
+  },
+  "llm": {
+    "enabled": false,
+    "model": "claude-opus-4-8",
+    "max_entities": 8,
+    "effort": "medium",
+    "research_max_continuations": 4
   }
 }

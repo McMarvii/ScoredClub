@@ -26,10 +26,11 @@ Resident-Advisor-Collector (best effort) ┘                                    
   Webrecherche, das System validiert und merged. Netzwerk-Collector sind best effort und
   degradieren bei Fehlern zu Warnungen — sie brechen einen Run nie ab:
   - *Discovery-Collector* (Clubcommission, RA-GraphQL) finden ggf. neue Entitäten.
-  - *Enrichment-Collector* (Reddit) reichern bestehende Entitäten an: der Reddit-Collector
-    fragt die öffentliche `search.json`-API pro Entität ab und füllt `community.reddit_threads`
-    (speist die Dimension D). In Sandbox-/Offline-Umgebungen ist Reddit oft geblockt — dann
-    bleibt D bei 0; in echter Deployment-Umgebung greift die Anreicherung automatisch.
+  - *Enrichment-Collector* reichern bestehende Entitäten an: der **agentische
+    `LLMResearchCollector`** (optional, `[llm]`-Extra + `ANTHROPIC_API_KEY`) recherchiert pro
+    Entität via Claude-API + web_search und befüllt das Schema automatisch — er ersetzt den
+    manuellen Research-Schritt; der Reddit-Collector füllt `community.reddit_threads` (Dimension D).
+    In Sandbox-/Offline-Umgebungen sind diese Quellen oft geblockt; dann degradieren sie zu Warnungen.
 - **Dedup:** Namensnormalisierung (Diacritics, Sonderzeichen, Füllwörter), Alias-Tabelle
   für die Seed-Entitäten, konservatives Fuzzy-Matching (nur mit Korroboration über
   Bezirk/Website/Instagram).

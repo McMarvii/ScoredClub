@@ -44,7 +44,7 @@
 | `scoring/engine.py` | Gewichtung, Gesamt-Score, Tier-Klassifizierung. |
 | `trending.py` | Trend-Analyse über die Score-Historie (Richtung, Momentum, Ränge, Movers). |
 | `compare.py` | A/B-Vergleich zweier Scoring-Konfigurationen (Score-/Rang-Diff, Tier-Wechsel, Spearman). |
-| `collectors/` | `base` (Protokoll), `clubcommission`, `resident_advisor`, `reddit`, `llm_ingest`. |
+| `collectors/` | `base` (Protokoll), `clubcommission`, `resident_advisor`, `reddit`, `llm_research` (agentischer Claude-Collector), `llm_ingest`. |
 | `pipeline/run.py` | Orchestrierung des kompletten Laufs. |
 | `pipeline/diff.py` | Vergleich Lauf vs. Vorlauf. |
 | `pipeline/alerts.py` | Alert-Erzeugung + Webhook-Zustellung. |
