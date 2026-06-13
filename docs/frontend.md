@@ -7,11 +7,14 @@ hostbar.
 ## Funktionen
 
 - Kennzahlen-Karten (Gesamtzahl, TOP-TIER, Clubs, Kollektive).
+- **Bewegungen-Panel:** Top-Auf-/Absteiger seit dem letzten Run (aus `trend.score_delta`).
+  Erscheint, sobald Trenddaten vorliegen (≥ 2 Läufe); klickbar → Detail-Dialog.
 - Suche (Name/Bezirk), Filter nach Typ und Tier, Sortierung (Score/Name).
-- Entitäten-Karten mit Score, Tier-/Status-Badges, IG-Followern und Mini-Balken der
-  Dimensionen A–G.
-- Detail-Dialog pro Entität: Score-Breakdown (A–G mit Balken), Bonus/Malus,
-  Presse-Highlights, Quellen-Links, Notizen.
+- Entitäten-Karten mit Score, Tier-/Status-/Konfidenz-/Trend-Badges, IG-Followern und
+  Mini-Balken der Dimensionen A–G.
+- Detail-Dialog pro Entität: **Score-Verlauf als Sparkline** (aus `trend.sparkline`),
+  Score-Breakdown (A–G mit Balken), Bonus/Malus, Datenkonfidenz, Presse-Highlights,
+  Quellen-Links, Notizen.
 
 ## Dateien
 

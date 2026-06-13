@@ -88,13 +88,13 @@ Migration deckt sich mit den Modellen). Siehe [Deployment](deployment.md) → Po
 - **Offen:** Rate-Limiting, OAuth/mehrere Keys, **persistente/verteilte Jobs**
   (RQ/Celery + Broker) statt In-Process, Entitäten-Management-Endpunkte.
 
-### 6. Frontend-Ausbau
-- Dedizierte **Trending-Ansicht** (Sparklines, Leaderboard über Zeit).
-- Visuelles **A/B-Compare-UI** (zwei Configs wählen, Diff sehen).
-- Entity-Detailseiten mit Verlaufs-Charts.
-- **Kartenansicht** — das `geo`-Feld endlich nutzen (Bezirke/Adressen geocoden).
-- Daten live aus der API statt statischem JSON-Snapshot (Snapshot als Fallback/Cache).
-- Auth-geschützter Admin-Bereich (Läufe auslösen, Dedup-Merges prüfen).
+### 6. Frontend-Ausbau — 🟡 teilweise ausgeliefert
+- **Trending im Dashboard → ✅ umgesetzt.** Bewegungen-Panel (Top-Auf-/Absteiger) und
+  Score-Verlauf-Sparkline im Detail-Dialog (XSS-sicher per `createElementNS`). Aktiviert
+  sich ab ≥ 2 Läufen. Siehe [Dashboard](frontend.md).
+- **Offen:** visuelles **A/B-Compare-UI** (Compare-Output wird heute nur per CLI exportiert),
+  **Kartenansicht** (braucht Geocoding des `geo`-Felds — aktuell leer), Daten live aus der
+  API statt statischem Snapshot, auth-geschützter Admin-Bereich.
 
 ---
 

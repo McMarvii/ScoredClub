@@ -20,6 +20,14 @@
   <main class="wrap">
     <section class="cards" id="summary-cards" aria-label="Kennzahlen"></section>
 
+    <section class="movers" id="movers-section" aria-label="Bewegungen" hidden>
+      <h2>Bewegungen seit letztem Run</h2>
+      <div class="movers-cols">
+        <div><h3>▲ Aufsteiger</h3><ol id="movers-risers"></ol></div>
+        <div><h3>▼ Absteiger</h3><ol id="movers-fallers"></ol></div>
+      </div>
+    </section>
+
     <section class="controls" aria-label="Filter">
       <input type="search" id="search" placeholder="Suche nach Name oder Bezirk…" autocomplete="off" />
       <select id="filter-type" aria-label="Typ filtern">
