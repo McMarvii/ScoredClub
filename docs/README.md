@@ -18,6 +18,7 @@ Diese Dokumentation ist in Kapitel gegliedert. Wenn du neu bist, lies
 | [Architektur](architecture.md) | Komponenten, Datenfluss, Designentscheidungen |
 | [Scoring-Modell](scoring.md) | Dimensionen A–G, Gewichte, Bonus/Malus, Tiers — exakte Regeln |
 | [Trending](trending.md) | Trend-Analyse über die Score-Historie (Auf-/Absteiger, Momentum, Ränge) |
+| [A/B-Testing](ab-testing.md) | Zwei Scoring-Konfigurationen auf denselben Daten vergleichen |
 | [Datenschema](schema.md) | Alle Felder des `EntityProfile` (Research-JSON-Format) |
 | [Datenerhebung & Research](data-collection.md) | Collectors, LLM-Research-Workflow, Dedup/Merge |
 | [CLI-Referenz](cli.md) | Alle Befehle und Optionen |

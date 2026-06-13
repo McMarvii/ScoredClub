@@ -22,6 +22,7 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | `list` | Entitäten auflisten |
 | `show` | Profil + Score-Historie einer Entität anzeigen |
 | `trending` | Auf-/Absteiger und Leaderboard des letzten Laufs |
+| `compare` | Zwei Scoring-Konfigurationen vergleichen (A/B) |
 | `serve` | FastAPI-Lese-API starten |
 
 ---
@@ -107,6 +108,15 @@ scoredclub trending [--movers N] [--config PATH]
 Zeigt für den letzten Lauf die stärksten Auf-/Absteiger und ein Leaderboard mit
 Richtungspfeilen (▲/▼/→/✦) und Rang-Änderungen. Braucht ≥ 2 Läufe für aussagekräftige
 Trends. Details: [Trending](trending.md).
+
+## `compare`
+```bash
+scoredclub compare --config-b VARIANT.json [--config-a BASIS.json] [--date YYYY-MM-DD] [--no-write]
+```
+A/B-Vergleich: scort die aktuellen Entitäten unter zwei Scoring-Konfigurationen und zeigt
+Score-/Rang-Unterschiede, Tier-Wechsel und die Spearman-Rang-Korrelation. `--config-a`
+ist standardmäßig die aktive Konfiguration. Schreibt mit `--write` (Standard) einen
+Vergleichs-Report in den Output-Ordner. Details: [A/B-Testing](ab-testing.md).
 
 ## `serve`
 ```bash

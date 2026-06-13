@@ -7,8 +7,9 @@ inklusive Alerts bei starken Score- oder Status-Änderungen.
 
 > 📖 **Ausführliche Dokumentation:** [`docs/`](docs/README.md) — Installation, ein
 > komplettes [How-To](docs/howto.md), [Scoring-Modell](docs/scoring.md),
-> [Trending](docs/trending.md), [Datenschema](docs/schema.md), [CLI](docs/cli.md),
-> [API](docs/api.md), [Dashboard](docs/frontend.md), [Konfiguration](docs/configuration.md),
+> [Trending](docs/trending.md), [A/B-Testing](docs/ab-testing.md),
+> [Datenschema](docs/schema.md), [CLI](docs/cli.md), [API](docs/api.md),
+> [Dashboard](docs/frontend.md), [Konfiguration](docs/configuration.md),
 > [Deployment](docs/deployment.md) und [Troubleshooting](docs/troubleshooting.md).
 
 ## Architektur
@@ -76,6 +77,7 @@ scoredclub run --skip-collectors            # ohne Netzwerk-Collector (Sandbox/C
 scoredclub list --tier TOP-TIER
 scoredclub show berghain         # Profil + Score-Historie
 scoredclub trending              # Auf-/Absteiger + Leaderboard (braucht ≥2 Runs)
+scoredclub compare --config-b config/variants/reach_heavy.json   # Scoring-A/B-Vergleich
 scoredclub serve                 # FastAPI auf http://127.0.0.1:8000
 ```
 

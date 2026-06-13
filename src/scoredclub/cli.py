@@ -267,6 +267,70 @@ def trending(
 
 
 @app.command()
+def compare(
+    config_b: Path = typer.Option(..., "--config-b", help="Variant config to compare against"),
+    config_a: Path = typer.Option(None, "--config-a", help="Baseline config (default: active)"),
+    date: str = typer.Option(None, help="Scoring date YYYY-MM-DD (default: today)"),
+    write: bool = typer.Option(True, help="Write comparison report to the output dir"),
+) -> None:
+    """A/B test two scoring configurations on the current entities."""
+    import json as _json
+    from datetime import date as date_type
+    from pathlib import Path as _Path
+
+    from scoredclub.compare import (
+        compare_scoring,
+        render_comparison_json,
+        render_comparison_markdown,
+    )
+
+    active = Settings.load()
+    init_db(active.database_url)
+    scoring_a = Settings.load(config_a).scoring if config_a else active.scoring
+    scoring_b = Settings.load(config_b).scoring
+    label_a = config_a.stem if config_a else "aktiv"
+    label_b = config_b.stem
+    run_date = date_type.fromisoformat(date) if date else date_type.today()
+
+    with get_session(active.database_url) as session:
+        profiles = [repo.profile_from_row(e) for e in repo.all_entities(session)]
+
+    if not profiles:
+        typer.secho("Keine Entitäten in der DB. Erst 'seed'/'run' ausführen.", fg=typer.colors.RED)
+        raise typer.Exit(code=1)
+
+    report = compare_scoring(
+        profiles, scoring_a, scoring_b, today=run_date, label_a=label_a, label_b=label_b
+    )
+
+    typer.echo(f"Vergleich: {label_a} vs. {label_b}")
+    typer.echo(f"  Rang-Korrelation (Spearman): {report.rank_correlation}")
+    typer.echo(f"  Mittlere abs. Score-Differenz: {report.mean_abs_delta}")
+    typer.echo(f"  Tier-Wechsel: {len(report.tier_changes)}")
+    if report.tier_changes:
+        for c in report.tier_changes:
+            typer.echo(f"    {c.name}: {c.tier_a} → {c.tier_b}")
+    typer.echo("  Größte Rang-Bewegungen:")
+    for c in report.biggest_movers:
+        if c.rank_delta:
+            arrow = "▲" if c.rank_delta > 0 else "▼"
+            typer.echo(f"    {arrow} {c.name:24s} Rang {c.rank_a}→{c.rank_b} (Δ score {c.score_delta:+.1f})")
+
+    if write:
+        out_dir = _Path(active.run.output_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        stem = f"scoring_compare_{label_a}_vs_{label_b}_{run_date.isoformat()}"
+        md_path = out_dir / f"{stem}.md"
+        json_path = out_dir / f"{stem}.json"
+        md_path.write_text(render_comparison_markdown(report), encoding="utf-8")
+        json_path.write_text(
+            _json.dumps(render_comparison_json(report), indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        typer.echo(f"  Reports: {md_path}, {json_path}")
+
+
+@app.command()
 def serve(
     host: str = typer.Option("127.0.0.1"),
     port: int = typer.Option(8000),

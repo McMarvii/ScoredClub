@@ -43,6 +43,7 @@
 | `scoring/rubric.py` | Reine Funktionen pro Dimension A–G, Bonus/Malus. |
 | `scoring/engine.py` | Gewichtung, Gesamt-Score, Tier-Klassifizierung. |
 | `trending.py` | Trend-Analyse über die Score-Historie (Richtung, Momentum, Ränge, Movers). |
+| `compare.py` | A/B-Vergleich zweier Scoring-Konfigurationen (Score-/Rang-Diff, Tier-Wechsel, Spearman). |
 | `collectors/` | `base` (Protokoll), `clubcommission`, `resident_advisor`, `reddit`, `llm_ingest`. |
 | `pipeline/run.py` | Orchestrierung des kompletten Laufs. |
 | `pipeline/diff.py` | Vergleich Lauf vs. Vorlauf. |

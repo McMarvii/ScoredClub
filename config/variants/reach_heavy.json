@@ -1,0 +1,14 @@
+{
+  "_comment": "A/B variant: emphasise online reach and event activity over the rest.",
+  "scoring": {
+    "weights": {
+      "event_activity": 0.25,
+      "online_reach": 0.35,
+      "press": 0.10,
+      "community": 0.10,
+      "networking": 0.05,
+      "continuity": 0.10,
+      "safety": 0.05
+    }
+  }
+}
