@@ -18,9 +18,13 @@ def get_engine(database_url: str) -> Engine:
     global _engine, _session_factory
     if _engine is None or str(_engine.url) != database_url:
         url = make_url(database_url)
-        if url.drivername.startswith("sqlite") and url.database not in (None, ":memory:"):
-            Path(url.database).parent.mkdir(parents=True, exist_ok=True)
-        _engine = create_engine(database_url, future=True)
+        connect_args: dict = {}
+        if url.drivername.startswith("sqlite"):
+            if url.database not in (None, ":memory:"):
+                Path(url.database).parent.mkdir(parents=True, exist_ok=True)
+            # Allow use across threads (background job runner opens its own session).
+            connect_args["check_same_thread"] = False
+        _engine = create_engine(database_url, future=True, connect_args=connect_args)
         _session_factory = sessionmaker(bind=_engine, expire_on_commit=False)
     return _engine
 
