@@ -59,7 +59,9 @@ def _name_from_slug(slug: str) -> str:
 class ClubcommissionCollector:
     name = "clubcommission"
 
-    def collect(self, settings: Settings) -> CollectorResult:
+    def collect(
+        self, settings: Settings, entities: list[EntityProfile] | None = None
+    ) -> CollectorResult:
         result = CollectorResult(collector=self.name)
         url = settings.sources.clubcommission_url
         try:

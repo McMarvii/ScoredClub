@@ -32,7 +32,9 @@ query searchClubs($searchTerm: String!) {
 class ResidentAdvisorCollector:
     name = "resident_advisor"
 
-    def collect(self, settings: Settings) -> CollectorResult:
+    def collect(
+        self, settings: Settings, entities: list[EntityProfile] | None = None
+    ) -> CollectorResult:
         result = CollectorResult(collector=self.name)
         url = settings.sources.ra_graphql_url
         try:

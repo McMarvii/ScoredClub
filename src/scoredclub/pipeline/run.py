@@ -10,7 +10,7 @@ from pathlib import Path
 
 from sqlalchemy.orm import Session
 
-from scoredclub.collectors import NETWORK_COLLECTORS
+from scoredclub.collectors import DISCOVERY_COLLECTORS, ENRICHMENT_COLLECTORS
 from scoredclub.collectors.llm_ingest import IngestReport, ingest_file
 from scoredclub.config import Settings
 from scoredclub.db import init_db, repo
@@ -86,11 +86,21 @@ def execute_run(
         summary.warnings.extend(summary.ingest_report.errors)
 
     if not skip_collectors:
-        for collector_cls in NETWORK_COLLECTORS:
+        # Discovery collectors may introduce new entities.
+        for collector_cls in DISCOVERY_COLLECTORS:
             result = collector_cls().collect(settings)
             summary.warnings.extend(result.warnings)
             for profile in result.profiles:
                 repo.upsert_profile(session, profile, run_id=run.id)
+        # Enrichment collectors augment the current entities only.
+        current = [repo.profile_from_row(e) for e in repo.all_entities(session)]
+        for collector_cls in ENRICHMENT_COLLECTORS:
+            result = collector_cls().collect(settings, entities=current)
+            summary.warnings.extend(result.warnings)
+            for profile in result.profiles:
+                repo.upsert_profile(
+                    session, profile, run_id=run.id, create_if_missing=False
+                )
 
     seed_ids = seed_entity_ids()
     entities: list[Entity] = repo.all_entities(session)

@@ -44,10 +44,19 @@ def upsert_profile(
     session: Session,
     profile: EntityProfile,
     run_id: int | None = None,
-) -> tuple[Entity, bool]:
-    """Insert or merge a profile. Returns (entity, is_new)."""
+    create_if_missing: bool = True,
+) -> tuple[Entity | None, bool]:
+    """Insert or merge a profile. Returns (entity, is_new).
+
+    When ``create_if_missing`` is False and no existing entity matches, the
+    profile is skipped and ``(None, False)`` is returned — used by enrichment
+    collectors that must never introduce new entities.
+    """
     existing_profiles = [profile_from_row(e) for e in all_entities(session)]
     match = find_match(profile, existing_profiles)
+
+    if match is None and not create_if_missing:
+        return None, False
 
     if match is not None:
         entity = session.get(Entity, match.entity_id)

@@ -3,8 +3,11 @@ from __future__ import annotations
 import httpx
 
 from scoredclub.collectors.clubcommission import ClubcommissionCollector, _name_from_slug
+from scoredclub.collectors.reddit import RedditCollector
 from scoredclub.collectors.resident_advisor import ResidentAdvisorCollector
 from scoredclub.config import Settings
+from scoredclub.db import repo
+from scoredclub.schemas import EntityProfile
 
 MEMBERS_HTML = """
 <html><body>
@@ -79,3 +82,88 @@ def test_ra_collector_blocked_is_nonfatal(monkeypatch):
     assert result.ok is False
     assert result.profiles == []
     assert result.warnings
+
+
+def _reddit_payload(*entries):
+    return {"data": {"children": [{"data": d} for d in entries]}}
+
+
+def test_reddit_collector_enriches_and_filters_subreddits(monkeypatch):
+    payload = _reddit_payload(
+        {"subreddit": "berlin", "permalink": "/r/berlin/comments/a/berghain_door/"},
+        {"subreddit": "techno", "permalink": "/r/techno/comments/b/berghain_set/"},
+        {"subreddit": "random", "permalink": "/r/random/comments/c/unrelated/"},
+    )
+
+    def fake_get(url, **kwargs):
+        return httpx.Response(200, json=payload, request=httpx.Request("GET", url))
+
+    monkeypatch.setattr(httpx, "get", fake_get)
+    collector = RedditCollector()
+    collector.request_delay = 0
+    entities = [EntityProfile(name="Berghain", type="club")]
+    result = collector.collect(Settings(), entities=entities)
+    assert result.ok
+    assert len(result.profiles) == 1
+    threads = result.profiles[0].community.reddit_threads
+    # The /r/random thread is filtered out; the two relevant subs are kept.
+    assert threads == [
+        "https://www.reddit.com/r/berlin/comments/a/berghain_door/",
+        "https://www.reddit.com/r/techno/comments/b/berghain_set/",
+    ]
+
+
+def test_reddit_collector_disabled(monkeypatch):
+    settings = Settings()
+    settings.sources.reddit_enabled = False
+    # Should not even touch the network.
+    monkeypatch.setattr(httpx, "get", lambda *a, **k: (_ for _ in ()).throw(AssertionError))
+    result = RedditCollector().collect(settings, entities=[EntityProfile(name="X")])
+    assert result.ok
+    assert result.profiles == []
+
+
+def test_reddit_collector_aborts_after_failures(monkeypatch):
+    def boom(url, **kwargs):
+        raise httpx.ConnectError("blocked")
+
+    monkeypatch.setattr(httpx, "get", boom)
+    collector = RedditCollector()
+    collector.request_delay = 0
+    entities = [EntityProfile(name=f"Club {i}") for i in range(6)]
+    result = collector.collect(Settings(), entities=entities)
+    assert result.ok is False
+    assert result.profiles == []
+    assert any("unreachable" in w for w in result.warnings)
+
+
+def test_reddit_enrichment_merges_into_existing_entity(session, monkeypatch):
+    seed = EntityProfile(entity_id="berghain", name="Berghain", type="club", district="Friedrichshain")
+    repo.upsert_profile(session, seed)
+
+    payload = _reddit_payload(
+        {"subreddit": "berlin", "permalink": "/r/berlin/comments/a/berghain/"},
+    )
+    monkeypatch.setattr(
+        httpx, "get", lambda url, **k: httpx.Response(200, json=payload, request=httpx.Request("GET", url))
+    )
+    collector = RedditCollector()
+    collector.request_delay = 0
+    current = [repo.profile_from_row(e) for e in repo.all_entities(session)]
+    result = collector.collect(Settings(), entities=current)
+
+    for profile in result.profiles:
+        entity, is_new = repo.upsert_profile(session, profile, create_if_missing=False)
+        assert is_new is False
+    merged = repo.profile_from_row(repo.get_entity(session, "berghain"))
+    assert merged.community.reddit_threads == ["https://www.reddit.com/r/berlin/comments/a/berghain/"]
+    # Existing data preserved.
+    assert merged.district == "Friedrichshain"
+
+
+def test_upsert_create_if_missing_false_skips_unmatched(session):
+    profile = EntityProfile(name="Totally Unknown Venue")
+    entity, is_new = repo.upsert_profile(session, profile, create_if_missing=False)
+    assert entity is None
+    assert is_new is False
+    assert repo.all_entities(session) == []

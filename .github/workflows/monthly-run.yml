@@ -4,8 +4,14 @@ name: Monthly ScoredClub Run
 # Score history and alerts rely on the SQLite DB under state/, which this
 # workflow commits back so each run can diff against the previous one.
 #
-# NOTE: this commits to the branch the workflow runs on. If you want the data
-# to land on main instead, run it from main (or adjust the checkout/branch).
+# IMPORTANT (GitHub limitation): `schedule` and `workflow_dispatch` only run
+# for workflows present on the repository's DEFAULT branch. While this file
+# lives only on a feature branch it will neither auto-schedule nor be
+# dispatchable (the API returns 404). Merge it to the default branch to
+# activate it. The CI workflow (push-triggered) works on any branch.
+#
+# This commits to the branch the workflow runs on. If you want the data to
+# land on main instead, run it from main (or adjust the checkout/branch).
 
 on:
   schedule:

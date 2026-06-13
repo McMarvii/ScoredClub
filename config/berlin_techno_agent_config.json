@@ -23,6 +23,9 @@
   "sources": {
     "clubcommission_url": "https://www.clubcommission.de/",
     "ra_graphql_url": "https://ra.co/graphql",
+    "reddit_search_url": "https://www.reddit.com/search.json",
+    "reddit_enabled": true,
+    "reddit_max_threads": 5,
     "extra_sources": []
   },
   "run": {

@@ -16,9 +16,13 @@ Resident-Advisor-Collector (best effort) ┘                                    
 
 - **Hybrid-Datenerhebung:** Der zuverlässige Pfad ist der *LLM-Research-Ingest*
   (`scoredclub ingest research.json`): ein Research-Agent befüllt das Entity-Schema per
-  Webrecherche, das System validiert und merged. Netzwerk-Collector (Clubcommission,
-  RA-GraphQL) sind best effort und degradieren bei Fehlern zu Warnungen — sie brechen
-  einen Run nie ab.
+  Webrecherche, das System validiert und merged. Netzwerk-Collector sind best effort und
+  degradieren bei Fehlern zu Warnungen — sie brechen einen Run nie ab:
+  - *Discovery-Collector* (Clubcommission, RA-GraphQL) finden ggf. neue Entitäten.
+  - *Enrichment-Collector* (Reddit) reichern bestehende Entitäten an: der Reddit-Collector
+    fragt die öffentliche `search.json`-API pro Entität ab und füllt `community.reddit_threads`
+    (speist die Dimension D). In Sandbox-/Offline-Umgebungen ist Reddit oft geblockt — dann
+    bleibt D bei 0; in echter Deployment-Umgebung greift die Anreicherung automatisch.
 - **Dedup:** Namensnormalisierung (Diacritics, Sonderzeichen, Füllwörter), Alias-Tabelle
   für die Seed-Entitäten, konservatives Fuzzy-Matching (nur mit Korroboration über
   Bezirk/Website/Instagram).
@@ -108,10 +112,19 @@ Env-Variablen haben Vorrang:
 - `DATABASE_URL` — z. B. `postgresql+psycopg2://user:pass@host/db` (Default: SQLite)
 - `SCOREDCLUB_WEBHOOK_URL` — Webhook-Endpoint für Alerts (Slack/Matrix/Telegram-Bridge)
 
-## Scheduling
+## CI & Scheduling
 
-Kein eingebauter Scheduler — `output/next_run.json` dokumentiert den nächsten geplanten
-Run (+30 Tage, konfigurierbar). Beispiel-Cron:
+Zwei GitHub-Workflows liegen unter `.github/workflows/`:
+
+- **`ci.yml`** — pytest + Offline-Pipeline-Smoke bei jedem Push/PR (läuft auf jedem Branch).
+- **`monthly-run.yml`** — monatlicher Lauf (Cron) bzw. manuell via `workflow_dispatch`;
+  committet Reports und die State-DB unter `state/` zurück und lädt Reports als Artifact hoch.
+  **GitHub-Einschränkung:** `schedule` und `workflow_dispatch` laufen nur für Workflows auf
+  dem **Default-Branch**. Solange `monthly-run.yml` nur auf einem Feature-Branch liegt, lässt
+  er sich weder planen noch auslösen (API-404) — dafür auf den Default-Branch mergen.
+
+Ohne GitHub Actions reicht ein lokaler Cron (`output/next_run.json` dokumentiert die Kadenz,
++30 Tage, konfigurierbar):
 
 ```cron
 0 4 1 * * cd /opt/scoredclub && scoredclub run --research data/research/latest.json
