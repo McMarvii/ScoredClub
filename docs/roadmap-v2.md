@@ -94,9 +94,12 @@ Migration deckt sich mit den Modellen). Siehe [Deployment](deployment.md) → Po
   sich ab ≥ 2 Läufen. Siehe [Dashboard](frontend.md).
 - **A/B-Compare über die API → ✅ umgesetzt.** `POST /compare` liefert den Vergleich zweier
   Scoring-Konfigurationen (Grundlage für ein künftiges Compare-UI). Siehe [API](api.md).
-- **Offen:** visuelles **A/B-Compare-UI** (Frontend, das `POST /compare` nutzt),
-  **Kartenansicht** (braucht Geocoding des `geo`-Felds — aktuell leer), Daten live aus der
-  API statt statischem Snapshot, auth-geschützter Admin-Bereich.
+- **Kartenansicht → ✅ umgesetzt.** Listen-/Karten-Umschalter im Dashboard; Entitäten werden
+  nach Berliner Bezirk geplottet (statische Bezirks-Zentren via `scoredclub.geocode`, kein
+  externer Dienst). Das `geo`-Feld wird im Lauf befüllt (`run.geocode_districts`).
+- **Offen:** visuelles **A/B-Compare-UI** (Frontend, das `POST /compare` nutzt), präzises
+  Per-Adress-Geocoding über einen Dienst, Daten live aus der API statt statischem Snapshot,
+  auth-geschützter Admin-Bereich.
 
 ---
 

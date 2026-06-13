@@ -98,6 +98,26 @@ body {
 .controls input { flex: 1 1 220px; }
 .controls input:focus, .controls select:focus { outline: 2px solid var(--accent); border-color: transparent; }
 
+.view-toggle { display: flex; gap: 0.4rem; margin: 1rem 0 0; }
+.view-toggle button {
+  background: var(--bg-elev); border: 1px solid var(--border); color: var(--text-dim);
+  padding: 0.4rem 0.9rem; border-radius: 999px; cursor: pointer; font: inherit; font-size: 0.85rem;
+}
+.view-toggle button.active { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 600; }
+
+.map { margin-bottom: 3rem; }
+.map svg {
+  width: 100%; height: auto; background: var(--bg-elev); border: 1px solid var(--border);
+  border-radius: 14px; aspect-ratio: 1000 / 600;
+}
+.map-dot { cursor: pointer; opacity: 0.85; transition: opacity 0.1s; }
+.map-dot:hover, .map-dot:focus { opacity: 1; }
+.map-dot.tier-top { fill: var(--top); }
+.map-dot.tier-mid { fill: var(--mid); }
+.map-dot.tier-emerging { fill: var(--emerging); }
+.map-dot.tier-inactive { fill: var(--inactive); }
+.map-hint { color: var(--text-dim); font-size: 0.8rem; margin: 0.6rem 0 0; }
+
 .result-count { color: var(--text-dim); font-size: 0.85rem; margin: 0.8rem 0; }
 
 .grid {

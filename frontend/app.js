@@ -242,6 +242,50 @@ function renderGrid() {
   count.textContent = `${state.filtered.length} von ${state.all.length} Entitäten`;
 }
 
+// Berlin bounding box for the district map (lon × lat).
+const MAP = { lonMin: 13.08, lonMax: 13.66, latMin: 52.40, latMax: 52.66, w: 1000, h: 600 };
+
+function renderMap() {
+  const svg = document.getElementById("map-svg");
+  const NS = "http://www.w3.org/2000/svg";
+  const dots = [];
+  for (const e of state.filtered) {
+    const geo = e.geo || {};
+    if (typeof geo.lat !== "number" || typeof geo.lon !== "number") continue;
+    const x = ((geo.lon - MAP.lonMin) / (MAP.lonMax - MAP.lonMin)) * MAP.w;
+    const y = ((MAP.latMax - geo.lat) / (MAP.latMax - MAP.latMin)) * MAP.h;
+    if (x < 0 || x > MAP.w || y < 0 || y > MAP.h) continue;
+    const c = document.createElementNS(NS, "circle");
+    c.setAttribute("cx", x.toFixed(1));
+    c.setAttribute("cy", y.toFixed(1));
+    c.setAttribute("r", "7");
+    c.setAttribute("class", `map-dot ${tierClass(tierOf(e))}`);
+    c.setAttribute("tabindex", "0");
+    const title = document.createElementNS(NS, "title");
+    title.textContent = `${e.name} — ${Math.round(scoreOf(e))}/100`;
+    c.appendChild(title);
+    c.addEventListener("click", () => openModal(e));
+    c.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" || ev.key === " ") openModal(e);
+    });
+    dots.push(c);
+  }
+  svg.replaceChildren(...dots);
+}
+
+function setView(view) {
+  const isMap = view === "map";
+  document.getElementById("entity-grid").hidden = isMap;
+  document.getElementById("map-section").hidden = !isMap;
+  document.getElementById("view-list").classList.toggle("active", !isMap);
+  document.getElementById("view-map").classList.toggle("active", isMap);
+  if (isMap) renderMap();
+}
+
+function currentView() {
+  return document.getElementById("map-section").hidden ? "list" : "map";
+}
+
 // ---- detail modal ------------------------------------------------------------
 
 function kvRow(dl, label, valueNode) {
@@ -365,6 +409,7 @@ function applyFilters() {
 
   state.filtered = rows;
   renderGrid();
+  if (currentView() === "map") renderMap();
 }
 
 // ---- bootstrap ---------------------------------------------------------------
@@ -391,6 +436,8 @@ function wire() {
     const ev = id === "search" ? "input" : "change";
     document.getElementById(id).addEventListener(ev, applyFilters);
   }
+  document.getElementById("view-list").addEventListener("click", () => setView("list"));
+  document.getElementById("view-map").addEventListener("click", () => setView("map"));
   document.getElementById("modal-close").addEventListener("click", closeModal);
   document.getElementById("modal").addEventListener("click", (e) => {
     if (e.target.id === "modal") closeModal();

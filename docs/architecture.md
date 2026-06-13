@@ -45,6 +45,7 @@
 | `scoring/confidence.py` | Datenkonfidenz (Presence, Vollständigkeit, Frische) — confidence-aware. |
 | `trending.py` | Trend-Analyse über die Score-Historie (Richtung, Momentum, Ränge, Movers). |
 | `compare.py` | A/B-Vergleich zweier Scoring-Konfigurationen (Score-/Rang-Diff, Tier-Wechsel, Spearman). |
+| `geocode.py` | Bezirks-Geocoding (statische Berlin-Zentren) — füllt `geo` für die Kartenansicht. |
 | `collectors/` | `base` (Protokoll), `clubcommission`, `resident_advisor`, `reddit`, `llm_research` (agentischer Claude-Collector), `llm_ingest`. |
 | `pipeline/run.py` | Orchestrierung des kompletten Laufs. |
 | `pipeline/diff.py` | Vergleich Lauf vs. Vorlauf. |

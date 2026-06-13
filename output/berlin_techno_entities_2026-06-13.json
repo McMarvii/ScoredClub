@@ -15,8 +15,8 @@
       "address": "Koepenicker Str. 70 (Kraftwerk Berlin), 10179 Berlin",
       "district": "Mitte",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.51596,
+        "lon": 13.4084
       },
       "active_since": "1991",
       "last_event_date": "2026-06-12",
@@ -252,8 +252,8 @@
       "address": "Am Wriezener Bahnhof, 10243 Berlin",
       "district": "Friedrichshain",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.51951,
+        "lon": 13.45057
       },
       "active_since": "2004",
       "last_event_date": "2026-05-09",
@@ -491,8 +491,8 @@
       "address": "Ritterstraße 24-26, 10969 Berlin",
       "district": "Kreuzberg",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.50366,
+        "lon": 13.40707
       },
       "active_since": "2007",
       "last_event_date": null,
@@ -723,8 +723,8 @@
       "address": "Am Flutgraben 1, 12435 Berlin",
       "district": "Kreuzberg / Alt-Treptow (am Flutgraben)",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.49419,
+        "lon": 13.40096
       },
       "active_since": "2001",
       "last_event_date": "2026-05-03",
@@ -962,8 +962,8 @@
       "address": "Am Wriezener Bahnhof, 10243 Berlin (Berghain)",
       "district": "Friedrichshain",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.52006,
+        "lon": 13.44879
       },
       "active_since": "2004",
       "last_event_date": "2026-05-09",
@@ -1189,8 +1189,8 @@
       "address": "Koepenicker Str. 76 / Bruecken Str. 1, 10179 Berlin",
       "district": "Mitte",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.52302,
+        "lon": 13.40284
       },
       "active_since": "1994",
       "last_event_date": "2026-03-04",
@@ -1419,8 +1419,8 @@
       "address": "Alt-Stralau 70, 10245 Berlin",
       "district": "Friedrichshain",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.51932,
+        "lon": 13.45592
       },
       "active_since": "2007",
       "last_event_date": "2026-01-04",
@@ -1656,8 +1656,8 @@
       "address": "Hauptstrasse 15, 10317 Berlin (Rummelsburg)",
       "district": "Lichtenberg",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.5205,
+        "lon": 13.50141
       },
       "active_since": "2009",
       "last_event_date": null,
@@ -2094,8 +2094,8 @@
       "address": "KitKat Club, Koepenicker Str. 76, 10179 Berlin",
       "district": "Mitte",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.52484,
+        "lon": 13.40716
       },
       "active_since": "2018",
       "last_event_date": "2026-03-04",
@@ -2311,8 +2311,8 @@
       "address": "Schnellerstraße 137, 12439 Berlin",
       "district": "Schöneweide",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.45192,
+        "lon": 13.51446
       },
       "active_since": "2021",
       "last_event_date": null,
@@ -2535,8 +2535,8 @@
       "address": null,
       "district": "Friedrichshain",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.51374,
+        "lon": 13.45976
       },
       "active_since": "2013",
       "last_event_date": "2026-05-09",
@@ -2758,8 +2758,8 @@
       "address": "Markgrafendamm 24c, 10245 Berlin",
       "district": "Friedrichshain",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.5117,
+        "lon": 13.45963
       },
       "active_since": "2010",
       "last_event_date": "2026-02-14",
@@ -3234,8 +3234,8 @@
       "address": "Alt-Treptow 14-17, 12435 Berlin",
       "district": "Treptow (Treptower Park)",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.49076,
+        "lon": 13.45888
       },
       "active_since": "2021",
       "last_event_date": null,
@@ -4121,8 +4121,8 @@
       "address": "An den Treptowers 10, 12435 Berlin",
       "district": "Treptow (Alt-Treptow)",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.4993,
+        "lon": 13.45857
       },
       "active_since": "2014",
       "last_event_date": null,
@@ -4348,8 +4348,8 @@
       "address": "RAW-Gelände, Revaler Straße 99 (Eingang Warschauer Straße), 10245 Berlin",
       "district": "Friedrichshain",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.51788,
+        "lon": 13.44964
       },
       "active_since": "2024",
       "last_event_date": null,
@@ -4571,8 +4571,8 @@
       "address": "Schleusenufer 3, 10997 Berlin",
       "district": "Kreuzberg (Lohmühleninsel)",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.50252,
+        "lon": 13.39861
       },
       "active_since": "2021",
       "last_event_date": null,
@@ -5032,8 +5032,8 @@
       "address": "Alt-Stralau 1-2, 10245 Berlin",
       "district": "Friedrichshain (an der Elsenbrücke, zwischen Ostkreuz und Treptower Park)",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.51408,
+        "lon": 13.45849
       },
       "active_since": "2017",
       "last_event_date": null,
@@ -5254,8 +5254,8 @@
       "address": "Wiesenweg 1-4, 10365 Berlin",
       "district": "Lichtenberg",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.52115,
+        "lon": 13.49378
       },
       "active_since": "2022",
       "last_event_date": null,
@@ -5475,8 +5475,8 @@
       "address": null,
       "district": "Mitte",
       "geo": {
-        "lat": null,
-        "lon": null
+        "lat": 52.5257,
+        "lon": 13.41023
       },
       "active_since": "2026",
       "last_event_date": null,

@@ -1,19 +1,23 @@
 {
   "scoring": {
     "weights": {
-      "event_activity": 0.20,
-      "online_reach": 0.20,
+      "event_activity": 0.2,
+      "online_reach": 0.2,
       "press": 0.15,
       "community": 0.15,
-      "networking": 0.10,
-      "continuity": 0.10,
-      "safety": 0.10
+      "networking": 0.1,
+      "continuity": 0.1,
+      "safety": 0.1
     },
     "bonus_per_item": 5,
     "bonus_cap": 15,
     "malus_per_incident": 5,
     "malus_cap": 15,
-    "tier_thresholds": { "top": 75, "mid": 50, "emerging": 25 },
+    "tier_thresholds": {
+      "top": 75,
+      "mid": 50,
+      "emerging": 25
+    },
     "inactive_after_days": 180,
     "confidence": {
       "low_confidence_threshold": 50,
@@ -40,7 +44,8 @@
   },
   "run": {
     "next_run_interval_days": 30,
-    "output_dir": "output"
+    "output_dir": "output",
+    "geocode_districts": true
   },
   "trending": {
     "momentum_window": 4,

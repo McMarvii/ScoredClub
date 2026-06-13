@@ -51,8 +51,18 @@
       </select>
     </section>
 
+    <div class="view-toggle" role="group" aria-label="Ansicht">
+      <button type="button" id="view-list" class="active">Liste</button>
+      <button type="button" id="view-map">Karte</button>
+    </div>
+
     <p class="result-count" id="result-count" aria-live="polite"></p>
     <section class="grid" id="entity-grid"></section>
+    <section class="map" id="map-section" hidden aria-label="Karte">
+      <svg id="map-svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet"
+           role="img" aria-label="Bezirks-Karte der Entitäten"></svg>
+      <p class="map-hint">Punkte nach Berliner Bezirk (genähert) · Farbe = Tier · Klick → Detail</p>
+    </section>
     <p class="empty" id="empty-state" hidden>Keine Entitäten passen zu den Filtern.</p>
     <p class="error" id="error-state" hidden></p>
   </main>

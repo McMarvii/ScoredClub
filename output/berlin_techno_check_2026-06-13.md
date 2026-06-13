@@ -16,6 +16,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Koepenicker Str. 70 (Kraftwerk Berlin), 10179 Berlin
 - **Bezirk:** Mitte
+- **Geo:** [52.51596, 13.4084]
 - **Aktiv seit:** 1991
 - **Letztes Event:** 2026-06-12
 - **Instagram:** @tresorberlin (ca. 290.000 Follower)
@@ -38,6 +39,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Am Wriezener Bahnhof, 10243 Berlin
 - **Bezirk:** Friedrichshain
+- **Geo:** [52.51951, 13.45057]
 - **Aktiv seit:** 2004
 - **Letztes Event:** 2026-05-09
 - **Instagram:** @berghain_panoramabar (ca. 293.000 Follower)
@@ -67,6 +69,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Ritterstraße 24-26, 10969 Berlin
 - **Bezirk:** Kreuzberg
+- **Geo:** [52.50366, 13.40707]
 - **Aktiv seit:** 2007
 - **Instagram:** @ritterbutzke.berlin (ca. 100.000 Follower)
 - **RA-Profil:** https://ra.co/clubs/6950
@@ -86,6 +89,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Am Flutgraben 1, 12435 Berlin
 - **Bezirk:** Kreuzberg / Alt-Treptow (am Flutgraben)
+- **Geo:** [52.49419, 13.40096]
 - **Aktiv seit:** 2001
 - **Letztes Event:** 2026-05-03
 - **Instagram:** @club_der_visionaere (ca. 110.000 Follower)
@@ -109,6 +113,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Am Wriezener Bahnhof, 10243 Berlin (Berghain)
 - **Bezirk:** Friedrichshain
+- **Geo:** [52.52006, 13.44879]
 - **Aktiv seit:** 2004
 - **Letztes Event:** 2026-05-09
 - **RA-Profil:** https://ra.co/clubs/5031
@@ -130,6 +135,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Koepenicker Str. 76 / Bruecken Str. 1, 10179 Berlin
 - **Bezirk:** Mitte
+- **Geo:** [52.52302, 13.40284]
 - **Aktiv seit:** 1994
 - **Letztes Event:** 2026-03-04
 - **Instagram:** @kitkatclub.official (ca. 31.000 Follower)
@@ -153,6 +159,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Alt-Stralau 70, 10245 Berlin
 - **Bezirk:** Friedrichshain
+- **Geo:** [52.51932, 13.45592]
 - **Aktiv seit:** 2007
 - **Letztes Event:** 2026-01-04
 - **Instagram:** @renate.berlin (ca. 100.000 Follower)
@@ -173,6 +180,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Hauptstrasse 15, 10317 Berlin (Rummelsburg)
 - **Bezirk:** Lichtenberg
+- **Geo:** [52.5205, 13.50141]
 - **Aktiv seit:** 2009
 - **Instagram:** @sisyphosberlin (ca. 139.000 Follower)
 - **RA-Profil:** https://ra.co/clubs/17118
@@ -211,6 +219,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** KitKat Club, Koepenicker Str. 76, 10179 Berlin
 - **Bezirk:** Mitte
+- **Geo:** [52.52484, 13.40716]
 - **Aktiv seit:** 2018
 - **Letztes Event:** 2026-03-04
 - **Instagram:** @symbiotikka (ca. 78.000 Follower)
@@ -232,6 +241,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Schnellerstraße 137, 12439 Berlin
 - **Bezirk:** Schöneweide
+- **Geo:** [52.45192, 13.51446]
 - **Aktiv seit:** 2021
 - **Instagram:** @rso.berlin (ca. 130.000 Follower)
 - **RA-Profil:** https://ra.co/clubs/185172
@@ -250,6 +260,7 @@
 - **Score:** 53/100
 - **Status:** active
 - **Bezirk:** Friedrichshain
+- **Geo:** [52.51374, 13.45976]
 - **Aktiv seit:** 2013
 - **Letztes Event:** 2026-05-09
 - **Instagram:** @techno_staub (ca. 11.000 Follower)
@@ -271,6 +282,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Markgrafendamm 24c, 10245 Berlin
 - **Bezirk:** Friedrichshain
+- **Geo:** [52.5117, 13.45963]
 - **Aktiv seit:** 2010
 - **Letztes Event:** 2026-02-14
 - **Instagram:** @about.blank.berlin (ca. 85.000 Follower)
@@ -319,6 +331,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Alt-Treptow 14-17, 12435 Berlin
 - **Bezirk:** Treptow (Treptower Park)
+- **Geo:** [52.49076, 13.45888]
 - **Aktiv seit:** 2021
 - **Instagram:** @zenner.berlin (ca. 25.000 Follower)
 - **RA-Profil:** https://ra.co/clubs/188239
@@ -374,6 +387,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** An den Treptowers 10, 12435 Berlin
 - **Bezirk:** Treptow (Alt-Treptow)
+- **Geo:** [52.4993, 13.45857]
 - **Aktiv seit:** 2014
 - **Instagram:** @else_klub
 - **RA-Profil:** https://ra.co/clubs/79607
@@ -393,6 +407,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** RAW-Gelände, Revaler Straße 99 (Eingang Warschauer Straße), 10245 Berlin
 - **Bezirk:** Friedrichshain
+- **Geo:** [52.51788, 13.44964]
 - **Aktiv seit:** 2024
 - **Instagram:** @lokschuppenberlin (ca. 50.000 Follower)
 - **Presse-Highlights:** FazeMag: 'Missverständnisse und Vorurteile: Berliner Technoclub benennt sich um' (Umbenennung von Suicide Circus)
@@ -411,6 +426,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Schleusenufer 3, 10997 Berlin
 - **Bezirk:** Kreuzberg (Lohmühleninsel)
+- **Geo:** [52.50252, 13.39861]
 - **Aktiv seit:** 2021
 - **RA-Profil:** https://ra.co/clubs/187744
 - **Events (letzte 3 Monate):** 10 Events
@@ -430,6 +446,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Alt-Stralau 1-2, 10245 Berlin
 - **Bezirk:** Friedrichshain (an der Elsenbrücke, zwischen Ostkreuz und Treptower Park)
+- **Geo:** [52.51408, 13.45849]
 - **Aktiv seit:** 2017
 - **RA-Profil:** https://ra.co/clubs/141987
 - **Presse-Highlights:** DJ Mag: 'Berlin is getting a new techno temple' (Eröffnungsmeldung)
@@ -493,6 +510,7 @@
 - **Status:** active
 - **Adresse / Hauptort:** Wiesenweg 1-4, 10365 Berlin
 - **Bezirk:** Lichtenberg
+- **Geo:** [52.52115, 13.49378]
 - **Aktiv seit:** 2022
 - **RA-Profil:** https://ra.co/clubs/184646
 - **Presse-Highlights:** Groove: 'OXI: Brand in Berliner Club' (18.05.2026); Groove: 'OXI: Brandstiftung ist Ursache' (22.05.2026); FazeMag: 'Brandserie geht weiter'
@@ -510,6 +528,7 @@
 - **Score:** 20/100
 - **Status:** emerging
 - **Bezirk:** Mitte
+- **Geo:** [52.5257, 13.41023]
 - **Aktiv seit:** 2026
 - **Presse-Highlights:** DJ Mag: New Berlin club to open in former casino under Alexanderplatz arches; Resident Advisor News: New club to open on Berlin's Alexanderplatz next month; Groove: AMT am Berliner Alexanderplatz - Neuer Club soll im Maerz eroeffnen (Feb 2026) / Club kuendigt Eroeffnungstermin an (May 2026)
 - **Community-Resonanz:** gemischt
