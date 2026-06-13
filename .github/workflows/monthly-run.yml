@@ -1,0 +1,85 @@
+name: Monthly ScoredClub Run
+
+# Runs the scoring pipeline on a schedule and commits the generated reports.
+# Score history and alerts rely on the SQLite DB under state/, which this
+# workflow commits back so each run can diff against the previous one.
+#
+# NOTE: this commits to the branch the workflow runs on. If you want the data
+# to land on main instead, run it from main (or adjust the checkout/branch).
+
+on:
+  schedule:
+    # 04:00 UTC on the 1st of every month.
+    - cron: "0 4 1 * *"
+  workflow_dispatch:
+    inputs:
+      skip_collectors:
+        description: "Skip network collectors (Clubcommission/RA)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scoredclub-run
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package
+        run: pip install .
+
+      - name: Initialize and seed (idempotent)
+        env:
+          DATABASE_URL: sqlite:///state/scoredclub.db
+        run: |
+          scoredclub init-db
+          scoredclub seed
+
+      - name: Execute run
+        env:
+          DATABASE_URL: sqlite:///state/scoredclub.db
+          # Optional: set this secret to receive alert webhooks.
+          SCOREDCLUB_WEBHOOK_URL: ${{ secrets.SCOREDCLUB_WEBHOOK_URL }}
+        run: |
+          # Use the most recent committed research file as enrichment input, if any.
+          RESEARCH="$(ls -1 data/research/berlin_research_*.json 2>/dev/null | sort | tail -n 1 || true)"
+          ARGS=""
+          if [ -n "$RESEARCH" ]; then
+            echo "Using research file: $RESEARCH"
+            ARGS="--research $RESEARCH"
+          fi
+          if [ "${{ inputs.skip_collectors }}" = "true" ]; then
+            ARGS="$ARGS --skip-collectors"
+          fi
+          scoredclub run $ARGS
+
+      - name: Commit reports and state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add output/ state/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Automated ScoredClub run $(date -u +%Y-%m-%d)"
+            git push origin HEAD:${GITHUB_REF_NAME}
+          fi
+
+      - name: Upload reports as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: scoredclub-reports
+          path: output/
+          if-no-files-found: warn

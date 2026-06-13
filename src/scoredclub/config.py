@@ -57,7 +57,7 @@ class AlertsConfig(_Base):
 
 
 class SourcesConfig(_Base):
-    clubcommission_url: str = "https://www.clubcommission.de/clubs"
+    clubcommission_url: str = "https://www.clubcommission.de/"
     ra_graphql_url: str = "https://ra.co/graphql"
     extra_sources: list[str] = Field(default_factory=list)
 

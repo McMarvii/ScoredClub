@@ -21,7 +21,7 @@
     "webhook_url": null
   },
   "sources": {
-    "clubcommission_url": "https://www.clubcommission.de/clubs",
+    "clubcommission_url": "https://www.clubcommission.de/",
     "ra_graphql_url": "https://ra.co/graphql",
     "extra_sources": []
   },

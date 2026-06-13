@@ -128,6 +128,7 @@
 - **Aktiv seit:** 1994
 - **Letztes Event:** 2026-03-04
 - **Instagram:** @kitkatclub.official (ca. 31.000 Follower)
+- **RA-Profil:** https://ra.co/clubs/10546
 - **Events (letzte 3 Monate):** 36 Events
 - **Presse-Highlights:** Irish Times: Berlin's vanishing nightclubs - 'The open sex in all corners can be distracting' (2020); The Local: Berlin institution KitKat Club 'set to close doors' (2019)
 - **Community-Resonanz:** überwiegend positiv

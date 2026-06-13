@@ -1146,7 +1146,7 @@
         }
       },
       "events": {
-        "ra_profile_url": null,
+        "ra_profile_url": "https://ra.co/clubs/10546",
         "ra_followers": null,
         "events_last_3_months": 36,
         "events_last_6_months": 72,
