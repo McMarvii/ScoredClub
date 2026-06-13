@@ -27,6 +27,7 @@ Diese Dokumentation ist in Kapitel gegliedert. Wenn du neu bist, lies
 | [Konfiguration](configuration.md) | `config/*.json` und Umgebungsvariablen |
 | [Deployment](deployment.md) | Docker, PostgreSQL, CI, GitHub Pages, Scheduling |
 | [Troubleshooting](troubleshooting.md) | Häufige Probleme und Lösungen |
+| [Roadmap v2](roadmap-v2.md) | Richtung und Prioritäten für die nächste Hauptversion |
 
 ## In einem Satz
 
