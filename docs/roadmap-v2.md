@@ -68,9 +68,14 @@ markiert statt als niedrige Relevanz.
 
 ## P1 — Vom Tool zum Service
 
-### 4. Postgres-first + Alembic-Migrationen
-Sauberer Schema-Evolutionspfad (heute nur `create_all`), JSONB-Indizes, getestete
-Migrationen.
+### 4. Postgres-first + Alembic-Migrationen — ✅ v1 ausgeliefert
+Alembic ist eingerichtet: `migrations/` mit einer aus den ORM-Modellen generierten
+Initial-Migration, `migrations/env.py` liest `DATABASE_URL` (SQLite **oder** Postgres),
+CLI `scoredclub migrate`. Getestet (Upgrade/Downgrade-Roundtrip + `alembic check` =
+Migration deckt sich mit den Modellen). Siehe [Deployment](deployment.md) → PostgreSQL + Migrationen.
+
+- **Offen für v2-Vollausbau:** Postgres-spezifische JSONB-Spalten/Indizes (statt portablem
+  `JSON`), CI-Job, der Migrationen gegen echtes Postgres testet.
 
 ### 5. Voll-API mit Auth + Background-Jobs
 - Token-Auth (API-Key/OAuth), Rate-Limiting.
