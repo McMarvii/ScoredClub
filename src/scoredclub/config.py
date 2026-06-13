@@ -77,6 +77,11 @@ class SourcesConfig(_Base):
     clubcommission_url: str = "https://www.clubcommission.de/"
     ra_graphql_url: str = "https://ra.co/graphql"
     reddit_search_url: str = "https://www.reddit.com/search.json"
+    # OAuth endpoints used when REDDIT_CLIENT_ID/REDDIT_CLIENT_SECRET are set in
+    # the environment (reliable, rate-limited access). Falls back to the public
+    # search endpoint above when no credentials are configured.
+    reddit_oauth_token_url: str = "https://www.reddit.com/api/v1/access_token"
+    reddit_oauth_search_url: str = "https://oauth.reddit.com/search"
     reddit_enabled: bool = True
     reddit_max_threads: int = 5
     extra_sources: list[str] = Field(default_factory=list)

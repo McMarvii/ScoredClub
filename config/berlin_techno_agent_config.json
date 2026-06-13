@@ -32,6 +32,8 @@
     "clubcommission_url": "https://www.clubcommission.de/",
     "ra_graphql_url": "https://ra.co/graphql",
     "reddit_search_url": "https://www.reddit.com/search.json",
+    "reddit_oauth_token_url": "https://www.reddit.com/api/v1/access_token",
+    "reddit_oauth_search_url": "https://oauth.reddit.com/search",
     "reddit_enabled": true,
     "reddit_max_threads": 5,
     "extra_sources": []

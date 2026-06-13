@@ -77,18 +77,37 @@ RA ist JavaScript-lastig und bot-geschützt; bei 403/Cloudflare degradiert der C
 zu einer Warnung. **Es wird kein Headless-Browser verwendet** — der LLM-Research-Pfad ist
 die maßgebliche Quelle für RA-Daten. Liefert opportunistisch `ra_profile_url`/`ra_followers`.
 
-## 4. Reddit-Collector (Enrichment)
+## 4. Reddit-Collector (Enrichment) — mit OAuth
 
-Fragt pro Entität die öffentliche `search.json`-API (`sources.reddit_search_url`) ab,
-filtert auf szene-relevante Subreddits (`r/berlin`, `r/Berghain_Community`, `r/techno`,
-`r/aves`, …) und merged die Permalinks in `community.reddit_threads` — das speist
-**Dimension D**.
+Sucht pro Entität auf Reddit, filtert auf szene-relevante Subreddits (`r/berlin`,
+`r/Berghain_Community`, `r/techno`, `r/aves`, …) und merged die Permalinks in
+`community.reddit_threads` — das speist **Dimension D**. Zwei Modi, automatisch gewählt:
 
-- Konfigurierbar: `sources.reddit_enabled`, `sources.reddit_max_threads`.
-- Fehlertolerant: bricht nach wiederholten Fehlern (z. B. wenn Reddit geblockt ist)
-  sauber ab und liefert Teilresultate.
-- In Sandbox-/Offline-Umgebungen ist Reddit oft nicht erreichbar → D bleibt 0. In echter
-  Deployment-Umgebung greift die Anreicherung automatisch.
+- **OAuth (bevorzugt, zuverlässig):** Sind `REDDIT_CLIENT_ID` und `REDDIT_CLIENT_SECRET`
+  im Environment gesetzt, holt der Collector ein App-Only-Token (Client-Credentials-Grant)
+  und fragt den authentifizierten `oauth.reddit.com`-Endpunkt ab — mit echten Rate-Limits,
+  nicht geblockt. **Das ist der Pfad, der Dimension D in Produktion verlässlich füllt.**
+- **Public-Fallback:** Ohne Credentials wird die öffentliche `search.json`-API genutzt —
+  best effort, außerhalb eines Browsers oft geblockt/rate-limited.
+
+**Setup:** Reddit-„script"-App unter <https://www.reddit.com/prefs/apps> anlegen → Client-ID
+und Secret. Zusätzlich einen aussagekräftigen `REDDIT_USER_AGENT` setzen (Reddit verlangt
+einen eindeutigen UA).
+
+```bash
+export REDDIT_CLIENT_ID=...
+export REDDIT_CLIENT_SECRET=...
+export REDDIT_USER_AGENT="scoredclub/0.1 by /u/deinname"
+scoredclub run        # Reddit-Collector nutzt automatisch OAuth
+```
+
+- Konfigurierbar: `sources.reddit_enabled`, `sources.reddit_max_threads`, Endpunkt-URLs.
+- Fehlertolerant: OAuth-Fehler → Public-Fallback; wiederholte Suchfehler → sauberer Abbruch
+  mit Teilresultaten. In Sandbox/CI ohne Credentials bleibt D mangels Zugang oft 0.
+
+> Erster Teil von **P0.2** der [Roadmap v2](roadmap-v2.md). RA-Follower/Events und Ticketing
+> brauchen einen authentifizierten Zugang bzw. einen Scraping-Dienst und bleiben vorerst
+> best effort (siehe Roadmap).
 
 ## Dedup & Merge
 
