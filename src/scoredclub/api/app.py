@@ -64,6 +64,14 @@ class RunRequest(BaseModel):
     model_config = {"populate_by_name": True}
 
 
+class CompareRequest(BaseModel):
+    config_b: dict  # required: a scoring config (the variant)
+    config_a: dict | None = None  # baseline; null = active config
+    date: str | None = None
+    label_a: str = "A"
+    label_b: str = "B"
+
+
 # In-process background job runner (no external broker). Jobs are kept in
 # memory; state is lost on restart — documented in the API reference.
 _jobs: dict[str, dict] = {}
@@ -190,6 +198,34 @@ def trigger_run(
         "report_md": summary.report_md,
         "warnings": summary.warnings,
     }
+
+
+@app.post("/compare")
+def compare_endpoint(
+    body: CompareRequest = Body(...),
+    _auth: bool = Depends(require_api_key),
+    session: Session = Depends(db_session),
+) -> dict:
+    """A/B compare two scoring configurations over the current entities (read-only)."""
+    from scoredclub.compare import compare_scoring, render_comparison_json
+    from scoredclub.config import ScoringConfig
+
+    try:
+        run_date = date_type.fromisoformat(body.date) if body.date else None
+    except ValueError:
+        raise HTTPException(status_code=400, detail="date must be ISO format YYYY-MM-DD.")
+    try:
+        scoring_a = ScoringConfig.model_validate(body.config_a) if body.config_a else _settings.scoring
+        scoring_b = ScoringConfig.model_validate(body.config_b)
+    except Exception as exc:  # noqa: BLE001 — invalid config -> 400
+        raise HTTPException(status_code=400, detail=f"invalid scoring config: {exc}")
+
+    profiles = [repo.profile_from_row(e) for e in repo.all_entities(session)]
+    report = compare_scoring(
+        profiles, scoring_a, scoring_b, today=run_date,
+        label_a=body.label_a, label_b=body.label_b,
+    )
+    return render_comparison_json(report)
 
 
 @app.get("/jobs/{job_id}")

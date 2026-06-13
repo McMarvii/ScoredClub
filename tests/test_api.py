@@ -194,3 +194,45 @@ def test_async_run_job(client, monkeypatch, tmp_path):
 
 def test_job_unknown_404(client):
     assert client.get("/jobs/doesnotexist").status_code == 404
+
+
+# ---- A/B compare endpoint ----
+
+_REACH_HEAVY = {
+    "weights": {
+        "event_activity": 0.2, "online_reach": 0.5, "press": 0.0, "community": 0.0,
+        "networking": 0.0, "continuity": 0.2, "safety": 0.1,
+    }
+}
+
+
+def test_compare_requires_key(client, monkeypatch):
+    # No key configured -> 503.
+    assert client.post("/compare", json={"config_b": _REACH_HEAVY}).status_code == 503
+    monkeypatch.setenv("SCOREDCLUB_API_KEY", "s3cret")
+    assert client.post("/compare", json={"config_b": _REACH_HEAVY}).status_code == 401
+
+
+def test_compare_returns_comparison(client, monkeypatch):
+    monkeypatch.setenv("SCOREDCLUB_API_KEY", "s3cret")
+    resp = client.post(
+        "/compare",
+        json={"config_b": _REACH_HEAVY, "label_a": "aktiv", "label_b": "reach"},
+        headers={"X-API-Key": "s3cret"},
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["label_a"] == "aktiv" and body["label_b"] == "reach"
+    assert "rank_correlation" in body
+    assert len(body["entities"]) == 2
+    assert {"score_a", "score_b", "score_delta", "rank_a", "rank_b"} <= set(body["entities"][0])
+
+
+def test_compare_invalid_config(client, monkeypatch):
+    monkeypatch.setenv("SCOREDCLUB_API_KEY", "s3cret")
+    resp = client.post(
+        "/compare",
+        json={"config_b": {"weights": {"event_activity": "not-a-number"}}},
+        headers={"X-API-Key": "s3cret"},
+    )
+    assert resp.status_code == 400

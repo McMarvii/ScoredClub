@@ -70,6 +70,21 @@ läuft in einem Hintergrund-Thread, der Endpunkt antwortet sofort mit `202` und 
 { "job_id": "a1b2c3…", "status": "queued" }
 ```
 
+### `POST /compare`
+A/B-Vergleich zweier Scoring-Konfigurationen über die aktuellen Entitäten (read-only, aber
+API-Key erforderlich). Body: `config_b` (Pflicht, der `scoring`-Block der Variante),
+optional `config_a` (Basis; null = aktive Konfiguration), `date`, `label_a`, `label_b`.
+
+```bash
+curl -X POST http://127.0.0.1:8000/compare \
+  -H "X-API-Key: $SCOREDCLUB_API_KEY" -H "Content-Type: application/json" \
+  -d '{"config_b": {"weights": {"online_reach": 0.4, "event_activity": 0.2, "press": 0.1,
+       "community": 0.1, "networking": 0.05, "continuity": 0.1, "safety": 0.05}},
+       "label_a": "aktiv", "label_b": "reach"}'
+```
+Antwort = dasselbe Format wie `scoredclub compare` (`rank_correlation`, `mean_abs_delta`,
+`tier_change_count`, `entities[]` mit Score-/Rang-Deltas). Siehe [A/B-Testing](ab-testing.md).
+
 ### `GET /jobs/{job_id}`
 Status eines Background-Jobs (offen, die `job_id` wirkt als Capability-Token). `404` bei
 unbekannter ID.

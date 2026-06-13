@@ -92,7 +92,9 @@ Migration deckt sich mit den Modellen). Siehe [Deployment](deployment.md) → Po
 - **Trending im Dashboard → ✅ umgesetzt.** Bewegungen-Panel (Top-Auf-/Absteiger) und
   Score-Verlauf-Sparkline im Detail-Dialog (XSS-sicher per `createElementNS`). Aktiviert
   sich ab ≥ 2 Läufen. Siehe [Dashboard](frontend.md).
-- **Offen:** visuelles **A/B-Compare-UI** (Compare-Output wird heute nur per CLI exportiert),
+- **A/B-Compare über die API → ✅ umgesetzt.** `POST /compare` liefert den Vergleich zweier
+  Scoring-Konfigurationen (Grundlage für ein künftiges Compare-UI). Siehe [API](api.md).
+- **Offen:** visuelles **A/B-Compare-UI** (Frontend, das `POST /compare` nutzt),
   **Kartenansicht** (braucht Geocoding des `geo`-Felds — aktuell leer), Daten live aus der
   API statt statischem Snapshot, auth-geschützter Admin-Bereich.
 
