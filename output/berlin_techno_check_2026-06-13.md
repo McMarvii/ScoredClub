@@ -522,7 +522,9 @@
    - AMT (Club, Score 20)
 5. **Alerts (starke Score-/Status-Änderungen):**
    - keine
-6. **Empfehlungen:**
+6. **Stärkste Bewegungen seit letztem Run:**
+   - keine (erster Run oder keine relevanten Änderungen)
+7. **Empfehlungen:**
    - Lecken (Kollektiv, Score 48) — aufstrebend, tiefere manuelle Recherche lohnt sich.
    - Zenner (Club, Score 44) — aufstrebend, tiefere manuelle Recherche lohnt sich.
    - Pornceptual (Kollektiv, Score 41) — aufstrebend, tiefere manuelle Recherche lohnt sich.

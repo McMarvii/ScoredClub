@@ -94,6 +94,28 @@ class ScoreSnapshot(Base):
     entity: Mapped[Entity] = relationship(back_populates="snapshots")
 
 
+class TrendSnapshot(Base):
+    """Persisted trend metrics for one entity at one run.
+
+    Source of truth for trending: computed from the score history and stored
+    each run so the API can serve trends without recomputing, and so the
+    historical trend record is durable.
+    """
+
+    __tablename__ = "trend_snapshots"
+    __table_args__ = (UniqueConstraint("run_id", "entity_id", name="uq_trend_run_entity"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    run_id: Mapped[int] = mapped_column(ForeignKey("runs.id"), nullable=False, index=True)
+    entity_id: Mapped[str] = mapped_column(ForeignKey("entities.entity_id"), nullable=False, index=True)
+    score: Mapped[float] = mapped_column(Float, nullable=False)
+    rank: Mapped[int] = mapped_column(Integer, nullable=False)
+    score_delta: Mapped[float | None] = mapped_column(Float)
+    rank_delta: Mapped[int | None] = mapped_column(Integer)
+    momentum: Mapped[float] = mapped_column(Float, default=0.0)
+    direction: Mapped[str] = mapped_column(String(16), nullable=False, default="new")
+
+
 class Alert(Base):
     __tablename__ = "alerts"
 

@@ -1,0 +1,14 @@
+{
+  "_comment": "A/B variant: emphasise community resonance, safety/inclusivity and press.",
+  "scoring": {
+    "weights": {
+      "event_activity": 0.15,
+      "online_reach": 0.10,
+      "press": 0.20,
+      "community": 0.20,
+      "networking": 0.10,
+      "continuity": 0.05,
+      "safety": 0.20
+    }
+  }
+}

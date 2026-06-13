@@ -26,17 +26,25 @@ def client(tmp_path, monkeypatch):
 
     from scoredclub.db import get_session
 
+    from scoredclub.config import Settings
+    from scoredclub.pipeline.run import compute_run_trends
+
     with get_session(f"sqlite:///{db_path}") as session:
         top = make_top_profile()
         emerging = make_minimal_profile(name="API Kollektiv")
         repo.upsert_profile(session, top)
         repo.upsert_profile(session, emerging)
         run = repo.start_run(session)
-        entity = repo.get_entity(session, top.entity_id)
         repo.save_score(
-            session, run, entity, ScoreBreakdown(total=88.0, tier="TOP-TIER")
+            session, run, repo.get_entity(session, top.entity_id),
+            ScoreBreakdown(total=88.0, tier="TOP-TIER"),
+        )
+        repo.save_score(
+            session, run, repo.get_entity(session, emerging.entity_id),
+            ScoreBreakdown(total=30.0, tier="EMERGING"),
         )
         repo.finish_run(session, run, 2, 0, None, None, utcnow())
+        compute_run_trends(session, Settings())
         session.commit()
 
     return TestClient(app_module.app)
@@ -82,3 +90,31 @@ def test_latest_report_404_without_report(client):
 
 def test_alerts_empty(client):
     assert client.get("/alerts").json() == []
+
+
+def test_trending_leaderboard(client):
+    data = client.get("/trending").json()
+    assert data["run_id"] == 1
+    ids = [e["entity_id"] for e in data["entities"]]
+    assert ids == ["testclub", "api-kollektiv"]  # ordered by rank
+    assert data["entities"][0]["rank"] == 1
+    # First run -> everything is "new", no deltas yet.
+    assert data["entities"][0]["direction"] == "new"
+    assert data["entities"][0]["name"] == "Testclub"
+
+
+def test_trending_movers_empty_on_first_run(client):
+    data = client.get("/trending/movers").json()
+    assert data["risers"] == [] and data["fallers"] == []
+
+
+def test_entity_trend(client):
+    data = client.get("/entities/testclub/trend").json()
+    assert data["entity_id"] == "testclub"
+    assert data["sparkline"] == [88.0]
+    assert data["latest"]["rank"] == 1
+    assert data["latest"]["direction"] == "new"
+
+
+def test_entity_trend_404(client):
+    assert client.get("/entities/nope/trend").status_code == 404

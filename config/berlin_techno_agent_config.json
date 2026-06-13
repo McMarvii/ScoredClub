@@ -31,5 +31,10 @@
   "run": {
     "next_run_interval_days": 30,
     "output_dir": "output"
+  },
+  "trending": {
+    "momentum_window": 4,
+    "stable_epsilon": 1.0,
+    "movers_limit": 5
   }
 }

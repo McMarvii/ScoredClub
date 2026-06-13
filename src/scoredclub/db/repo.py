@@ -8,7 +8,14 @@ from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from scoredclub.db.models import Alert, Entity, EntityAlias, Run, ScoreSnapshot
+from scoredclub.db.models import (
+    Alert,
+    Entity,
+    EntityAlias,
+    Run,
+    ScoreSnapshot,
+    TrendSnapshot,
+)
 from scoredclub.normalize import find_match, merge_profiles, normalize_name
 from scoredclub.schemas import EntityProfile, ScoreBreakdown
 
@@ -132,6 +139,62 @@ def score_history(session: Session, entity_id: str) -> list[ScoreSnapshot]:
             select(ScoreSnapshot)
             .where(ScoreSnapshot.entity_id == entity_id)
             .order_by(ScoreSnapshot.run_id)
+        )
+    )
+
+
+def recent_runs(session: Session, limit: int) -> list[Run]:
+    """The most recent finished/started runs, oldest-to-newest."""
+    rows = list(
+        session.scalars(select(Run).order_by(Run.id.desc()).limit(limit))
+    )
+    return list(reversed(rows))
+
+
+def run_score_series(session: Session, run_ids: list[int]) -> dict[int, dict[str, float]]:
+    """For each run id, a map entity_id -> score."""
+    if not run_ids:
+        return {}
+    rows = session.scalars(
+        select(ScoreSnapshot).where(ScoreSnapshot.run_id.in_(run_ids))
+    )
+    series: dict[int, dict[str, float]] = {rid: {} for rid in run_ids}
+    for snap in rows:
+        series.setdefault(snap.run_id, {})[snap.entity_id] = snap.score
+    return series
+
+
+def save_trend(session: Session, run_id: int, trend) -> TrendSnapshot:
+    snapshot = TrendSnapshot(
+        run_id=run_id,
+        entity_id=trend.entity_id,
+        score=trend.current_score,
+        rank=trend.rank,
+        score_delta=trend.score_delta,
+        rank_delta=trend.rank_delta,
+        momentum=trend.momentum,
+        direction=trend.direction,
+    )
+    session.add(snapshot)
+    session.flush()
+    return snapshot
+
+
+def trends_for_run(session: Session, run_id: int) -> dict[str, TrendSnapshot]:
+    rows = session.scalars(select(TrendSnapshot).where(TrendSnapshot.run_id == run_id))
+    return {t.entity_id: t for t in rows}
+
+
+def latest_run(session: Session) -> Run | None:
+    return session.scalar(select(Run).order_by(Run.id.desc()).limit(1))
+
+
+def trend_history(session: Session, entity_id: str) -> list[TrendSnapshot]:
+    return list(
+        session.scalars(
+            select(TrendSnapshot)
+            .where(TrendSnapshot.entity_id == entity_id)
+            .order_by(TrendSnapshot.run_id)
         )
     )
 

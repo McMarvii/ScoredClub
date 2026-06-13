@@ -70,11 +70,21 @@ class RunConfig(_Base):
     output_dir: str = "output"
 
 
+class TrendingConfig(_Base):
+    # Number of most recent runs used to compute momentum/direction.
+    momentum_window: int = 4
+    # |momentum| below this counts as "stable" rather than rising/falling.
+    stable_epsilon: float = 1.0
+    # How many entities to list as top risers / fallers.
+    movers_limit: int = 5
+
+
 class Settings(_Base):
     scoring: ScoringConfig = Field(default_factory=ScoringConfig)
     alerts: AlertsConfig = Field(default_factory=AlertsConfig)
     sources: SourcesConfig = Field(default_factory=SourcesConfig)
     run: RunConfig = Field(default_factory=RunConfig)
+    trending: TrendingConfig = Field(default_factory=TrendingConfig)
     database_url: str = DEFAULT_DATABASE_URL
 
     @classmethod

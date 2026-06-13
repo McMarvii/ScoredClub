@@ -51,6 +51,10 @@ _Keine Entitäten in dieser Kategorie._
 {% endif %}5. **Alerts (starke Score-/Status-Änderungen):**
 {% if alerts %}{% for a in alerts %}   - {{ a.message }}
 {% endfor %}{% else %}   - keine
-{% endif %}6. **Empfehlungen:**
+{% endif %}6. **Stärkste Bewegungen seit letztem Run:**
+{% if movers.risers or movers.fallers %}{% for m in movers.risers %}   - ▲ {{ m.name }} ({{ "%+.1f" | format(m.delta) }})
+{% endfor %}{% for m in movers.fallers %}   - ▼ {{ m.name }} ({{ "%+.1f" | format(m.delta) }})
+{% endfor %}{% else %}   - keine (erster Run oder keine relevanten Änderungen)
+{% endif %}7. **Empfehlungen:**
 {% for r in recommendations %}   - {{ r }}
 {% endfor %}

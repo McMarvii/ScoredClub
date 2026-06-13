@@ -5,6 +5,13 @@ Kollektive, Labels und Partyreihen, berechnet einen Relevanz-Score (0–100), h�
 Score-Historie über Runs hinweg fest und erzeugt menschen- wie maschinenlesbare Reports
 inklusive Alerts bei starken Score- oder Status-Änderungen.
 
+> 📖 **Ausführliche Dokumentation:** [`docs/`](docs/README.md) — Installation, ein
+> komplettes [How-To](docs/howto.md), [Scoring-Modell](docs/scoring.md),
+> [Trending](docs/trending.md), [A/B-Testing](docs/ab-testing.md),
+> [Datenschema](docs/schema.md), [CLI](docs/cli.md), [API](docs/api.md),
+> [Dashboard](docs/frontend.md), [Konfiguration](docs/configuration.md),
+> [Deployment](docs/deployment.md) und [Troubleshooting](docs/troubleshooting.md).
+
 ## Architektur
 
 ```
@@ -69,6 +76,8 @@ scoredclub run --research research.json     # kompletter Pipeline-Run
 scoredclub run --skip-collectors            # ohne Netzwerk-Collector (Sandbox/CI)
 scoredclub list --tier TOP-TIER
 scoredclub show berghain         # Profil + Score-Historie
+scoredclub trending              # Auf-/Absteiger + Leaderboard (braucht ≥2 Runs)
+scoredclub compare --config-b config/variants/reach_heavy.json   # Scoring-A/B-Vergleich
 scoredclub serve                 # FastAPI auf http://127.0.0.1:8000
 ```
 
@@ -92,6 +101,8 @@ Read-only (V1 ohne Auth — für lokalen/Docker-Betrieb gedacht):
 
 - `GET /entities?type=&tier=&status=&min_score=`
 - `GET /entities/{entity_id}` — Profil, letzter Breakdown, Score-Historie
+- `GET /entities/{entity_id}/trend` — Trend-Historie (Sparkline)
+- `GET /trending`, `GET /trending/movers?limit=` — Leaderboard & Auf-/Absteiger
 - `GET /runs`, `GET /runs/{id}`, `GET /runs/latest/report` (Markdown)
 - `GET /alerts?run_id=`
 - `GET /health`
@@ -111,6 +122,14 @@ Env-Variablen haben Vorrang:
 
 - `DATABASE_URL` — z. B. `postgresql+psycopg2://user:pass@host/db` (Default: SQLite)
 - `SCOREDCLUB_WEBHOOK_URL` — Webhook-Endpoint für Alerts (Slack/Matrix/Telegram-Bridge)
+
+## Dashboard (Frontend)
+
+Ein statisches, dauerhaft hostbares Web-Dashboard liegt unter `frontend/` (reines
+HTML/CSS/JS, kein Build-Schritt). Es visualisiert die Score-Daten mit Tier-/Typ-Filtern,
+Suche und Detail-Dialogen (Score-Breakdown A–G, Bonus/Malus, Quellen). Deployment via
+GitHub Pages (`.github/workflows/pages.yml`) oder jeden Static-Host. Details:
+[`frontend/README.md`](frontend/README.md).
 
 ## CI & Scheduling
 

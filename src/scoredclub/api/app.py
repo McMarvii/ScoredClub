@@ -85,6 +85,34 @@ def get_entity(entity_id: str, session: Session = Depends(db_session)) -> dict:
     }
 
 
+def _trend_dict(t) -> dict:
+    return {
+        "entity_id": t.entity_id,
+        "run_id": t.run_id,
+        "score": t.score,
+        "rank": t.rank,
+        "score_delta": t.score_delta,
+        "rank_delta": t.rank_delta,
+        "momentum": t.momentum,
+        "direction": t.direction,
+    }
+
+
+@app.get("/entities/{entity_id}/trend")
+def entity_trend(entity_id: str, session: Session = Depends(db_session)) -> dict:
+    entity = repo.get_entity(session, entity_id)
+    if entity is None:
+        raise HTTPException(status_code=404, detail=f"entity '{entity_id}' not found")
+    history = repo.trend_history(session, entity_id)
+    return {
+        "entity_id": entity_id,
+        "name": entity.name,
+        "sparkline": [t.score for t in history],
+        "history": [{**_trend_dict(t)} for t in history],
+        "latest": _trend_dict(history[-1]) if history else None,
+    }
+
+
 @app.get("/runs")
 def list_runs(session: Session = Depends(db_session)) -> list[dict]:
     runs = session.scalars(select(Run).order_by(Run.id.desc())).all()
@@ -99,6 +127,38 @@ def list_runs(session: Session = Depends(db_session)) -> list[dict]:
         }
         for r in runs
     ]
+
+
+@app.get("/trending")
+def trending(session: Session = Depends(db_session)) -> dict:
+    """Latest run's trend leaderboard: direction, deltas and rank per entity."""
+    run = repo.latest_run(session)
+    if run is None:
+        return {"run_id": None, "entities": []}
+    trends = repo.trends_for_run(session, run.id)
+    names = {e.entity_id: e.name for e in repo.all_entities(session)}
+    rows = sorted(trends.values(), key=lambda t: t.rank)
+    return {
+        "run_id": run.id,
+        "entities": [{**_trend_dict(t), "name": names.get(t.entity_id, t.entity_id)} for t in rows],
+    }
+
+
+@app.get("/trending/movers")
+def trending_movers(
+    limit: int = Query(default=5, ge=1, le=50), session: Session = Depends(db_session)
+) -> dict:
+    """Top risers and fallers in the latest run (by score delta)."""
+    run = repo.latest_run(session)
+    if run is None:
+        return {"run_id": None, "risers": [], "fallers": []}
+    trends = repo.trends_for_run(session, run.id)
+    names = {e.entity_id: e.name for e in repo.all_entities(session)}
+    movers = [t for t in trends.values() if t.score_delta is not None]
+    risers = sorted((t for t in movers if t.score_delta > 0), key=lambda t: t.score_delta, reverse=True)[:limit]
+    fallers = sorted((t for t in movers if t.score_delta < 0), key=lambda t: t.score_delta)[:limit]
+    decorate = lambda t: {**_trend_dict(t), "name": names.get(t.entity_id, t.entity_id)}
+    return {"run_id": run.id, "risers": [decorate(t) for t in risers], "fallers": [decorate(t) for t in fallers]}
 
 
 @app.get("/runs/latest/report", response_class=PlainTextResponse)

@@ -36,6 +36,7 @@ class ScoredEntity:
     delta: float | None = None
     is_new: bool = False  # not present in the previous run (run-over-run)
     discovered: bool = False  # not part of the seed list (off-seed find)
+    trend: dict | None = None  # direction/score_delta/rank/rank_delta/momentum/sparkline
 
     @property
     def tier(self) -> str:
@@ -99,11 +100,27 @@ def _recommendations(scored: list[ScoredEntity]) -> list[str]:
     return recs
 
 
+def _movers(scored: list[ScoredEntity], trend_report) -> dict:
+    """Build {risers, fallers} as (name, delta) lists for the report."""
+    if trend_report is None:
+        return {"risers": [], "fallers": []}
+    names = {e.profile.entity_id: e.profile.name for e in scored}
+
+    def rows(items):
+        return [
+            {"name": names.get(t.entity_id, t.entity_id), "delta": t.score_delta}
+            for t in items
+        ]
+
+    return {"risers": rows(trend_report.risers), "fallers": rows(trend_report.fallers)}
+
+
 def render_markdown(
     scored: list[ScoredEntity],
     alerts: list,
     run_date: date,
     settings: Settings,
+    trend_report=None,
 ) -> str:
     template = _env().get_template("report.md.j2")
     next_run = run_date + timedelta(days=settings.run.next_run_interval_days)
@@ -130,6 +147,7 @@ def render_markdown(
         top_clubs=clubs[:5],
         top_collectives=collectives[:5],
         recommendations=_recommendations(scored),
+        movers=_movers(scored, trend_report),
     )
 
 
@@ -144,6 +162,7 @@ def render_entities_json(
             {
                 **json.loads(e.profile.model_dump_json()),
                 "score": json.loads(e.breakdown.model_dump_json()),
+                "trend": e.trend,
             }
             for e in sorted(scored, key=lambda x: x.breakdown.total, reverse=True)
         ],
@@ -193,6 +212,7 @@ def write_reports(
     alerts: list,
     run_date: date,
     settings: Settings,
+    trend_report=None,
 ) -> tuple[Path, Path, Path]:
     out_dir = Path(settings.run.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -200,7 +220,8 @@ def write_reports(
 
     md_path = out_dir / f"berlin_techno_check_{date_str}.md"
     md_path.write_text(
-        render_markdown(scored, alerts, run_date, settings), encoding="utf-8"
+        render_markdown(scored, alerts, run_date, settings, trend_report),
+        encoding="utf-8",
     )
 
     json_path = out_dir / f"berlin_techno_entities_{date_str}.json"
