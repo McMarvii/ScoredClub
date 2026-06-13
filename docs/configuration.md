@@ -96,6 +96,7 @@ Details der Wirkung: [Scoring-Modell](scoring.md) (inkl. Datenkonfidenz).
 |-----------|-----------|
 | `next_run_interval_days` | Abstand bis zum nächsten geplanten Lauf (in `next_run.json`). |
 | `output_dir` | Zielordner für Reports. |
+| `geocode_districts` | `geo` aus dem Bezirk befüllen (statische Zentren) für die Kartenansicht. |
 
 ### `trending`
 | Schlüssel | Bedeutung |

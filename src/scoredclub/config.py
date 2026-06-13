@@ -90,6 +90,9 @@ class SourcesConfig(_Base):
 class RunConfig(_Base):
     next_run_interval_days: int = 30
     output_dir: str = "output"
+    # Fill empty geo coordinates from the entity's Berlin district (static
+    # centroids; no external geocoding service).
+    geocode_districts: bool = True
 
 
 class TrendingConfig(_Base):

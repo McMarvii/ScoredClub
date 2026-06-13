@@ -9,6 +9,9 @@ hostbar.
 - Kennzahlen-Karten (Gesamtzahl, TOP-TIER, Clubs, Kollektive).
 - **Bewegungen-Panel:** Top-Auf-/Absteiger seit dem letzten Run (aus `trend.score_delta`).
   Erscheint, sobald Trenddaten vorliegen (≥ 2 Läufe); klickbar → Detail-Dialog.
+- **Listen-/Kartenansicht-Umschalter:** Die Karte plottet Entitäten nach Berliner Bezirk
+  (genähert über statische Bezirks-Zentren, kein externer Geocoding-Dienst), Farbe = Tier,
+  Klick → Detail. Filter wirken auch auf die Karte.
 - Suche (Name/Bezirk), Filter nach Typ und Tier, Sortierung (Score/Name).
 - Entitäten-Karten mit Score, Tier-/Status-/Konfidenz-/Trend-Badges, IG-Followern und
   Mini-Balken der Dimensionen A–G.
