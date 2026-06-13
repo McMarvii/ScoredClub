@@ -62,6 +62,28 @@ Wird `research` mitgegeben, wird es vorher eingespielt. Antwort:
 > `skip_collectors` ist standardmäßig `true`, damit API-Läufe schnell und deterministisch
 > sind. Für einen Lauf mit Netzwerk-Collectorn `false` setzen.
 
+**Asynchron (Background-Job):** Mit `"async": true` blockiert der Request nicht — der Lauf
+läuft in einem Hintergrund-Thread, der Endpunkt antwortet sofort mit `202` und einer
+`job_id`:
+
+```json
+{ "job_id": "a1b2c3…", "status": "queued" }
+```
+
+### `GET /jobs/{job_id}`
+Status eines Background-Jobs (offen, die `job_id` wirkt als Capability-Token). `404` bei
+unbekannter ID.
+
+```json
+{ "job_id": "a1b2c3…", "status": "done",
+  "result": { "run_id": 3, "entities_tracked": 25, "new_entities": 1, "alerts": 0,
+              "report_md": "output/…", "warnings": [] } }
+```
+`status` ∈ `queued | running | done | error` (bei `error` zusätzlich ein `error`-Feld).
+
+> Der Job-Runner ist in-process (kein externer Broker); Job-Status geht bei einem
+> Server-Neustart verloren. Für persistente/verteilte Jobs siehe [Roadmap v2](roadmap-v2.md).
+
 ## Lese-Endpunkte
 
 ### `GET /entities`

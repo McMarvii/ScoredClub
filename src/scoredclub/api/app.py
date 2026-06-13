@@ -10,13 +10,16 @@ from __future__ import annotations
 
 import hmac
 import os
+import threading
+import uuid
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date as date_type
 from pathlib import Path
 from typing import Iterator
 
 from fastapi import Body, Depends, FastAPI, Header, HTTPException, Query
-from fastapi.responses import PlainTextResponse
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse, PlainTextResponse
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -56,6 +59,51 @@ class RunRequest(BaseModel):
     skip_collectors: bool = True
     date: str | None = None
     research: list | dict | None = None
+    run_async: bool = Field(default=False, alias="async")
+
+    model_config = {"populate_by_name": True}
+
+
+# In-process background job runner (no external broker). Jobs are kept in
+# memory; state is lost on restart — documented in the API reference.
+_jobs: dict[str, dict] = {}
+_jobs_lock = threading.Lock()
+_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="scoredclub-job")
+
+
+def _set_job(job_id: str, **fields) -> None:
+    with _jobs_lock:
+        _jobs.setdefault(job_id, {}).update(fields)
+
+
+def _run_job(job_id, skip_collectors, run_date, research_entries) -> None:
+    _set_job(job_id, status="running")
+    try:
+        from scoredclub.collectors.llm_ingest import ingest_entries
+        from scoredclub.db import get_session
+        from scoredclub.pipeline.run import execute_run
+
+        with get_session(_settings.database_url) as session:
+            if research_entries:
+                ingest_entries(session, research_entries)
+                session.commit()
+            summary = execute_run(
+                session, _settings, research_file=None,
+                skip_collectors=skip_collectors, run_date=run_date,
+            )
+        _set_job(
+            job_id, status="done",
+            result={
+                "run_id": summary.run_id,
+                "entities_tracked": summary.entities_tracked,
+                "new_entities": summary.new_entities,
+                "alerts": summary.alerts,
+                "report_md": summary.report_md,
+                "warnings": summary.warnings,
+            },
+        )
+    except Exception as exc:  # noqa: BLE001 — surface as job error, never crash the worker
+        _set_job(job_id, status="error", error=f"{type(exc).__name__}: {exc}")
 
 
 def _entity_summary(entity) -> dict:
@@ -107,19 +155,30 @@ def trigger_run(
     _auth: bool = Depends(require_api_key),
     session: Session = Depends(db_session),
 ) -> dict:
-    """Trigger a pipeline run (synchronous). Optionally ingest inline research first."""
+    """Trigger a pipeline run. Sync by default; pass ``"async": true`` for a background job."""
     from scoredclub.collectors.llm_ingest import ingest_entries
     from scoredclub.pipeline.run import execute_run
 
-    if body.research is not None:
-        entries = body.research.get("entities") if isinstance(body.research, dict) else body.research
-        if isinstance(entries, list):
-            ingest_entries(session, entries)
-            session.commit()
     try:
         run_date = date_type.fromisoformat(body.date) if body.date else None
     except ValueError:
         raise HTTPException(status_code=400, detail="date must be ISO format YYYY-MM-DD.")
+
+    entries = None
+    if body.research is not None:
+        entries = body.research.get("entities") if isinstance(body.research, dict) else body.research
+        if not isinstance(entries, list):
+            entries = None
+
+    if body.run_async:
+        job_id = uuid.uuid4().hex
+        _set_job(job_id, status="queued")
+        _executor.submit(_run_job, job_id, body.skip_collectors, run_date, entries)
+        return JSONResponse(status_code=202, content={"job_id": job_id, "status": "queued"})
+
+    if entries:
+        ingest_entries(session, entries)
+        session.commit()
     summary = execute_run(
         session, _settings, research_file=None, skip_collectors=body.skip_collectors, run_date=run_date
     )
@@ -131,6 +190,15 @@ def trigger_run(
         "report_md": summary.report_md,
         "warnings": summary.warnings,
     }
+
+
+@app.get("/jobs/{job_id}")
+def get_job(job_id: str) -> dict:
+    with _jobs_lock:
+        job = _jobs.get(job_id)
+        if job is None:
+            raise HTTPException(status_code=404, detail=f"job '{job_id}' not found")
+        return {"job_id": job_id, **job}
 
 
 @app.get("/entities")

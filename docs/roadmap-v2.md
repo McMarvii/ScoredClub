@@ -82,8 +82,11 @@ Migration deckt sich mit den Modellen). Siehe [Deployment](deployment.md) → Po
   schützt `POST /ingest` (Research einspielen) und `POST /runs` (Lauf auslösen);
   konstant-zeitiger Vergleich, ohne Key deaktiviert (503). Lese-Endpunkte bleiben offen.
   Siehe [API](api.md) → Schreib-/Trigger-Endpunkte.
-- **Offen:** Rate-Limiting, OAuth/mehrere Keys, **asynchrone Läufe** (APScheduler/RQ/Celery)
-  statt synchron im Request, Entitäten-Management-Endpunkte.
+- **Asynchrone Läufe → ✅ v1 umgesetzt.** `POST /runs` mit `"async": true` startet einen
+  In-Process-Background-Job (`202` + `job_id`); Status via `GET /jobs/{id}`. Siehe
+  [API](api.md) → `POST /runs` / `GET /jobs/{id}`.
+- **Offen:** Rate-Limiting, OAuth/mehrere Keys, **persistente/verteilte Jobs**
+  (RQ/Celery + Broker) statt In-Process, Entitäten-Management-Endpunkte.
 
 ### 6. Frontend-Ausbau
 - Dedizierte **Trending-Ansicht** (Sparklines, Leaderboard über Zeit).

@@ -167,3 +167,30 @@ def test_trigger_run(client, monkeypatch, tmp_path):
     assert body["entities_tracked"] == 2
     # A new run is now visible.
     assert len(client.get("/runs").json()) >= 2
+
+
+def test_async_run_job(client, monkeypatch, tmp_path):
+    import time
+
+    monkeypatch.setenv("SCOREDCLUB_API_KEY", "s3cret")
+    import scoredclub.api.app as app_module
+
+    app_module._settings.run.output_dir = str(tmp_path / "out")
+    resp = client.post(
+        "/runs", json={"async": True, "skip_collectors": True}, headers={"X-API-Key": "s3cret"}
+    )
+    assert resp.status_code == 202
+    job_id = resp.json()["job_id"]
+
+    status = {}
+    for _ in range(100):  # poll up to ~10s
+        status = client.get(f"/jobs/{job_id}").json()
+        if status["status"] in ("done", "error"):
+            break
+        time.sleep(0.1)
+    assert status["status"] == "done", status
+    assert status["result"]["entities_tracked"] == 2
+
+
+def test_job_unknown_404(client):
+    assert client.get("/jobs/doesnotexist").status_code == 404
