@@ -27,7 +27,7 @@
                                                         ▼
                                             frontend/ (Static Dashboard)
 
-                   API (FastAPI) ──► liest dieselbe DB (read-only)
+                   API (FastAPI) ──► liest dieselbe DB; Schreib-Endpunkte per API-Key
 ```
 
 ## Module (`src/scoredclub/`)
@@ -37,7 +37,7 @@
 | `schemas.py` | Pydantic-Modelle (`EntityProfile` + verschachtelte Typen). Kanonisches Datenformat. |
 | `config.py` | Konfigurations- und Settings-Laden (JSON + Umgebungsvariablen). |
 | `normalize.py` | Namensnormalisierung, Alias-Tabelle, Dedup-Matching, Merge-Politik. |
-| `db/models.py` | ORM-Tabellen: `entities`, `entity_aliases`, `runs`, `score_snapshots`, `alerts`. |
+| `db/models.py` | ORM-Tabellen: `entities`, `entity_aliases`, `runs`, `score_snapshots`, `trend_snapshots`, `alerts`. |
 | `db/session.py` | Engine/Session aus `DATABASE_URL`, `init_db()`. |
 | `db/repo.py` | Upsert (mit Dedup/Merge), Queries, Snapshots, Alerts. |
 | `scoring/rubric.py` | Reine Funktionen pro Dimension A–G, Bonus/Malus. |
@@ -50,7 +50,7 @@
 | `pipeline/diff.py` | Vergleich Lauf vs. Vorlauf. |
 | `pipeline/alerts.py` | Alert-Erzeugung + Webhook-Zustellung. |
 | `reports/render.py` | Markdown (Jinja2) + JSON + `next_run.json`. |
-| `api/app.py` | Read-only FastAPI. |
+| `api/app.py` | FastAPI (Lese-Endpunkte offen, Schreib-/Trigger-Endpunkte per API-Key). |
 | `cli.py` | Typer-Einstiegspunkt. |
 
 ## Datenmodell (DB)
@@ -83,9 +83,12 @@
 
 ## Bewusste V1-Vereinfachungen
 
-- Keine Alembic-Migrationen (`create_all`); Postgres = Connection-String-Kompatibilität.
 - Geo-Koordinaten optional, kein Geocoding; Bezirk ist die Orts-Granularität.
 - Community-Sentiment ist ein Researcher-Hint (Enum), kein NLP.
 - RA-Collector scheitert erwartbar an Bot-Protection; LLM-Research ist die maßgebliche Quelle.
-- API ohne Auth (lokaler/Docker-Betrieb).
-- Kein eingebauter Scheduler — Cron/GitHub Actions übernehmen das.
+- Lese-Endpunkte der API ohne Auth (lokaler/Docker-Betrieb); Schreib-/Trigger-Endpunkte
+  per API-Key. Kein eingebauter Scheduler — Cron/GitHub Actions übernehmen das.
+
+> Seit v2 umgesetzt (nicht mehr vereinfacht): Alembic-Migrationen (`scoredclub migrate`,
+> SQLite/Postgres), agentischer LLM-Collector, confidence-aware Scoring, Reddit OAuth,
+> API-Key-Auth + Schreib-Endpunkte. Siehe [Roadmap v2](roadmap-v2.md).

@@ -1,11 +1,13 @@
 # HTTP-API
 
-Read-only FastAPI (`src/scoredclub/api/app.py`). Sie liefert dieselben Daten wie die
-Reports in strukturierter Form — gedacht für lokale Tools, Dashboards oder Integrationen.
+FastAPI (`src/scoredclub/api/app.py`). Liefert dieselben Daten wie die Reports in
+strukturierter Form — gedacht für lokale Tools, Dashboards oder Integrationen.
 
-> **Sicherheit:** Die API hat in V1 **keine Authentifizierung** und ist für den lokalen/
-> Docker-Betrieb gedacht. Wird sie über localhost hinaus exponiert, gehört eine Auth-Schicht
-> davor (Reverse-Proxy mit Basic-Auth/OAuth o. Ä.).
+> **Sicherheit:** **Lese-Endpunkte** sind offen (für lokalen/Docker-Betrieb; ein
+> Reverse-Proxy schützt sie bei öffentlicher Exposition). **Schreib-/Trigger-Endpunkte**
+> (`POST /ingest`, `POST /runs`) sind per **API-Key** geschützt: `SCOREDCLUB_API_KEY` im
+> Environment setzen, dann den Header `X-API-Key: <key>` mitsenden. Ohne gesetzten Key sind
+> die Schreib-Endpunkte deaktiviert (503). Der Key-Vergleich ist konstant-zeitig.
 
 ## Starten
 
@@ -24,6 +26,43 @@ Die API liest dieselbe `DATABASE_URL` wie die CLI. Interaktive Doku (Swagger UI)
 ```json
 { "status": "ok", "version": "0.1.0" }
 ```
+
+## Schreib-/Trigger-Endpunkte (API-Key erforderlich)
+
+Alle benötigen `X-API-Key: <SCOREDCLUB_API_KEY>`. Ohne konfigurierten Key → `503`;
+falscher/fehlender Header → `401`.
+
+### `POST /ingest`
+Validiert und upsertet Research-Entitäten (JSON-Array oder `{"entities": [...]}`) —
+derselbe Pfad wie `scoredclub ingest`, nur über HTTP.
+
+```bash
+curl -X POST http://127.0.0.1:8000/ingest \
+  -H "X-API-Key: $SCOREDCLUB_API_KEY" -H "Content-Type: application/json" \
+  -d '[{"name":"Neuer Club","type":"club","status":"active"}]'
+```
+```json
+{ "ok": true, "ingested": ["neuer-club"], "new_entities": ["neuer-club"],
+  "merged_entities": [], "errors": [] }
+```
+
+### `POST /runs`
+Löst einen Pipeline-Lauf aus (synchron). Optionaler Body:
+
+```json
+{ "skip_collectors": true, "date": "2026-07-13", "research": [ /* optionale Entitäten */ ] }
+```
+Wird `research` mitgegeben, wird es vorher eingespielt. Antwort:
+
+```json
+{ "run_id": 2, "entities_tracked": 25, "new_entities": 1, "alerts": 0,
+  "report_md": "output/berlin_techno_check_2026-07-13.md", "warnings": [] }
+```
+
+> `skip_collectors` ist standardmäßig `true`, damit API-Läufe schnell und deterministisch
+> sind. Für einen Lauf mit Netzwerk-Collectorn `false` setzen.
+
+## Lese-Endpunkte
 
 ### `GET /entities`
 Liste der Entitäten (Kurzform), absteigend nach Score.

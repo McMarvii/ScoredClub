@@ -15,6 +15,8 @@ from tests.conftest import make_minimal_profile, make_top_profile
 def client(tmp_path, monkeypatch):
     db_path = tmp_path / "api.db"
     monkeypatch.setenv("DATABASE_URL", f"sqlite:///{db_path}")
+    # Write endpoints are guarded by SCOREDCLUB_API_KEY — off unless a test sets it.
+    monkeypatch.delenv("SCOREDCLUB_API_KEY", raising=False)
     # The app binds its engine at import time — reload with the test DB.
     import scoredclub.db.session as session_module
 
@@ -118,3 +120,50 @@ def test_entity_trend(client):
 
 def test_entity_trend_404(client):
     assert client.get("/entities/nope/trend").status_code == 404
+
+
+# ---- write/trigger endpoints (auth) ----
+
+_RESEARCH = [{"name": "Neuer Club", "type": "club", "status": "active"}]
+
+
+def test_writes_disabled_without_api_key(client):
+    # No SCOREDCLUB_API_KEY configured -> write endpoints are 503.
+    assert client.post("/ingest", json=_RESEARCH).status_code == 503
+    assert client.post("/runs", json={}).status_code == 503
+
+
+def test_ingest_requires_valid_key(client, monkeypatch):
+    monkeypatch.setenv("SCOREDCLUB_API_KEY", "s3cret")
+    assert client.post("/ingest", json=_RESEARCH).status_code == 401  # missing header
+    assert client.post("/ingest", json=_RESEARCH, headers={"X-API-Key": "wrong"}).status_code == 401
+
+    resp = client.post("/ingest", json=_RESEARCH, headers={"X-API-Key": "s3cret"})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["ok"] is True
+    assert "neuer-club" in body["new_entities"]
+    # Entity is now queryable via the read API.
+    assert client.get("/entities/neuer-club").status_code == 200
+
+
+def test_ingest_bad_body(client, monkeypatch):
+    monkeypatch.setenv("SCOREDCLUB_API_KEY", "s3cret")
+    resp = client.post("/ingest", json={"not_entities": 1}, headers={"X-API-Key": "s3cret"})
+    assert resp.status_code == 400
+
+
+def test_trigger_run(client, monkeypatch, tmp_path):
+    monkeypatch.setenv("SCOREDCLUB_API_KEY", "s3cret")
+    import scoredclub.api.app as app_module
+
+    app_module._settings.run.output_dir = str(tmp_path / "out")
+    resp = client.post(
+        "/runs", json={"skip_collectors": True}, headers={"X-API-Key": "s3cret"}
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["run_id"] >= 2  # the fixture already created run #1
+    assert body["entities_tracked"] == 2
+    # A new run is now visible.
+    assert len(client.get("/runs").json()) >= 2

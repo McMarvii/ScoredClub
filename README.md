@@ -99,7 +99,8 @@ trotzdem ingestiert (partial ingest).
 
 ## API
 
-Read-only (V1 ohne Auth — für lokalen/Docker-Betrieb gedacht):
+Lese-Endpunkte offen (lokal/Docker); Schreib-/Trigger-Endpunkte per `SCOREDCLUB_API_KEY`
+(Header `X-API-Key`) geschützt. Details: [`docs/api.md`](docs/api.md).
 
 - `GET /entities?type=&tier=&status=&min_score=`
 - `GET /entities/{entity_id}` — Profil, letzter Breakdown, Score-Historie
@@ -108,6 +109,7 @@ Read-only (V1 ohne Auth — für lokalen/Docker-Betrieb gedacht):
 - `GET /runs`, `GET /runs/{id}`, `GET /runs/latest/report` (Markdown)
 - `GET /alerts?run_id=`
 - `GET /health`
+- `POST /ingest`, `POST /runs` — Research einspielen / Lauf auslösen (API-Key)
 
 ## Docker
 
