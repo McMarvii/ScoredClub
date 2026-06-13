@@ -17,6 +17,7 @@ Diese Dokumentation ist in Kapitel gegliedert. Wenn du neu bist, lies
 | [**How-To (Schritt für Schritt)**](howto.md) | Der komplette Arbeitsablauf von der Installation bis zum gehosteten Dashboard |
 | [Architektur](architecture.md) | Komponenten, Datenfluss, Designentscheidungen |
 | [Scoring-Modell](scoring.md) | Dimensionen A–G, Gewichte, Bonus/Malus, Tiers — exakte Regeln |
+| [Trending](trending.md) | Trend-Analyse über die Score-Historie (Auf-/Absteiger, Momentum, Ränge) |
 | [Datenschema](schema.md) | Alle Felder des `EntityProfile` (Research-JSON-Format) |
 | [Datenerhebung & Research](data-collection.md) | Collectors, LLM-Research-Workflow, Dedup/Merge |
 | [CLI-Referenz](cli.md) | Alle Befehle und Optionen |

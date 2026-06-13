@@ -21,6 +21,7 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | `report` | Reports eines bestehenden Laufs neu rendern |
 | `list` | Entitäten auflisten |
 | `show` | Profil + Score-Historie einer Entität anzeigen |
+| `trending` | Auf-/Absteiger und Leaderboard des letzten Laufs |
 | `serve` | FastAPI-Lese-API starten |
 
 ---
@@ -98,6 +99,14 @@ scoredclub show ENTITY_ID [--config PATH]
 ```
 Zeigt das vollständige Profil (JSON), den letzten Breakdown und die Score-Historie über
 alle Läufe.
+
+## `trending`
+```bash
+scoredclub trending [--movers N] [--config PATH]
+```
+Zeigt für den letzten Lauf die stärksten Auf-/Absteiger und ein Leaderboard mit
+Richtungspfeilen (▲/▼/→/✦) und Rang-Änderungen. Braucht ≥ 2 Läufe für aussagekräftige
+Trends. Details: [Trending](trending.md).
 
 ## `serve`
 ```bash

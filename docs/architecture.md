@@ -42,6 +42,7 @@
 | `db/repo.py` | Upsert (mit Dedup/Merge), Queries, Snapshots, Alerts. |
 | `scoring/rubric.py` | Reine Funktionen pro Dimension A–G, Bonus/Malus. |
 | `scoring/engine.py` | Gewichtung, Gesamt-Score, Tier-Klassifizierung. |
+| `trending.py` | Trend-Analyse über die Score-Historie (Richtung, Momentum, Ränge, Movers). |
 | `collectors/` | `base` (Protokoll), `clubcommission`, `resident_advisor`, `reddit`, `llm_ingest`. |
 | `pipeline/run.py` | Orchestrierung des kompletten Laufs. |
 | `pipeline/diff.py` | Vergleich Lauf vs. Vorlauf. |
@@ -59,6 +60,8 @@
 - **`runs`** — ein Lauf (Start/Ende, Zähler, Report-Pfade).
 - **`score_snapshots`** — Score je Entität je Lauf (Grundlage der Historie/Diffs),
   eindeutig pro `(run_id, entity_id)`.
+- **`trend_snapshots`** — persistierte Trend-Kennzahlen je Entität je Lauf (Rang, Score-/
+  Rang-Delta, Momentum, Richtung); eindeutig pro `(run_id, entity_id)`. Siehe [Trending](trending.md).
 - **`alerts`** — erzeugte Alerts mit Typ und Webhook-Status.
 
 ## Designentscheidungen

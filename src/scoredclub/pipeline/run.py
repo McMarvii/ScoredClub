@@ -20,10 +20,39 @@ from scoredclub.pipeline.diff import diff_runs
 from scoredclub.reports.render import ScoredEntity, write_reports
 from scoredclub.schemas import EntityProfile, utcnow
 from scoredclub.scoring import score_entity
+from scoredclub.trending import RunScores, TrendReport, compute_trends
 
 logger = logging.getLogger(__name__)
 
 SEED_FILE = Path("data/seeds/berlin_seed_entities.json")
+
+
+def compute_run_trends(session: Session, settings: Settings) -> TrendReport:
+    """Compute trends from the recent score history and persist them.
+
+    Loads the last ``momentum_window`` runs (including the current one, whose
+    score snapshots have already been saved), computes per-entity trends and
+    cross-entity movers, and stores a trend snapshot per entity for the latest
+    run.
+    """
+    cfg = settings.trending
+    runs = repo.recent_runs(session, cfg.momentum_window)
+    if not runs:
+        return TrendReport(trends={}, risers=[], fallers=[])
+    run_ids = [r.id for r in runs]
+    series = repo.run_score_series(session, run_ids)
+    ordered = [RunScores(run_id=rid, scores=series.get(rid, {})) for rid in run_ids]
+    report = compute_trends(
+        ordered,
+        momentum_window=cfg.momentum_window,
+        stable_epsilon=cfg.stable_epsilon,
+        movers_limit=cfg.movers_limit,
+    )
+    latest_run_id = run_ids[-1]
+    for trend in report.trends.values():
+        repo.save_trend(session, latest_run_id, trend)
+    session.flush()
+    return report
 
 
 @dataclass
@@ -128,7 +157,24 @@ def execute_run(
     alerts = create_alerts(session, run, diff, settings)
     deliver_webhooks(alerts, settings)
 
-    md_path, json_path, _ = write_reports(scored, diff, alerts, run_date, settings)
+    # Compute and persist trends from the score history (incl. this run).
+    trend_report = compute_run_trends(session, settings)
+    trend_by_id = trend_report.trends
+    for item in scored:
+        trend = trend_by_id.get(item.profile.entity_id)
+        if trend:
+            item.trend = {
+                "direction": trend.direction,
+                "score_delta": trend.score_delta,
+                "rank": trend.rank,
+                "rank_delta": trend.rank_delta,
+                "momentum": trend.momentum,
+                "sparkline": trend.sparkline,
+            }
+
+    md_path, json_path, _ = write_reports(
+        scored, diff, alerts, run_date, settings, trend_report=trend_report
+    )
 
     repo.finish_run(
         session,

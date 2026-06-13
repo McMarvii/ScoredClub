@@ -214,6 +214,16 @@
         "base": 72.8,
         "total": 87.8,
         "tier": "TOP-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 1,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          87.8
+        ]
       }
     },
     {
@@ -431,6 +441,16 @@
         "base": 71.1,
         "total": 86.1,
         "tier": "TOP-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 2,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          86.1
+        ]
       }
     },
     {
@@ -640,6 +660,16 @@
         "base": 58.25,
         "total": 68.25,
         "tier": "MID-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 3,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          68.25
+        ]
       }
     },
     {
@@ -856,6 +886,16 @@
         "base": 66.25,
         "total": 66.25,
         "tier": "MID-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 4,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          66.25
+        ]
       }
     },
     {
@@ -1059,6 +1099,16 @@
         "base": 48.35,
         "total": 63.35,
         "tier": "MID-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 5,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          63.35
+        ]
       }
     },
     {
@@ -1267,6 +1317,16 @@
         "base": 63.15,
         "total": 63.15,
         "tier": "MID-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 6,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          63.15
+        ]
       }
     },
     {
@@ -1481,6 +1541,16 @@
         "base": 49.2,
         "total": 59.2,
         "tier": "MID-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 7,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          59.2
+        ]
       }
     },
     {
@@ -1673,6 +1743,16 @@
         "base": 53.15,
         "total": 58.15,
         "tier": "MID-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 8,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          58.15
+        ]
       }
     },
     {
@@ -1873,6 +1953,16 @@
         "base": 47.8,
         "total": 57.8,
         "tier": "MID-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 9,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          57.8
+        ]
       }
     },
     {
@@ -2066,6 +2156,16 @@
         "base": 50.3,
         "total": 55.3,
         "tier": "MID-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 10,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          55.3
+        ]
       }
     },
     {
@@ -2269,6 +2369,16 @@
         "base": 48.4,
         "total": 53.4,
         "tier": "MID-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 11,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          53.4
+        ]
       }
     },
     {
@@ -2467,6 +2577,16 @@
         "base": 42.95,
         "total": 52.95,
         "tier": "MID-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 12,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          52.95
+        ]
       }
     },
     {
@@ -2699,6 +2819,16 @@
         "base": 62.45,
         "total": 52.45,
         "tier": "MID-TIER"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 13,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          52.45
+        ]
       }
     },
     {
@@ -2897,6 +3027,16 @@
         "base": 37.7,
         "total": 47.7,
         "tier": "EMERGING"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 14,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          47.7
+        ]
       }
     },
     {
@@ -3100,6 +3240,16 @@
         "base": 34.05,
         "total": 44.05,
         "tier": "EMERGING"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 15,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          44.05
+        ]
       }
     },
     {
@@ -3297,6 +3447,16 @@
         "base": 35.65,
         "total": 40.65,
         "tier": "EMERGING"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 16,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          40.65
+        ]
       }
     },
     {
@@ -3489,6 +3649,16 @@
         "base": 34.95,
         "total": 39.95,
         "tier": "EMERGING"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 17,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          39.95
+        ]
       }
     },
     {
@@ -3693,6 +3863,16 @@
         "base": 29.05,
         "total": 39.05,
         "tier": "INAKTIV/GESCHLOSSEN"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 18,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          39.05
+        ]
       }
     },
     {
@@ -3897,6 +4077,16 @@
         "base": 27.35,
         "total": 37.35,
         "tier": "EMERGING"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 19,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          37.35
+        ]
       }
     },
     {
@@ -4096,6 +4286,16 @@
         "base": 28.55,
         "total": 33.55,
         "tier": "EMERGING"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 20,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          33.55
+        ]
       }
     },
     {
@@ -4291,6 +4491,16 @@
         "base": 28.2,
         "total": 33.2,
         "tier": "EMERGING"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 21,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          33.2
+        ]
       }
     },
     {
@@ -4512,6 +4722,16 @@
         "base": 29.6,
         "total": 29.6,
         "tier": "INAKTIV/GESCHLOSSEN"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 22,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          29.6
+        ]
       }
     },
     {
@@ -4710,6 +4930,16 @@
         "base": 15.95,
         "total": 25.95,
         "tier": "EMERGING"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 23,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          25.95
+        ]
       }
     },
     {
@@ -4912,6 +5142,16 @@
         "base": 28.2,
         "total": 23.2,
         "tier": "INAKTIV/GESCHLOSSEN"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 24,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          23.2
+        ]
       }
     },
     {
@@ -5099,6 +5339,16 @@
         "base": 19.5,
         "total": 19.5,
         "tier": "INAKTIV/GESCHLOSSEN"
+      },
+      "trend": {
+        "direction": "new",
+        "score_delta": null,
+        "rank": 25,
+        "rank_delta": null,
+        "momentum": 0.0,
+        "sparkline": [
+          19.5
+        ]
       }
     }
   ]

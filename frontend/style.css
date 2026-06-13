@@ -117,6 +117,11 @@ body {
 .badge.tier-emerging { color: var(--emerging); border-color: var(--emerging); }
 .badge.tier-inactive { color: var(--inactive); border-color: var(--inactive); }
 .badge.type { color: var(--text-dim); }
+.badge.trend { font-variant-numeric: tabular-nums; }
+.badge.trend-rising { color: var(--top); border-color: var(--top); }
+.badge.trend-falling { color: var(--accent-2); border-color: var(--accent-2); }
+.badge.trend-stable { color: var(--text-dim); }
+.badge.trend-new { color: var(--mid); border-color: var(--mid); }
 
 .bars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 0.6rem; }
 .bar { height: 34px; display: flex; flex-direction: column; justify-content: flex-end; }

@@ -229,6 +229,44 @@ def show(
 
 
 @app.command()
+def trending(
+    movers: int = typer.Option(5, help="How many risers/fallers to show"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Show the latest run's trends: risers, fallers and the leaderboard."""
+    _ARROWS = {"rising": "▲", "falling": "▼", "stable": "→", "new": "✦"}
+    settings = _settings(config)
+    init_db(settings.database_url)
+    with get_session(settings.database_url) as session:
+        run = repo.latest_run(session)
+        if run is None:
+            typer.echo("No runs yet. Run 'scoredclub run' first.")
+            return
+        trends = repo.trends_for_run(session, run.id)
+        if not trends:
+            typer.echo("No trend data for the latest run.")
+            return
+        names = {e.entity_id: e.name for e in repo.all_entities(session)}
+        rows = [t for t in trends.values() if t.score_delta is not None]
+        risers = sorted((t for t in rows if t.score_delta > 0), key=lambda t: t.score_delta, reverse=True)[:movers]
+        fallers = sorted((t for t in rows if t.score_delta < 0), key=lambda t: t.score_delta)[:movers]
+
+        if risers:
+            typer.secho("Aufsteiger:", fg=typer.colors.GREEN)
+            for t in risers:
+                typer.echo(f"  ▲ {names.get(t.entity_id, t.entity_id):24s} {t.score:6.1f}  (Δ {t.score_delta:+.1f})")
+        if fallers:
+            typer.secho("Absteiger:", fg=typer.colors.RED)
+            for t in fallers:
+                typer.echo(f"  ▼ {names.get(t.entity_id, t.entity_id):24s} {t.score:6.1f}  (Δ {t.score_delta:+.1f})")
+        typer.echo("\nLeaderboard:")
+        for t in sorted(trends.values(), key=lambda t: t.rank):
+            arrow = _ARROWS.get(t.direction, "·")
+            rank_delta = f"({t.rank_delta:+d})" if t.rank_delta else "    "
+            typer.echo(f"  {t.rank:2d}. {arrow} {names.get(t.entity_id, t.entity_id):24s} {t.score:6.1f} {rank_delta}")
+
+
+@app.command()
 def serve(
     host: str = typer.Option("127.0.0.1"),
     port: int = typer.Option(8000),

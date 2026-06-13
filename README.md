@@ -7,8 +7,8 @@ inklusive Alerts bei starken Score- oder Status-Änderungen.
 
 > 📖 **Ausführliche Dokumentation:** [`docs/`](docs/README.md) — Installation, ein
 > komplettes [How-To](docs/howto.md), [Scoring-Modell](docs/scoring.md),
-> [Datenschema](docs/schema.md), [CLI](docs/cli.md), [API](docs/api.md),
-> [Dashboard](docs/frontend.md), [Konfiguration](docs/configuration.md),
+> [Trending](docs/trending.md), [Datenschema](docs/schema.md), [CLI](docs/cli.md),
+> [API](docs/api.md), [Dashboard](docs/frontend.md), [Konfiguration](docs/configuration.md),
 > [Deployment](docs/deployment.md) und [Troubleshooting](docs/troubleshooting.md).
 
 ## Architektur
@@ -75,6 +75,7 @@ scoredclub run --research research.json     # kompletter Pipeline-Run
 scoredclub run --skip-collectors            # ohne Netzwerk-Collector (Sandbox/CI)
 scoredclub list --tier TOP-TIER
 scoredclub show berghain         # Profil + Score-Historie
+scoredclub trending              # Auf-/Absteiger + Leaderboard (braucht ≥2 Runs)
 scoredclub serve                 # FastAPI auf http://127.0.0.1:8000
 ```
 
@@ -98,6 +99,8 @@ Read-only (V1 ohne Auth — für lokalen/Docker-Betrieb gedacht):
 
 - `GET /entities?type=&tier=&status=&min_score=`
 - `GET /entities/{entity_id}` — Profil, letzter Breakdown, Score-Historie
+- `GET /entities/{entity_id}/trend` — Trend-Historie (Sparkline)
+- `GET /trending`, `GET /trending/movers?limit=` — Leaderboard & Auf-/Absteiger
 - `GET /runs`, `GET /runs/{id}`, `GET /runs/latest/report` (Markdown)
 - `GET /alerts?run_id=`
 - `GET /health`

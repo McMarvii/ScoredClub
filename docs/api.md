@@ -55,6 +55,35 @@ curl http://127.0.0.1:8000/entities/berghain
 ```
 `404`, wenn die Entität nicht existiert.
 
+### `GET /trending`
+Trend-Leaderboard des letzten Laufs: pro Entität Richtung, Score-/Rang-Delta und Rang.
+Siehe [Trending](trending.md).
+
+```json
+{ "run_id": 2, "entities": [
+  { "entity_id": "tresor", "name": "Tresor", "run_id": 2, "score": 87.8, "rank": 1,
+    "score_delta": 0.0, "rank_delta": 0, "momentum": 0.0, "direction": "stable" } ] }
+```
+
+### `GET /trending/movers`
+Top-Auf- und -Absteiger des letzten Laufs (nach Score-Delta). **Query:** `limit` (1–50, Standard 5).
+
+```json
+{ "run_id": 2,
+  "risers": [ { "entity_id": "oxi", "name": "OXI", "score": 55.1, "score_delta": 31.9,
+                "rank": 10, "rank_delta": 14, "direction": "rising", "...": "..." } ],
+  "fallers": [ { "entity_id": "kitkat-club", "name": "KitKat Club", "score_delta": -8.4, "...": "..." } ] }
+```
+
+### `GET /entities/{entity_id}/trend`
+Vollständige Trend-Historie einer Entität (Sparkline über alle Läufe). `404` bei unbekannter Entität.
+
+```json
+{ "entity_id": "oxi", "name": "OXI", "sparkline": [23.2, 55.1],
+  "history": [ { "run_id": 1, "score": 23.2, "rank": 24, "direction": "new", "...": "..." } ],
+  "latest": { "run_id": 2, "score": 55.1, "direction": "rising", "...": "..." } }
+```
+
 ### `GET /runs`
 Liste aller Läufe (neueste zuerst).
 

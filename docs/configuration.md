@@ -40,6 +40,11 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
   "run": {
     "next_run_interval_days": 30,
     "output_dir": "output"
+  },
+  "trending": {
+    "momentum_window": 4,
+    "stable_epsilon": 1.0,
+    "movers_limit": 5
   }
 }
 ```
@@ -78,6 +83,15 @@ Details der Wirkung: [Scoring-Modell](scoring.md).
 |-----------|-----------|
 | `next_run_interval_days` | Abstand bis zum nächsten geplanten Lauf (in `next_run.json`). |
 | `output_dir` | Zielordner für Reports. |
+
+### `trending`
+| Schlüssel | Bedeutung |
+|-----------|-----------|
+| `momentum_window` | Anzahl der letzten Läufe für Momentum/Sparkline. |
+| `stable_epsilon` | Schwelle für steigend/fallend vs. stabil. |
+| `movers_limit` | Anzahl gelisteter Auf-/Absteiger. |
+
+Details: [Trending](trending.md).
 
 ## Umgebungsvariablen
 

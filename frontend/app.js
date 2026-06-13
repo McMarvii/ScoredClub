@@ -66,6 +66,23 @@ function tierClass(tier) {
   return "tier-inactive";
 }
 
+const TREND_ARROW = { rising: "▲", falling: "▼", stable: "→", new: "✦" };
+
+// Returns a trend badge node, or null when there is nothing meaningful to show.
+function trendBadge(e) {
+  const t = e.trend;
+  if (!t || typeof t.direction !== "string") return null;
+  const arrow = TREND_ARROW[t.direction] || "·";
+  let label = arrow;
+  if (typeof t.score_delta === "number") {
+    const sign = t.score_delta > 0 ? "+" : "";
+    label = `${arrow} ${sign}${t.score_delta.toFixed(1)}`;
+  } else if (t.direction === "new") {
+    label = `${arrow} neu`;
+  }
+  return el("span", { class: `badge trend trend-${t.direction}`, text: label });
+}
+
 function fmtFollowers(n) {
   if (typeof n !== "number" || n <= 0) return null;
   return n.toLocaleString("de-DE");
@@ -124,6 +141,7 @@ function entityCard(e) {
     el("span", { class: `badge ${tierClass(tierOf(e))}`, text: tierOf(e) }),
     el("span", { class: "badge type", text: e.status || "unknown" }),
     igFollowers ? el("span", { class: "badge type", text: `IG ${igFollowers}` }) : null,
+    trendBadge(e),
   ]);
 
   const bars = el("div", { class: "bars" });
