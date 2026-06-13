@@ -2,8 +2,9 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md alembic.ini ./
 COPY src/ src/
+COPY migrations/ migrations/
 COPY config/ config/
 COPY data/seeds/ data/seeds/
 

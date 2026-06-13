@@ -20,7 +20,7 @@ docker compose run app scoredclub run --research data/research/latest.json
 Volumes (in `docker-compose.yml`): `./output` und `./data` werden gemountet, damit
 Reports und SQLite-DB persistent bleiben.
 
-### PostgreSQL statt SQLite
+### PostgreSQL + Migrationen
 
 `docker-compose.yml` enthält einen optionalen `postgres`-Service unter einem
 Compose-Profil:
@@ -36,8 +36,25 @@ auskommentiert):
 DATABASE_URL=postgresql+psycopg2://scoredclub:scoredclub@postgres:5432/scoredclub
 ```
 
-> Postgres-Unterstützung bedeutet in V1 Connection-String-Kompatibilität (kein
-> Alembic-Migrationspfad; Tabellen werden via `create_all` angelegt).
+**Schema per Alembic-Migration anlegen/aktualisieren** (der empfohlene Weg für
+Postgres/Produktion):
+
+```bash
+pip install ".[postgres]"
+export DATABASE_URL=postgresql+psycopg2://user:pass@host/db
+scoredclub migrate          # wendet alle Migrationen an (alembic upgrade head)
+# oder direkt: alembic upgrade head   (aus dem Projektverzeichnis)
+```
+
+Die Migrationen liegen unter `migrations/` und sind aus den ORM-Modellen
+generiert; `migrations/env.py` liest `DATABASE_URL`. Für künftige Schema-Änderungen:
+Modelle anpassen, dann `alembic revision --autogenerate -m "…"` und die generierte
+Migration prüfen/committen.
+
+> `init-db` (`create_all`) bleibt der schnelle Pfad für lokale SQLite-Entwicklung und
+> CI; für verwaltete Datenbanken (Postgres) ist `scoredclub migrate` der maßgebliche
+> Weg. Ein Lauf gegen eine migrierte DB ruft `create_all` idempotent auf (No-op, da die
+> Tabellen existieren).
 
 ## API-Betrieb (ohne Docker)
 

@@ -35,10 +35,42 @@ def version() -> None:
 
 @app.command("init-db")
 def init_db_cmd(config: str = typer.Option(None, help="Path to config JSON")) -> None:
-    """Create database tables."""
+    """Create database tables (quick path; use 'migrate' for Postgres/production)."""
     settings = _settings(config)
     init_db(settings.database_url)
     typer.echo(f"Database initialized ({settings.database_url})")
+
+
+def _find_alembic_ini():
+    cwd = Path.cwd()
+    for directory in [cwd, *cwd.parents]:
+        candidate = directory / "alembic.ini"
+        if candidate.exists():
+            return candidate
+    return None
+
+
+@app.command()
+def migrate(
+    revision: str = typer.Option("head", help="Target revision"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Apply Alembic migrations — the managed schema path for Postgres/production."""
+    from alembic import command
+    from alembic.config import Config
+
+    settings = _settings(config)
+    ini = _find_alembic_ini()
+    if ini is None:
+        typer.secho(
+            "alembic.ini not found — run from the project directory.", fg=typer.colors.RED
+        )
+        raise typer.Exit(code=1)
+    cfg = Config(str(ini))
+    cfg.set_main_option("script_location", str(ini.parent / "migrations"))
+    cfg.set_main_option("sqlalchemy.url", settings.database_url)
+    command.upgrade(cfg, revision)
+    typer.echo(f"Migrated to '{revision}' ({settings.database_url})")
 
 
 @app.command()

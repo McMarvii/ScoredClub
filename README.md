@@ -70,7 +70,8 @@ Details und Bänder: `src/scoredclub/scoring/rubric.py`. Gewichte/Schwellwerte:
 pip install -e ".[dev]"          # Entwicklung (inkl. pytest)
 pytest                           # Tests
 
-scoredclub init-db               # Tabellen anlegen
+scoredclub init-db               # Tabellen anlegen (SQLite/Dev)
+scoredclub migrate               # Alembic-Migrationen (Postgres/Produktion)
 scoredclub seed                  # 20 Berliner Seed-Entitäten laden
 scoredclub ingest research.json --dry-run   # Research-JSON validieren
 scoredclub run --research research.json     # kompletter Pipeline-Run

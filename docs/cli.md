@@ -13,7 +13,8 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | Befehl | Zweck |
 |--------|-------|
 | `version` | Version ausgeben |
-| `init-db` | Datenbanktabellen anlegen |
+| `init-db` | Datenbanktabellen anlegen (Schnellpfad, SQLite/Dev) |
+| `migrate` | Alembic-Migrationen anwenden (Postgres/Produktion) |
 | `seed` | Berliner Seed-Entitäten laden |
 | `ingest` | Research-JSON validieren und einspielen |
 | `score` | Entitäten (neu) bewerten und Breakdown anzeigen |
@@ -33,6 +34,14 @@ scoredclub init-db [--config PATH]
 ```
 Legt die Tabellen gemäß `DATABASE_URL` an (Standard `sqlite:///data/scoredclub.db`).
 Idempotent.
+
+## `migrate`
+```bash
+scoredclub migrate [--revision head] [--config PATH]
+```
+Wendet die Alembic-Migrationen auf die Datenbank aus `DATABASE_URL` an (`upgrade head`).
+Der maßgebliche Weg für Postgres/Produktion. Aus dem Projektverzeichnis ausführen
+(`alembic.ini` + `migrations/` müssen erreichbar sein). Details: [Deployment](deployment.md).
 
 ## `seed`
 ```bash
