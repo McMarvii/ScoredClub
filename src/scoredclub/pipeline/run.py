@@ -53,6 +53,17 @@ def seed_entities(session: Session, seed_file: Path = SEED_FILE) -> int:
     return count
 
 
+def seed_entity_ids(seed_file: Path = SEED_FILE) -> set[str]:
+    """The entity_ids of the seed/start list (used to flag off-seed finds)."""
+    if not seed_file.exists():
+        return set()
+    data = json.loads(seed_file.read_text(encoding="utf-8"))
+    return {
+        EntityProfile.model_validate(entry).entity_id
+        for entry in data.get("entities", [])
+    }
+
+
 def execute_run(
     session: Session,
     settings: Settings,
@@ -81,13 +92,20 @@ def execute_run(
             for profile in result.profiles:
                 repo.upsert_profile(session, profile, run_id=run.id)
 
+    seed_ids = seed_entity_ids()
     entities: list[Entity] = repo.all_entities(session)
     scored: list[ScoredEntity] = []
     for entity in entities:
         profile = repo.profile_from_row(entity)
         breakdown = score_entity(profile, settings.scoring, today=run_date)
         repo.save_score(session, run, entity, breakdown)
-        scored.append(ScoredEntity(profile=profile, breakdown=breakdown))
+        scored.append(
+            ScoredEntity(
+                profile=profile,
+                breakdown=breakdown,
+                discovered=entity.entity_id not in seed_ids,
+            )
+        )
 
     diff = diff_runs(session, run)
     delta_by_id = {d.entity_id: d for d in diff.deltas}

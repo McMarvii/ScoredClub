@@ -34,7 +34,8 @@ class ScoredEntity:
     profile: EntityProfile
     breakdown: ScoreBreakdown
     delta: float | None = None
-    is_new: bool = False
+    is_new: bool = False  # not present in the previous run (run-over-run)
+    discovered: bool = False  # not part of the seed list (off-seed find)
 
     @property
     def tier(self) -> str:
@@ -121,6 +122,7 @@ def render_markdown(
         next_run=next_run.isoformat(),
         entities=ordered,
         new_entities=[e for e in ordered if e.is_new],
+        discovered_entities=[e for e in ordered if e.discovered],
         alerts=alerts,
         tiers=tiers,
         type_labels=TYPE_LABELS,

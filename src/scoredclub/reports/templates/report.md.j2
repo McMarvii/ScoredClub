@@ -45,8 +45,8 @@ _Keine Entitäten in dieser Kategorie._
 {% for e in top_clubs %}   {{ loop.index }}. {{ e.profile.name }} — {{ "%.0f" | format(e.breakdown.total) }}/100
 {% endfor %}3. **Top 5 Kollektive / Reihen nach Score:**
 {% for e in top_collectives %}   {{ loop.index }}. {{ e.profile.name }} — {{ "%.0f" | format(e.breakdown.total) }}/100
-{% endfor %}4. **Neu entdeckte Entitäten:**
-{% if new_entities %}{% for e in new_entities %}   - {{ e.profile.name }} ({{ type_labels[e.profile.type.value] }}, Score {{ "%.0f" | format(e.breakdown.total) }})
+{% endfor %}4. **Neu entdeckte Entitäten (nicht in Startliste):**
+{% if discovered_entities %}{% for e in discovered_entities %}   - {{ e.profile.name }} ({{ type_labels[e.profile.type.value] }}, Score {{ "%.0f" | format(e.breakdown.total) }})
 {% endfor %}{% else %}   - keine
 {% endif %}5. **Alerts (starke Score-/Status-Änderungen):**
 {% if alerts %}{% for a in alerts %}   - {{ a.message }}
