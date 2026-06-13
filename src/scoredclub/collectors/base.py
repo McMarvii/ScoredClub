@@ -26,4 +26,14 @@ class CollectorResult:
 class Collector(Protocol):
     name: str
 
-    def collect(self, settings: Settings) -> CollectorResult: ...
+    def collect(
+        self, settings: Settings, entities: list[EntityProfile] | None = None
+    ) -> CollectorResult:
+        """Collect profiles.
+
+        Discovery collectors ignore ``entities`` and return newly found
+        profiles. Enrichment collectors use the supplied existing
+        ``entities`` and return partial profiles (matched by name) that
+        merge additional fields into them.
+        """
+        ...

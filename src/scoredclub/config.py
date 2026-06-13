@@ -57,8 +57,11 @@ class AlertsConfig(_Base):
 
 
 class SourcesConfig(_Base):
-    clubcommission_url: str = "https://www.clubcommission.de/clubs"
+    clubcommission_url: str = "https://www.clubcommission.de/"
     ra_graphql_url: str = "https://ra.co/graphql"
+    reddit_search_url: str = "https://www.reddit.com/search.json"
+    reddit_enabled: bool = True
+    reddit_max_threads: int = 5
     extra_sources: list[str] = Field(default_factory=list)
 
 

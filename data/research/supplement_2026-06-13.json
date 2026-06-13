@@ -1,0 +1,256 @@
+{
+  "generated_at": "2026-06-13T00:00:00Z",
+  "research_note": "Reddit (reddit.com, old.reddit.com) is blocked for both WebSearch and WebFetch in this environment, and general web search did not surface any reddit.com/.../comments/ thread URLs in result snippets. No real Reddit thread URLs could be verified, so reddit_threads is left empty for every entity (per instructions not to invent URLs). Resident Advisor club/promoter pages render follower counts client-side and return HTTP 403 to the fetcher; no RA follower counts appeared in any search snippet, so ra_followers is left null (per instructions not to guess). Search-engine result pages (Google/Bing/DuckDuckGo/Marginalia) returned CAPTCHA/403/429/503. community_sentiment_hint is set to 'unknown' wherever no readable community discussion could be accessed.",
+  "entities": [
+    {
+      "entity_id": "berghain",
+      "name": "Berghain",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "tresor",
+      "name": "Tresor",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "sisyphos",
+      "name": "Sisyphos",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "about-blank",
+      "name": "about blank",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "club-der-visionaere",
+      "name": "Club der Visionaere",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/guide/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "kitkat-club",
+      "name": "KitKatClub",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null, "ra_profile_url": "https://ra.co/clubs/10546"},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/10546", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "ritter-butzke",
+      "name": "Ritter Butzke",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/guide/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "rso-berlin",
+      "name": "RSO.BERLIN",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "wilde-renate",
+      "name": "Salon zur Wilden Renate",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "zenner",
+      "name": "Zenner",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "else",
+      "name": "else",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "oxi",
+      "name": "OXI",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "symbiotikka",
+      "name": "Symbiotikka",
+      "type": "series",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/10546", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "klubnacht",
+      "name": "Klubnacht",
+      "type": "series",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/events/2090176", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "herrensauna",
+      "name": "Herrensauna",
+      "type": "collective",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "mala-junta",
+      "name": "Mala Junta",
+      "type": "series",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "lecken",
+      "name": "Lecken",
+      "type": "collective",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "pornceptual",
+      "name": "Pornceptual",
+      "type": "collective",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "staub-berlin",
+      "name": "Staub",
+      "type": "series",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "rave-the-planet",
+      "name": "Rave The Planet",
+      "type": "collective",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://www.ravetheplanet.com", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "clubcommission-berlin",
+      "name": "Clubcommission Berlin",
+      "type": "collective",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "ost-berlin",
+      "name": "OST Berlin",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "lokschuppen-berlin",
+      "name": "Lokschuppen Berlin",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/guide/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "aeden",
+      "name": "ÆDEN",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null, "ra_profile_url": "https://ra.co/clubs/187744"},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/187744", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    },
+    {
+      "entity_id": "amt",
+      "name": "AMT",
+      "type": "club",
+      "status": "active",
+      "events": {"ra_followers": null},
+      "community": {"reddit_threads": [], "community_sentiment_hint": "unknown"},
+      "sources": [{"url": "https://ra.co/clubs/de/berlin", "accessed_at": "2026-06-13"}],
+      "last_verification": "2026-06-13T00:00:00Z"
+    }
+  ]
+}
