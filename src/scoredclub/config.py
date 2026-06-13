@@ -79,12 +79,30 @@ class TrendingConfig(_Base):
     movers_limit: int = 5
 
 
+class LLMResearchConfig(_Base):
+    """Agentic LLM research collector (optional, off by default).
+
+    Requires the optional ``anthropic`` dependency and an ``ANTHROPIC_API_KEY``
+    in the environment. When disabled (the default) the collector is a no-op.
+    """
+
+    enabled: bool = False
+    model: str = "claude-opus-4-8"
+    # Max entities researched per run (0 = all); stalest entities first.
+    max_entities: int = 8
+    # Effort for the research/extraction calls (low|medium|high|max).
+    effort: str = "medium"
+    # Continuation cap while the server-side web_search loop runs.
+    research_max_continuations: int = 4
+
+
 class Settings(_Base):
     scoring: ScoringConfig = Field(default_factory=ScoringConfig)
     alerts: AlertsConfig = Field(default_factory=AlertsConfig)
     sources: SourcesConfig = Field(default_factory=SourcesConfig)
     run: RunConfig = Field(default_factory=RunConfig)
     trending: TrendingConfig = Field(default_factory=TrendingConfig)
+    llm: LLMResearchConfig = Field(default_factory=LLMResearchConfig)
     database_url: str = DEFAULT_DATABASE_URL
 
     @classmethod

@@ -16,14 +16,34 @@ Reddit-Collector (Enrichment) ──┘
 Zwei Kategorien (siehe `src/scoredclub/collectors/__init__.py`):
 
 - **Discovery-Collector** dürfen neue Entitäten anlegen: `ClubcommissionCollector`, `ResidentAdvisorCollector`.
-- **Enrichment-Collector** reichern nur bestehende Entitäten an (legen keine neuen an): `RedditCollector`.
+- **Enrichment-Collector** reichern nur bestehende Entitäten an (legen keine neuen an): `LLMResearchCollector`, `RedditCollector`.
 
 Die Pipeline führt erst Discovery, dann Enrichment aus.
 
-## 1. LLM-Research (maßgeblicher Pfad)
+## 0. Agentischer LLM-Collector (optional, automatisiert Schritt 1)
 
-Ein Research-Agent (z. B. Claude mit Websuche) füllt pro Entität ein Profil gemäß
-[Datenschema](schema.md) und schreibt es nach `data/research/berlin_research_<DATUM>.json`.
+Statt die Research-Datei von Hand zu erzeugen, kann der `LLMResearchCollector` die
+Recherche automatisieren: pro Entität ruft er die Claude-API (offizielles `anthropic`-SDK)
+mit dem serverseitigen **web_search**-Tool auf, extrahiert per **Structured Outputs** ein
+`EntityProfile` und merged es in die bestehende Entität (Enrichment, legt nichts Neues an).
+
+- **Standardmäßig aus.** Aktivieren über `llm.enabled` in der [Konfiguration](configuration.md).
+- **Optionale Abhängigkeit:** `pip install -e ".[llm]"` plus `ANTHROPIC_API_KEY` im Environment.
+  Fehlt eines davon, degradiert der Collector zu einer Warnung — nie ein Fehler.
+- **Kostenkontrolle:** `llm.max_entities` begrenzt die Anzahl pro Run; bevorzugt werden die
+  am längsten nicht verifizierten Entitäten (`last_verification`). `llm.model` (Default
+  `claude-opus-4-8`) und `llm.effort` sind konfigurierbar.
+- Fehlertolerant: bricht nach wiederholten API-Fehlern sauber ab und reicht Teilresultate durch.
+
+> Dies ist der erste Baustein des in der [Roadmap v2](roadmap-v2.md) beschriebenen
+> agentischen Collectors. Da die Claude-API in Sandbox/CI nicht erreichbar ist, wird die
+> Logik mit einem gemockten Client getestet; der reale Lauf passiert in deiner Umgebung.
+
+## 1. LLM-Research per Hand (immer verfügbar)
+
+Alternativ (oder ergänzend) füllt ein Research-Agent (z. B. Claude mit Websuche) pro Entität
+ein Profil gemäß [Datenschema](schema.md) und schreibt es nach
+`data/research/berlin_research_<DATUM>.json`.
 
 **Empfohlener Ablauf:**
 

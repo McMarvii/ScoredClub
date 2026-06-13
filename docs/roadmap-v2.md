@@ -29,15 +29,17 @@ vertrauenswürdigen Daten."**
 
 ## P0 — Höchster Hebel (Datenengpass & Vertrauen)
 
-### 1. Agentischer LLM-Collector
+### 1. Agentischer LLM-Collector — ✅ v1 ausgeliefert
 Die Webrecherche in die Pipeline holen: ein Collector, der pro Entität über die Claude-API
-(neuestes Modell) mit Tool-Use + strukturiertem Output das vorhandene Pydantic-Schema
+mit dem serverseitigen web_search-Tool + Structured Outputs das vorhandene Pydantic-Schema
 selbst befüllt. Damit entfällt der manuelle `research.json`-Schritt.
 
-- **Bauen auf vorhandenem:** Schema (`EntityProfile`), Validierung, Dedup/Merge existieren
-  bereits — es fehlt nur der Treiber als weiterer Discovery-/Enrichment-Collector.
-- Strukturierte Ausgabe gegen das Pydantic-Schema; pro Feld Quelle mitliefern.
-- Kostendeckel/Batching pro Lauf konfigurierbar.
+- **Status:** Als `LLMResearchCollector` umgesetzt (Enrichment, standardmäßig aus,
+  optionale `[llm]`-Abhängigkeit, fehlertolerant, mit gemocktem Client getestet). Siehe
+  [Datenerhebung](data-collection.md) → „Agentischer LLM-Collector".
+- **Offen für v2-Vollausbau:** pro Feld Quelle/Confidence mitliefern (siehe P0.3),
+  Batching/Kostendeckel feiner steuern, Discovery-Modus (neue Entitäten finden), gegen
+  echte API evaluieren.
 
 ### 2. Echte API-Collectors
 - **Reddit-OAuth-App** → bringt Dimension D zuverlässig zum Leben.

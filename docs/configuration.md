@@ -45,6 +45,13 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "momentum_window": 4,
     "stable_epsilon": 1.0,
     "movers_limit": 5
+  },
+  "llm": {
+    "enabled": false,
+    "model": "claude-opus-4-8",
+    "max_entities": 8,
+    "effort": "medium",
+    "research_max_continuations": 4
   }
 }
 ```
@@ -92,6 +99,20 @@ Details der Wirkung: [Scoring-Modell](scoring.md).
 | `movers_limit` | Anzahl gelisteter Auf-/Absteiger. |
 
 Details: [Trending](trending.md).
+
+### `llm`
+Agentischer LLM-Research-Collector (optional, standardmäßig aus). Braucht
+`pip install -e ".[llm]"` und `ANTHROPIC_API_KEY`.
+
+| Schlüssel | Bedeutung |
+|-----------|-----------|
+| `enabled` | Collector an/aus (Default `false`). |
+| `model` | Claude-Modell (Default `claude-opus-4-8`). |
+| `max_entities` | Max. Entitäten pro Run (0 = alle), stalste zuerst. |
+| `effort` | `low`/`medium`/`high`/`max`. |
+| `research_max_continuations` | Continuation-Cap für die serverseitige web_search-Schleife. |
+
+Details: [Datenerhebung](data-collection.md).
 
 ## Umgebungsvariablen
 
