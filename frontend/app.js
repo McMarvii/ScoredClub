@@ -97,6 +97,68 @@ function fmtFollowers(n) {
   return n.toLocaleString("de-DE");
 }
 
+// XSS-safe sparkline: all coordinates are numbers, built via createElementNS.
+function sparklineSvg(values) {
+  if (!Array.isArray(values) || values.length < 2) return null;
+  const w = 180, h = 40, pad = 3;
+  const min = Math.min(...values), max = Math.max(...values), range = (max - min) || 1;
+  const pts = values
+    .map((v, i) => {
+      const x = pad + (i * (w - 2 * pad)) / (values.length - 1);
+      const y = h - pad - ((v - min) / range) * (h - 2 * pad);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.setAttribute("class", "sparkline");
+  const poly = document.createElementNS(NS, "polyline");
+  poly.setAttribute("points", pts);
+  poly.setAttribute("fill", "none");
+  svg.appendChild(poly);
+  return svg;
+}
+
+function renderMovers() {
+  const section = document.getElementById("movers-section");
+  const withDelta = state.all.filter(
+    (e) => e.trend && typeof e.trend.score_delta === "number"
+  );
+  const risers = withDelta
+    .filter((e) => e.trend.score_delta > 0)
+    .sort((a, b) => b.trend.score_delta - a.trend.score_delta)
+    .slice(0, 5);
+  const fallers = withDelta
+    .filter((e) => e.trend.score_delta < 0)
+    .sort((a, b) => a.trend.score_delta - b.trend.score_delta)
+    .slice(0, 5);
+  if (!risers.length && !fallers.length) {
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+  const fill = (id, items) => {
+    const ol = document.getElementById(id);
+    ol.replaceChildren(
+      ...items.map((e) => {
+        const d = e.trend.score_delta;
+        const btn = el("button", { class: "mover-link", attrs: { type: "button" } }, [
+          el("span", { class: "mover-name", text: e.name }),
+          el("span", {
+            class: `mover-delta ${d > 0 ? "up" : "down"}`,
+            text: `${d > 0 ? "+" : ""}${d.toFixed(1)}`,
+          }),
+        ]);
+        btn.addEventListener("click", () => openModal(e));
+        return el("li", { class: "mover" }, [btn]);
+      })
+    );
+  };
+  fill("movers-risers", risers);
+  fill("movers-fallers", fallers);
+}
+
 // ---- rendering ---------------------------------------------------------------
 
 function renderMeta(data) {
@@ -256,7 +318,11 @@ function openModal(e) {
   if (typeof score.malus === "number" && score.malus > 0) bm.appendChild(el("span", { class: "chip malus", text: `Malus −${Math.round(score.malus)}` }));
   if (bm.childNodes.length) breakdown.appendChild(bm);
 
+  const spark = e.trend && sparklineSvg(e.trend.sparkline);
+  const sparkBlock = spark ? el("div", {}, [el("h3", { text: "Score-Verlauf" }), spark]) : null;
+
   const sections = [
+    sparkBlock,
     listSection("Besonderheiten", score.bonus_items, (s) => String(s)),
     listSection("Kritische Punkte", score.malus_items, (s) => String(s)),
     listSection("Presse-Highlights", e.press && e.press.major_features, (s) => String(s)),
@@ -311,6 +377,7 @@ async function load() {
     state.all = Array.isArray(data.entities) ? data.entities.filter((e) => e && typeof e.name === "string") : [];
     renderMeta(data);
     renderSummary();
+    renderMovers();
     applyFilters();
   } catch (err) {
     const node = document.getElementById("error-state");
