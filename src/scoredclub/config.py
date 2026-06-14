@@ -114,6 +114,8 @@ class SourcesConfig(_Base):
     # the canonical run is unaffected; when on it fills only *unknown* hints and
     # never overrides a researcher-supplied sentiment.
     sentiment_enabled: bool = False
+    # Förder-/Policy-Feed (JSON file; ingestable like research, no live scraper).
+    funding_feed_path: str = "data/funding/berlin_funding.json"
     extra_sources: list[str] = Field(default_factory=list)
 
 

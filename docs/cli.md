@@ -29,6 +29,7 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | `export` | Alle Entitäten als CSV exportieren (Summary + Dimensionspunkte) |
 | `retention` | Veraltete Community-/Personendaten redigieren (GDPR) |
 | `clubsterben` | Kulturökosystem-Register: Eröffnungen/Schließungen, Ursachen, gefährdete Venues |
+| `funding` | Förder-/Policy-Feed: Programme, Deadlines, Policy-Items |
 | `compare` | Zwei Scoring-Konfigurationen vergleichen (A/B) |
 | `serve` | FastAPI-Lese-API starten |
 
@@ -133,6 +134,14 @@ Berechnet aus der Score-Historie Breakout-/Anomalie-Buckets (dynamische Baseline
 Karrierephasen (Perzentil) und einen Kurzfrist-Forecast pro Entität. `--breakouts-only`
 zeigt nur die als Ausbruch markierten Entitäten. Braucht ≥ 3 Läufe für aussagekräftige
 Breakouts. Details: [Analytics](analytics.md).
+
+## `funding`
+```bash
+scoredclub funding [--within N] [--config PATH]
+```
+Liest den Förder-/Policy-Feed (`sources.funding_feed_path`) und zeigt Programme, anstehende
+Deadlines (≤ N Tage) und Policy-Items. Pendant zur API `GET /funding`. Details:
+[Förder-Feed](funding.md).
 
 ## `clubsterben`
 ```bash

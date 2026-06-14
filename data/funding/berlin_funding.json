@@ -1,0 +1,51 @@
+{
+  "_comment": "Förder-/Policy-Feed für die Berliner Clubkultur. Deadlines bewusst null, wo nicht gesichert — bitte vor Nutzung an der Quelle prüfen. Live-Erhebung deutschsprachiger Quellen ist offen.",
+  "programs": [
+    {
+      "name": "Musicboard Berlin — Künstler*innenförderung",
+      "provider": "Musicboard Berlin GmbH",
+      "url": "https://www.musicboard-berlin.de/en/funding/",
+      "deadline": null,
+      "eligibility": "In Berlin lebende Musiker*innen / Akteur*innen der Popmusik.",
+      "amount": null,
+      "status": "rolling",
+      "notes": "Mehrere Programme (Stipendien, Projektförderung, Karriereförderung)."
+    },
+    {
+      "name": "Clubkulturförderung / Festivalförderung",
+      "provider": "Musicboard Berlin GmbH",
+      "url": "https://www.musicboard-berlin.de/en/funding/clubculture-funding/",
+      "deadline": null,
+      "eligibility": "Berliner Clubs, Kollektive und Festivals.",
+      "amount": null,
+      "status": "rolling",
+      "notes": "Antragsfristen variieren je Runde — an der Quelle prüfen."
+    },
+    {
+      "name": "Spielstättenprogrammprämie / Awards",
+      "provider": "Initiative Musik / Clubcommission",
+      "url": "https://www.initiative-musik.de/",
+      "deadline": null,
+      "eligibility": "Live-Musikspielstätten und Clubs mit anspruchsvollem Programm.",
+      "amount": null,
+      "status": null,
+      "notes": "Bundesweite Auszeichnung/Förderung für Spielstätten."
+    }
+  ],
+  "policies": [
+    {
+      "title": "Berliner Techno als immaterielles UNESCO-Kulturerbe",
+      "source": "Deutsche UNESCO-Kommission",
+      "url": "https://www.unesco.de/kultur-und-natur/immaterielles-kulturerbe",
+      "date": "2024-03-13",
+      "summary": "Die Berliner Technokultur wurde ins bundesweite Verzeichnis des immateriellen Kulturerbes aufgenommen."
+    },
+    {
+      "title": "Clubsterben — Lage der Berliner Clubkultur",
+      "source": "Clubcommission Berlin",
+      "url": "https://www.clubcommission.de/",
+      "date": null,
+      "summary": "Laufende Berichterstattung zu Schließungen, Mieten, Lärmschutz und Standortpolitik."
+    }
+  ]
+}

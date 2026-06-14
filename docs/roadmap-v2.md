@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 238 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 245 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -201,8 +201,11 @@ das heutige Org-Entity-Scoring hinaus können sollte.
 - **Gentrifizierungs-/Verdrängungssignale** → ✅ als `displacement_signals` modelliert
   (rent_increase/property_sale/rezoning/noise_complaint/construction) und in der „at_risk"-
   Watchlist berücksichtigt.
-- **Förder-/Subventions- und Policy-Feed** (Clubcommission/Senat, UNESCO-ICH-Status) mit
-  Eignungs-/Deadline-Hinweisen; braucht deutschsprachige Quellen. **Offen** (externer Feed).
+- **Förder-/Subventions- und Policy-Feed** → ✅ als einspielbarer Feed umgesetzt
+  (`scoredclub.funding`, JSON-Datei `data/funding/berlin_funding.json`): Programme +
+  Policy-Items + `upcoming_deadlines`. CLI `funding`, API `GET /funding`. Siehe
+  [Förder-Feed](funding.md). **Offen:** Live-Erhebung deutschsprachiger Quellen
+  (Senat/Musicboard/Clubcommission) — kann dieselbe Datei schreiben.
 
 ### Quellen (Auswahl)
 - Chartmetric Artist Analytics — https://chartmetric.com/features/artist-analytics

@@ -51,6 +51,7 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "songkick_url": "https://api.songkick.com/api/3.0",
     "songkick_max_artists": 25,
     "sentiment_enabled": false,
+    "funding_feed_path": "data/funding/berlin_funding.json",
     "extra_sources": []
   },
   "run": {
@@ -126,6 +127,7 @@ Details der Wirkung: [Scoring-Modell](scoring.md) (inkl. Datenkonfidenz).
 | `bandsintown_max_artists` | Max. Artists pro Lauf, die über Bandsintown angereichert werden. |
 | `songkick_url` / `songkick_max_artists` | Songkick-API (zweite sanktionierte Event-Quelle für Artists). |
 | `sentiment_enabled` | Offline-Sentiment-Collector an/aus (füllt nur unbekannte Hints). |
+| `funding_feed_path` | JSON-Datei des Förder-/Policy-Feeds (siehe [Förder-Feed](funding.md)). |
 | `extra_sources` | Reserviert für zusätzliche Quellen. |
 
 ### `run`

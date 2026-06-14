@@ -176,6 +176,17 @@ Kurzfrist-Forecast pro Entität, berechnet aus der Score-Historie. Siehe [Analyt
   "breakouts": [ { "entity_id": "oxi", "...": "..." } ] }
 ```
 
+### `GET /funding`
+Förder-/Policy-Feed: Programme, Policy-Items und anstehende Deadlines. **Query:**
+`within_days` (1–730, Standard 90). Siehe [Förder-Feed](funding.md).
+
+```json
+{ "programs": [ { "name": "Clubkulturförderung", "provider": "Musicboard Berlin",
+                  "deadline": null, "status": "rolling" } ],
+  "policies": [ { "title": "Techno als UNESCO-ICH", "source": "UNESCO" } ],
+  "upcoming_deadlines": [] }
+```
+
 ### `GET /clubsterben`
 Kulturökosystem-Register: Eröffnungen/Schließungen, Ursachen, Jahresverlauf und gefährdete
 Venues aus den `lifecycle_events`/`displacement_signals`. Siehe [Clubsterben-Register](clubsterben.md).

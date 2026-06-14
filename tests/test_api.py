@@ -120,6 +120,13 @@ def test_entity_trend(client):
     assert data["latest"]["direction"] == "new"
 
 
+def test_funding_endpoint(client):
+    data = client.get("/funding").json()
+    assert {"programs", "policies", "upcoming_deadlines"} <= data.keys()
+    # Serves the committed seed feed.
+    assert any("Musicboard" in p["name"] for p in data["programs"])
+
+
 def test_clubsterben_endpoint(client):
     data = client.get("/clubsterben").json()
     # Seeded test entities carry no lifecycle events -> zeroed register, valid shape.
