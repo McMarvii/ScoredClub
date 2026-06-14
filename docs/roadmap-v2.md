@@ -1,9 +1,10 @@
 # ScoredClub — Roadmap v2
 
-Stand: v1 ist vollständig in `main` (Scoring, Trending, A/B-Testing, Backend-API,
-Dashboard, CI/Pages/Monthly-Automatisierung, ausführliche Doku, 106 Tests). Dieses
-Dokument hält die Richtung für v2 fest. Es ist ein lebendes Planungsdokument, kein
-Vertrag — Reihenfolge und Umfang werden iterativ angepasst.
+Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
+mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 143 Tests). Dieses Dokument hält die
+Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
+werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
 ## Ausgangslage: was v1 limitiert
 
@@ -105,18 +106,81 @@ Migration deckt sich mit den Modellen). Siehe [Deployment](deployment.md) → Po
 
 ## P2 — Reichweite & Tiefe
 
-### 7. Multi-City-Generalisierung
+### 7. Multi-City-Generalisierung — ❌ offen
 Eine `scene`/`city`-Dimension, pro Szene eigene Seeds/Configs — „ScoredClub für
 Hamburg/London/NYC".
 
-### 8. Lernkomponente (optional)
+### 8. Lernkomponente (optional) — ❌ offen
 Ein leichtes Ranking-Modell auf einem kleinen, menschlich gelabelten Relevanz-Set — als
 Ergänzung zum erklärbaren Regel-Score, der die Baseline bleibt.
 
-### 9. Event- & DJ-Graph
-Über Entitäten hinaus: Lineups, „wer spielt wo", Netzwerk-Analyse (die `networking`-
-Dimension als echter Graph). Sentiment per echtem NLP auf Reddit/Presse statt manuellem
-Hint.
+### 9. Event- & DJ-Graph — ❌ offen
+Über Entitäten hinaus: **DJ/Artist als eigene Entitäten** und ein **Venue↔Artist↔Kollektiv-
+Booking-/Kollaborations-Graph** (die `networking`-Dimension als echter Graph). Plus echte
+**NLP-Sentiment-Analyse** auf Reddit/Presse statt manuellem Hint. Details/Begründung: P3.
+
+---
+
+## P3 — Erweiterte Fähigkeiten (Recherche vergleichbarer Tools)
+
+Abgeleitet aus einer Wettbewerbs-/Domänen-Recherche: **Musik-/Artist-Analytics**
+(Chartmetric, Soundcharts, Viberate, Songstats), **Event-/Venue-Aggregatoren** (Resident
+Advisor, Bandsintown, Songkick, Dice, Shotgun), **Nightlife-/Reputations-Apps** sowie
+**Kulturpolitik-Monitoring** (Clubcommission, UNESCO-ICH). Ziel: was ein solches Tool über
+das heutige Org-Entity-Scoring hinaus können sollte.
+
+> **Datenzugang/rechtliche Leitplanke:** Resident Advisor hat **keine offizielle öffentliche
+> API** (nur undokumentiertes GraphQL/Scraper → ToS-/Rechtsrisiko). **Bandsintown** und
+> **Songkick** sind die sanktionierten, dokumentierten APIs und sollten der primäre Event-
+> Datenpfad sein. Community-/Personendaten brauchen eine GDPR-/Retention-Linie und
+> robots.txt-/ToS-konforme Erhebung.
+
+### Datenquellen
+- **Upcoming-Events + Lineup-Ingestion** (zuerst Bandsintown/Songkick, dann RA vorsichtig) →
+  speist die Event-Aktivitäts-Dimension mit echten statt geschätzten Zahlen.
+- **DJ/Artist-Entitäten** als First-Class-Records (über die heutigen Org-Typen
+  club/collective/label/series hinaus) — größere Schema-Erweiterung.
+- **Event-Nachfragesignale:** RA-„going"-Zahlen, ausverkauft/Warteliste (Dice/Shotgun) als
+  belastbare Proxys für Dimension A.
+- **Cross-Plattform-Follower-/Streaming-Zeitreihen** je Entität (löst die offene
+  RA-Follower-Lücke; pro-Plattform-Verlauf statt nur Score).
+
+### Analytics / Intelligence
+- **Booking-/Kollaborations-Graph** (Venue↔Artist↔Kollektiv) — macht die `networking`-
+  Dimension zum echten Graphen (siehe P2 §9).
+- **Breakout-/Anomalie-Erkennung** auf dem Score-Momentum (Slope-Buckets
+  Growth/Strong/Explosive + dynamische Baseline statt fixer Schwellen).
+- **Echte NLP-Sentiment-Analyse** auf Presse/Reddit (ersetzt den manuellen Hint; P2 §9).
+- **Perzentil-/Karrierephasen-Klassifikation** (Developing → Established) über den Tiers.
+- **Kurzfrist-Forecast** der Score-Trajektorie für „steigt bald"-Flags.
+
+### Produkt / UX
+- **Digests/Alerts über Webhooks hinaus:** E-Mail/RSS/Slack, gestuft (sofortige kritische
+  Alerts + Wochen-Digest der Movers).
+- **Watchlists + gespeicherte Filter** (nach Bezirk/Typ/Tier) als beobachtete Ansichten.
+- **Event-Kalender + Lineup-Ansicht** im Dashboard; pro Entität eine Gigography-Historie.
+- **CSV-/BI-Export + einbettbare Score-/Trend-Widgets** für Partner (Clubcommission, Presse).
+
+### Ops / Trust
+- **Per-Feld-Provenance** (Quelle + Konfidenz je Feld, nicht nur je Entität), GDPR-/
+  Retention-Policy für Community-Daten, robots.txt-/ToS-Konformitätsnachweis je Collector.
+
+### Differenzierter Niche: Kulturökosystem-Monitoring (Berlin-spezifisch, weitgehend greenfield)
+- **Clubsterben-Register:** Eröffnungen/Schließungen als Ereignisse mit Ursachen-Taxonomie
+  (Miete/Lärm/Umbau) — verteidigbares Alleinstellungsmerkmal für ein Berlin-Tool.
+- **Förder-/Subventions- und Policy-Feed** (Clubcommission/Senat, UNESCO-ICH-Status) mit
+  Eignungs-/Deadline-Hinweisen; braucht deutschsprachige Quellen.
+- **Gentrifizierungs-/Verdrängungssignale** (Gewerbemieten, Grundstücksverkäufe, Umnutzung
+  in Venue-Nähe), Lärm-/Genehmigungs-Tracking („Agent of Change").
+
+### Quellen (Auswahl)
+- Chartmetric Artist Analytics — https://chartmetric.com/features/artist-analytics
+- Soundcharts / Viberate — https://soundcharts.com/en/ar-research-and-business-facing-music-discovery · https://www.viberate.com/soundcharts-alternative/
+- Bandsintown API · Songkick Developer — https://help.artists.bandsintown.com/en/articles/7053475-what-is-the-bandsintown-api · https://www.songkick.com/developer
+- RA Events Scraper (ToS-Hinweis) — https://github.com/djb-gt/resident-advisor-events-scraper
+- Chartmetric „Predict"/Emerging — https://resources.onestowatch.com/chartmetric-data-accuracy-predictions/
+- Clubcommission „Clubsterben" · RA News · UNESCO-ICH — https://www.clubcommission.de/pressemitteilung-clubsterben-ist-wieder-an-der-tagesordnung/ · https://ra.co/news/76507 · https://www.timeout.com/news/why-has-berlin-techno-been-added-to-unescos-list-of-intangible-cultural-heritage-031524
+- Anomalie-Erkennung · Sentiment · Scraping-Recht/GDPR — https://www.kissmetrics.io/blog/ai-analytics-anomaly-detection-guide · https://use-apify.com/blog/web-scraping-legal-guide · https://www.octoparse.com/blog/gdpr-compliance-in-web-scraping
 
 ---
 
@@ -124,7 +188,10 @@ Hint.
 
 - Dedup-Review-UI / Human-in-the-Loop für mehrdeutige Merges.
 - Datenfrische prominent ausweisen (Alter aus `last_verification`).
-- Alerting über Webhooks hinaus: Digest-Mails, RSS der Movers.
+- Alerting über Webhooks hinaus: Digest-Mails, RSS der Movers (siehe P3).
+- Watchlists / gespeicherte Filter als beobachtete Ansichten (siehe P3).
+- Anomalie-/Breakout-Erkennung statt fixer Alert-Schwellen (siehe P3).
+- Per-Feld-Provenance + GDPR-/Retention-Policy für Community-Daten (siehe P3).
 - Observability: strukturiertes Logging, Run-Metriken, Error-Tracking.
 - Collector-Tests gegen aufgezeichnete Fixtures (VCR-Stil), damit Layout-Änderungen
   externer Seiten im CI auffallen.
@@ -138,10 +205,14 @@ Hint.
 ## Empfohlene Reihenfolge
 
 1. **P0** Agentischer Collector + Confidence/Provenance (löst Datenengpass und
-   Vertrauensproblem in einem).
-2. **P1** Postgres/Alembic + Auth-API/Jobs.
-3. **P1** Frontend-Ausbau (Trending-, Compare-, Karten-Ansicht).
-4. **P2** Multi-City, Lernkomponente, Event/DJ-Graph.
+   Vertrauensproblem in einem). ✅ weitgehend erledigt
+2. **P1** Postgres/Alembic + Auth-API/Jobs. ✅ erledigt
+3. **P1** Frontend-Ausbau (Trending-, Compare-, Karten-Ansicht). ✅ erledigt
+4. **P3** Event-/Lineup-Ingestion (Bandsintown/Songkick) + DJ/Artist-Entitäten + Booking-Graph
+   — der nächste hohe Hebel: bringt echte Event-/Beziehungsdaten in alle Dimensionen.
+5. **P3** Kulturökosystem-Monitoring (Clubsterben-Register, Förder-/Policy-Feed) — am stärksten
+   differenziert, weitgehend greenfield.
+6. **P2** Multi-City, Lernkomponente.
 
 ## Bezug zu v1-Komponenten
 
