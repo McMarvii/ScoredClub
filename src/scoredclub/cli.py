@@ -41,13 +41,20 @@ def init_db_cmd(config: str = typer.Option(None, help="Path to config JSON")) ->
     typer.echo(f"Database initialized ({settings.database_url})")
 
 
-def _find_alembic_ini():
-    cwd = Path.cwd()
-    for directory in [cwd, *cwd.parents]:
-        candidate = directory / "alembic.ini"
-        if candidate.exists():
-            return candidate
-    return None
+def _alembic_config(database_url: str):
+    """Build an Alembic config pointing at the migrations bundled in the package.
+
+    Works from an installed wheel (no alembic.ini / project checkout needed).
+    """
+    from alembic.config import Config
+
+    import scoredclub
+
+    migrations_dir = Path(scoredclub.__file__).resolve().parent / "migrations"
+    cfg = Config()
+    cfg.set_main_option("script_location", str(migrations_dir))
+    cfg.set_main_option("sqlalchemy.url", database_url)
+    return cfg, migrations_dir
 
 
 @app.command()
@@ -57,18 +64,12 @@ def migrate(
 ) -> None:
     """Apply Alembic migrations — the managed schema path for Postgres/production."""
     from alembic import command
-    from alembic.config import Config
 
     settings = _settings(config)
-    ini = _find_alembic_ini()
-    if ini is None:
-        typer.secho(
-            "alembic.ini not found — run from the project directory.", fg=typer.colors.RED
-        )
+    cfg, migrations_dir = _alembic_config(settings.database_url)
+    if not migrations_dir.exists():
+        typer.secho("Bundled migrations not found in the package.", fg=typer.colors.RED)
         raise typer.Exit(code=1)
-    cfg = Config(str(ini))
-    cfg.set_main_option("script_location", str(ini.parent / "migrations"))
-    cfg.set_main_option("sqlalchemy.url", settings.database_url)
     command.upgrade(cfg, revision)
     typer.echo(f"Migrated to '{revision}' ({settings.database_url})")
 
