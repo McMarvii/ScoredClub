@@ -405,6 +405,15 @@ def booking_graph(
     return payload
 
 
+@app.get("/funding")
+def funding(within_days: int = Query(default=90, ge=1, le=730)) -> dict:
+    """Förder-/Policy-Feed: programmes, policy items and upcoming deadlines."""
+    from scoredclub.funding import feed_to_dict, load_funding
+
+    feed = load_funding(_settings.sources.funding_feed_path)
+    return feed_to_dict(feed, within_days=within_days)
+
+
 @app.get("/clubsterben")
 def clubsterben(session: Session = Depends(db_session)) -> dict:
     """Cultural-ecosystem register: openings/closures, causes, at-risk venues."""

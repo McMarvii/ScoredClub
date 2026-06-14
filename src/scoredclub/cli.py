@@ -341,6 +341,34 @@ def analytics(
 
 
 @app.command()
+def funding(
+    within: int = typer.Option(90, help="Deadline-Fenster in Tagen"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Förder-/Policy-Feed: Programme, anstehende Deadlines und Policy-Items."""
+    from scoredclub.funding import load_funding, upcoming_deadlines
+
+    settings = _settings(config)
+    feed = load_funding(settings.sources.funding_feed_path)
+    if not feed.programs and not feed.policies:
+        typer.echo(f"Kein Förder-Feed unter {settings.sources.funding_feed_path}.")
+        return
+    upcoming = upcoming_deadlines(feed, within_days=within)
+    if upcoming:
+        typer.secho(f"Anstehende Deadlines (≤ {within} Tage):", fg=typer.colors.GREEN)
+        for p in upcoming:
+            typer.echo(f"  {p.deadline}  {p.name} ({p.provider or '—'})")
+    typer.secho(f"\nProgramme ({len(feed.programs)}):", fg=typer.colors.CYAN)
+    for p in feed.programs:
+        deadline = p.deadline.isoformat() if p.deadline else "—"
+        typer.echo(f"  {p.name:48s} Frist: {deadline}  Status: {p.status or '—'}")
+    if feed.policies:
+        typer.secho(f"\nPolicy/Status ({len(feed.policies)}):", fg=typer.colors.CYAN)
+        for item in feed.policies:
+            typer.echo(f"  {item.title} — {item.source or '—'}")
+
+
+@app.command()
 def clubsterben(
     config: str = typer.Option(None, help="Path to config JSON"),
 ) -> None:
