@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 186 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 194 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -136,12 +136,13 @@ das heutige Org-Entity-Scoring hinaus können sollte.
 > robots.txt-/ToS-konforme Erhebung.
 
 ### Datenquellen
-- **Event-/Lineup-Ingestion (Bandsintown) → 🟡 erster Schritt ausgeliefert.** Der
-  `BandsintownCollector` (Enrichment, no-op ohne `BANDSINTOWN_APP_ID`/ohne Artists) holt
-  über die *sanktionierte* Bandsintown-API die Events einer Artist-Entität und speist
-  Event-Zahlen (3/6 Monate, Dimension A), `last_event_date` und die bespielten Venues. Mit
-  gemocktem Client getestet. Siehe [Datenerhebung](data-collection.md) → Bandsintown.
-  **Offen:** Songkick als zweite Quelle, RA (vorsichtig), Org-Entitäten (nicht nur Artists).
+- **Event-/Lineup-Ingestion (Bandsintown + Songkick) → ✅ umgesetzt.** Der
+  `BandsintownCollector` (no-op ohne `BANDSINTOWN_APP_ID`/ohne Artists) holt über die
+  *sanktionierte* Bandsintown-API die Events einer Artist-Entität und speist Event-Zahlen
+  (3/6 Monate, Dimension A), `last_event_date` und die bespielten Venues. Der
+  `SongkickCollector` ergänzt dieselben Signale aus der **Songkick-API** (Suche → Gigography,
+  `SONGKICK_API_KEY`). Beide mit gemocktem Client getestet. Siehe
+  [Datenerhebung](data-collection.md). **Offen:** RA (vorsichtig), Org-Entitäten (nicht nur Artists).
 - **DJ/Artist-Entitäten → 🟡 erster Schritt ausgeliefert.** `artist` ist ein First-Class
   `EntityType` (Schema, Report, Dashboard-Filter). Artists werden über `ingest`/Research
   eingespielt (nicht über Seeds, damit der kanonische Lauf stabil bleibt). **Offen:**

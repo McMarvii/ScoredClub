@@ -141,6 +141,18 @@ scoredclub run        # reichert vorhandene artist-Entitäten an
 > Artists werden über `ingest`/Research (Typ `artist`) eingespielt, nicht über die Seeds —
 > so bleibt der kanonische Lauf stabil. Siehe **P3** der [Roadmap v2](roadmap-v2.md).
 
+### Songkick (zweite sanktionierte Quelle)
+
+`SongkickCollector` ist eine zweite offizielle Event-Quelle für `artist`-Entitäten neben
+Bandsintown. Pro Artist wird zunächst die Songkick-Artist-ID per Suche aufgelöst, dann die
+**Gigography** (vergangene Events) geladen und dasselbe Booking-Signal angereichert
+(Event-Zahlen 3/6 Monate, `last_event_date`, bespielte Venues → `networking.collaborations`,
+`ticketing_platforms=["Songkick"]`).
+
+**Setup:** API-Key unter <https://www.songkick.com/developer> beantragen und als
+`SONGKICK_API_KEY` setzen. No-op ohne Key oder ohne Artists; fehlertolerant; mit gemocktem
+Client getestet. Konfigurierbar: `sources.songkick_url`, `sources.songkick_max_artists`.
+
 ## 6. Sentiment-Collector (Enrichment, offline)
 
 Leitet den `community_sentiment_hint` deterministisch aus Reddit-Thread-Titeln + Notizen
