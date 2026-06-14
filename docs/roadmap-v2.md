@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 229 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 238 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -147,10 +147,12 @@ das heutige Org-Entity-Scoring hinaus können sollte.
   `EntityType` (Schema, Report, Dashboard-Filter). Artists werden über `ingest`/Research
   eingespielt (nicht über Seeds, damit der kanonische Lauf stabil bleibt). **Offen:**
   Artist-spezifische Scoring-Rubrik, Discovery von Artists.
-- **Event-Nachfragesignale:** RA-„going"-Zahlen, ausverkauft/Warteliste (Dice/Shotgun) als
-  belastbare Proxys für Dimension A.
-- **Cross-Plattform-Follower-/Streaming-Zeitreihen** je Entität (löst die offene
-  RA-Follower-Lücke; pro-Plattform-Verlauf statt nur Score).
+- **Event-Nachfragesignale:** → ✅ als `demand`-Objekt modelliert (`going_count`, `sold_out`,
+  `waitlist`); fließt als Bonus „Hohe Event-Nachfrage" ins Scoring ein, wenn vorhanden.
+  Live-Erhebung (RA „going"/Dice/Shotgun) braucht noch einen authentifizierten Collector.
+- **Cross-Plattform-Follower-Zeitreihen** → ✅ als `follower_history` (Plattform → datierte
+  Punkte) modelliert; `scoredclub.followers` berechnet Wachstum/Steigung je Plattform,
+  ausgewiesen in `GET /entities/{id}` (`follower_growth`). Streaming-Quellen offen.
 
 ### Analytics / Intelligence
 - **Booking-/Kollaborations-Graph** (Venue↔Artist↔Kollektiv) → ✅ Aggregation/Abfrage

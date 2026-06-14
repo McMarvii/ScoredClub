@@ -72,6 +72,8 @@ def test_get_entity_detail(client):
     assert detail["name"] == "Testclub"
     assert detail["score_history"] == [{"run_id": 1, "score": 88.0, "tier": "TOP-TIER"}]
     assert detail["profile"]["district"] == "Friedrichshain"
+    # Follower-growth view present (empty without follower history).
+    assert detail["follower_growth"] == {}
 
 
 def test_unknown_entity_404(client):

@@ -180,6 +180,17 @@ def merge_profiles(existing: EntityProfile, incoming: EntityProfile) -> EntityPr
     merged.displacement_signals = _union(
         existing.displacement_signals, incoming.displacement_signals
     )
+    # Event-demand: newer non-null wins; follower history merges per platform.
+    if incoming.demand is not None and (merged.demand is None or incoming_newer):
+        merged.demand = incoming.demand
+    follower_history = {k: list(v) for k, v in existing.follower_history.items()}
+    for platform, points in incoming.follower_history.items():
+        series = follower_history.setdefault(platform, [])
+        seen = {(p.date, p.followers) for p in series}
+        for point in points:
+            if (point.date, point.followers) not in seen:
+                series.append(point)
+    merged.follower_history = follower_history
     # Per-field provenance: incoming entries win when newer, else fill gaps.
     merged_provenance = dict(existing.provenance)
     for key, value in incoming.provenance.items():

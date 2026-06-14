@@ -265,6 +265,9 @@ def get_entity(entity_id: str, session: Session = Depends(db_session)) -> dict:
     if entity is None:
         raise HTTPException(status_code=404, detail=f"entity '{entity_id}' not found")
     history = repo.score_history(session, entity_id)
+    from scoredclub.followers import growth_to_dict, profile_follower_growth
+
+    profile = repo.profile_from_row(entity)
     return {
         **_entity_summary(entity),
         "profile": entity.profile,
@@ -272,6 +275,7 @@ def get_entity(entity_id: str, session: Session = Depends(db_session)) -> dict:
         "score_history": [
             {"run_id": s.run_id, "score": s.score, "tier": s.tier} for s in history
         ],
+        "follower_growth": growth_to_dict(profile_follower_growth(profile)),
     }
 
 

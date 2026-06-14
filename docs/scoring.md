@@ -133,6 +133,8 @@ Nur ausdrückliche „yes"-Werte zählen; `null`/unklar zählt 0.
 2. **Eigenes Label / Podcast** — `labels_podcasts.own_label` oder `podcast_series`.
 3. **Internationales Booking** — `networking.international_booking` oder
    `press.international_mentions`.
+4. **Hohe Event-Nachfrage** — `demand.sold_out`/`demand.waitlist` oder
+   `demand.going_count` ≥ 500 (Proxys aus RA „going"/Dice/Shotgun).
 
 ## Malus (−5 je Eintrag, Standard-Deckel −15)
 

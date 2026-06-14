@@ -118,7 +118,8 @@ curl "http://127.0.0.1:8000/entities?type=club&min_score=50"
 ```
 
 ### `GET /entities/{entity_id}`
-Vollständiges Profil + letzter Breakdown + Score-Historie.
+Vollständiges Profil + letzter Breakdown + Score-Historie + Follower-Wachstum je Plattform
+(aus `follower_history`, leer wenn keine Zeitreihe vorliegt).
 
 ```bash
 curl http://127.0.0.1:8000/entities/berghain
@@ -127,7 +128,8 @@ curl http://127.0.0.1:8000/entities/berghain
 { "entity_id": "berghain", "name": "Berghain", "...": "...",
   "profile": { "...": "vollständiges EntityProfile" },
   "latest_breakdown": { "total": 86.1, "tier": "TOP-TIER", "...": "..." },
-  "score_history": [ { "run_id": 1, "score": 86.1, "tier": "TOP-TIER" } ] }
+  "score_history": [ { "run_id": 1, "score": 86.1, "tier": "TOP-TIER" } ],
+  "follower_growth": { "instagram": { "start": 1000, "end": 1400, "delta": 400, "pct": 40.0, "slope": 200.0, "points": 2 } } }
 ```
 `404`, wenn die Entität nicht existiert.
 
