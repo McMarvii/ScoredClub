@@ -131,21 +131,18 @@ def execute_run(
                     session, profile, run_id=run.id, create_if_missing=False
                 )
 
-    # District-based geocoding: fill empty geo from the entity's district.
+    geocode = None
     if settings.run.geocode_districts:
-        from scoredclub.geocode import apply_geocoding
-
-        for entity in repo.all_entities(session):
-            profile = repo.profile_from_row(entity)
-            if apply_geocoding(profile):
-                entity.profile = json.loads(profile.model_dump_json())
-        session.flush()
+        from scoredclub.geocode import apply_geocoding as geocode
 
     seed_ids = seed_entity_ids()
     entities: list[Entity] = repo.all_entities(session)
     scored: list[ScoredEntity] = []
     for entity in entities:
         profile = repo.profile_from_row(entity)
+        # Fill empty geo from the district in the same pass (no scoring impact).
+        if geocode is not None and geocode(profile):
+            entity.profile = json.loads(profile.model_dump_json())
         breakdown = score_entity(profile, settings.scoring, today=run_date)
         repo.save_score(session, run, entity, breakdown)
         scored.append(

@@ -16,7 +16,7 @@ from scoredclub.db.models import (
     ScoreSnapshot,
     TrendSnapshot,
 )
-from scoredclub.normalize import find_match, merge_profiles, normalize_name
+from scoredclub.normalize import SEED_ALIASES, find_match, merge_profiles, normalize_name
 from scoredclub.schemas import EntityProfile, ScoreBreakdown
 
 
@@ -47,6 +47,28 @@ def _sync_aliases(session: Session, entity: Entity, profile: EntityProfile) -> N
             session.add(EntityAlias(entity_id=entity.entity_id, alias_normalized=alias))
 
 
+def _find_match_entity(session: Session, profile: EntityProfile) -> Entity | None:
+    """Cheap exact-match lookup via indexed columns (no full-profile parsing).
+
+    Mirrors the exact stages of :func:`scoredclub.normalize.find_match`
+    (entity_id → seed alias → alias table → normalized name). The expensive
+    fuzzy stage is left to the caller and only runs when this misses.
+    """
+    norm = normalize_name(profile.name)
+    entity = session.get(Entity, profile.entity_id)
+    if entity is not None:
+        return entity
+    target = SEED_ALIASES.get(norm)
+    if target:
+        entity = session.get(Entity, target)
+        if entity is not None:
+            return entity
+    alias = session.scalar(select(EntityAlias).where(EntityAlias.alias_normalized == norm))
+    if alias is not None:
+        return session.get(Entity, alias.entity_id)
+    return session.scalar(select(Entity).where(Entity.name_normalized == norm))
+
+
 def upsert_profile(
     session: Session,
     profile: EntityProfile,
@@ -59,16 +81,20 @@ def upsert_profile(
     profile is skipped and ``(None, False)`` is returned — used by enrichment
     collectors that must never introduce new entities.
     """
-    existing_profiles = [profile_from_row(e) for e in all_entities(session)]
-    match = find_match(profile, existing_profiles)
+    entity = _find_match_entity(session, profile)
+    if entity is None:
+        # Fuzzy fallback (needs corroboration data) only when no exact match —
+        # this is the only path that loads and parses all profiles.
+        existing_profiles = [profile_from_row(e) for e in all_entities(session)]
+        fuzzy = find_match(profile, existing_profiles)
+        if fuzzy is not None:
+            entity = session.get(Entity, fuzzy.entity_id)
 
-    if match is None and not create_if_missing:
+    if entity is None and not create_if_missing:
         return None, False
 
-    if match is not None:
-        entity = session.get(Entity, match.entity_id)
-        assert entity is not None
-        merged = merge_profiles(match, profile)
+    if entity is not None:
+        merged = merge_profiles(profile_from_row(entity), profile)
         entity.profile = _profile_to_json(merged)
         entity.name = merged.name
         entity.name_normalized = normalize_name(merged.name)
