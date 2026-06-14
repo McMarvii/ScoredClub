@@ -159,9 +159,10 @@ def render_entities_json(
 
     def _profile_dict(profile) -> dict:
         data = json.loads(profile.model_dump_json())
-        # Keep the output clean: omit provenance when no field carries any.
-        if not data.get("provenance"):
-            data.pop("provenance", None)
+        # Keep the output clean: omit optional structures when they are empty.
+        for optional in ("provenance", "lifecycle_events", "displacement_signals"):
+            if not data.get(optional):
+                data.pop(optional, None)
         return data
 
     return {

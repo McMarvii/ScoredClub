@@ -401,6 +401,14 @@ def booking_graph(
     return payload
 
 
+@app.get("/clubsterben")
+def clubsterben(session: Session = Depends(db_session)) -> dict:
+    """Cultural-ecosystem register: openings/closures, causes, at-risk venues."""
+    from scoredclub.clubsterben import build_register_from_db, register_to_dict
+
+    return register_to_dict(build_register_from_db(session))
+
+
 @app.get("/export.csv", response_class=PlainTextResponse)
 def export_csv_endpoint(session: Session = Depends(db_session)) -> PlainTextResponse:
     """All entities as CSV (summary + per-dimension points)."""

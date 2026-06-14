@@ -174,6 +174,19 @@ Kurzfrist-Forecast pro Entität, berechnet aus der Score-Historie. Siehe [Analyt
   "breakouts": [ { "entity_id": "oxi", "...": "..." } ] }
 ```
 
+### `GET /clubsterben`
+Kulturökosystem-Register: Eröffnungen/Schließungen, Ursachen, Jahresverlauf und gefährdete
+Venues aus den `lifecycle_events`/`displacement_signals`. Siehe [Clubsterben-Register](clubsterben.md).
+
+```json
+{ "openings": 3, "closures": 5, "net_change": -2,
+  "closures_by_cause": { "rent": 3, "redevelopment": 2 },
+  "by_year": { "2024": { "openings": 2, "closures": 1 } },
+  "at_risk": [ { "entity_id": "x", "name": "X", "status": "inactive",
+                 "displacement_signals": ["rent_increase"] } ],
+  "recent_events": [ { "entity_id": "x", "date": "2025-03-01", "event_type": "closure", "cause": "rent" } ] }
+```
+
 ### `GET /export.csv`
 Alle Entitäten als CSV (`text/csv`): Summary-Felder + gewichtete Punkte je Scoring-Dimension
 aus dem letzten Snapshot. Spaltenreihenfolge stabil, Dimensionsspalten alphabetisch angehängt.
