@@ -48,6 +48,17 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "stable_epsilon": 1.0,
     "movers_limit": 5
   },
+  "analytics": {
+    "history_window": 12,
+    "breakout_baseline_floor": 1.0,
+    "growth_z": 1.0,
+    "strong_z": 2.0,
+    "explosive_z": 3.0,
+    "forecast_epsilon": 0.5,
+    "elite_percentile": 90.0,
+    "established_percentile": 70.0,
+    "emerging_percentile": 40.0
+  },
   "llm": {
     "enabled": false,
     "model": "claude-opus-4-8",
@@ -110,6 +121,17 @@ Details der Wirkung: [Scoring-Modell](scoring.md) (inkl. Datenkonfidenz).
 | `movers_limit` | Anzahl gelisteter Auf-/Absteiger. |
 
 Details: [Trending](trending.md).
+
+### `analytics`
+| Schlüssel | Bedeutung |
+|-----------|-----------|
+| `history_window` | Läufe für Breakout/Forecast (0 = gesamte Historie). |
+| `breakout_baseline_floor` | Untergrenze der dynamischen Baseline (Punkte/Lauf). |
+| `growth_z` / `strong_z` / `explosive_z` | z-Schwellen der Breakout-Buckets. |
+| `forecast_epsilon` | Mindeststeigung für das „rising soon"-Flag. |
+| `elite_percentile` / `established_percentile` / `emerging_percentile` | Perzentil-Grenzen der Karrierephasen. |
+
+Details: [Analytics](analytics.md).
 
 ### `llm`
 Agentischer LLM-Research-Collector (optional, standardmäßig aus). Braucht

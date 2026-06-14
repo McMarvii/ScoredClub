@@ -118,6 +118,19 @@ def test_entity_trend(client):
     assert data["latest"]["direction"] == "new"
 
 
+def test_analytics_endpoint(client):
+    data = client.get("/analytics").json()
+    assert data["runs_considered"] == 1
+    ids = [e["entity_id"] for e in data["entities"]]
+    assert ids == ["testclub", "api-kollektiv"]  # ordered by score desc
+    top = data["entities"][0]
+    assert top["percentile"] == 100.0
+    assert top["career_phase"] == "elite"
+    # Single run -> not enough history to break out.
+    assert top["breakout"]["bucket"] == "insufficient_data"
+    assert data["breakouts"] == []
+
+
 def test_entity_trend_404(client):
     assert client.get("/entities/nope/trend").status_code == 404
 

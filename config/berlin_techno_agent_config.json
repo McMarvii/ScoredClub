@@ -54,6 +54,17 @@
     "stable_epsilon": 1.0,
     "movers_limit": 5
   },
+  "analytics": {
+    "history_window": 12,
+    "breakout_baseline_floor": 1.0,
+    "growth_z": 1.0,
+    "strong_z": 2.0,
+    "explosive_z": 3.0,
+    "forecast_epsilon": 0.5,
+    "elite_percentile": 90.0,
+    "established_percentile": 70.0,
+    "emerging_percentile": 40.0
+  },
   "llm": {
     "enabled": false,
     "model": "claude-opus-4-8",

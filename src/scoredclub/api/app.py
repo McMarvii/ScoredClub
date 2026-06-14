@@ -351,6 +351,40 @@ def trending_movers(
     return {"run_id": run.id, "risers": [decorate(t) for t in risers], "fallers": [decorate(t) for t in fallers]}
 
 
+def _intel_dict(i, name: str) -> dict:
+    return {
+        "entity_id": i.entity_id,
+        "name": name,
+        "current_score": i.current_score,
+        "percentile": i.percentile,
+        "career_phase": i.career_phase,
+        "breakout": {"bucket": i.breakout.bucket, "slope": i.breakout.slope, "z_score": i.breakout.z_score},
+        "forecast": {
+            "projected_score": i.forecast.projected_score,
+            "slope": i.forecast.slope,
+            "rising_soon": i.forecast.rising_soon,
+        },
+    }
+
+
+@app.get("/analytics")
+def analytics(session: Session = Depends(db_session)) -> dict:
+    """Breakout detection, career phase and short-term forecast per entity."""
+    from scoredclub.analytics import BUCKET_INSUFFICIENT, BUCKET_NONE, compute_intelligence
+
+    intel, run_ids = compute_intelligence(session, _settings)
+    if not intel:
+        return {"runs_considered": 0, "entities": [], "breakouts": []}
+    names = {e.entity_id: e.name for e in repo.all_entities(session)}
+    rows = sorted(intel.values(), key=lambda i: i.current_score, reverse=True)
+    entities = [_intel_dict(i, names.get(i.entity_id, i.entity_id)) for i in rows]
+    breakouts = [
+        e for e, i in zip(entities, rows)
+        if i.breakout.bucket not in (BUCKET_NONE, BUCKET_INSUFFICIENT)
+    ]
+    return {"runs_considered": len(run_ids), "entities": entities, "breakouts": breakouts}
+
+
 @app.get("/runs/latest/report", response_class=PlainTextResponse)
 def latest_report(session: Session = Depends(db_session)) -> str:
     run = session.scalar(

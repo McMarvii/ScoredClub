@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 152 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 166 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -156,11 +156,14 @@ das heutige Org-Entity-Scoring hinaus können sollte.
   Dimension zum echten Graphen (siehe P2 §9). 🟡 **Keim gelegt:** der Bandsintown-Collector
   schreibt die von einem Artist bespielten Venues in `networking.collaborations` (Kanten
   Artist→Venue); offen sind die Graph-Aggregation/-Abfrage und ein Graph-View.
-- **Breakout-/Anomalie-Erkennung** auf dem Score-Momentum (Slope-Buckets
-  Growth/Strong/Explosive + dynamische Baseline statt fixer Schwellen).
+- **Breakout-/Anomalie-Erkennung** auf dem Score-Momentum → ✅ umgesetzt. Slope-Buckets
+  Growth/Strong/Explosive mit **dynamischer Baseline** (Volatilität der Entität) statt fixer
+  Schwellen. `scoredclub.analytics`, CLI `analytics`, API `GET /analytics`. Siehe [Analytics](analytics.md).
 - **Echte NLP-Sentiment-Analyse** auf Presse/Reddit (ersetzt den manuellen Hint; P2 §9).
-- **Perzentil-/Karrierephasen-Klassifikation** (Developing → Established) über den Tiers.
-- **Kurzfrist-Forecast** der Score-Trajektorie für „steigt bald"-Flags.
+- **Perzentil-/Karrierephasen-Klassifikation** (Developing → Elite) → ✅ umgesetzt
+  (Perzentilrang der Kohorte → Phase). Siehe [Analytics](analytics.md).
+- **Kurzfrist-Forecast** der Score-Trajektorie für „steigt bald"-Flags → ✅ umgesetzt
+  (Kleinste-Quadrate-Steigung + `rising_soon`). Siehe [Analytics](analytics.md).
 
 ### Produkt / UX
 - **Digests/Alerts über Webhooks hinaus:** E-Mail/RSS/Slack, gestuft (sofortige kritische

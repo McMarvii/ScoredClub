@@ -302,6 +302,45 @@ def trending(
 
 
 @app.command()
+def analytics(
+    breakouts_only: bool = typer.Option(False, "--breakouts-only", help="Only entities flagged as a breakout"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Breakout detection, career phase and short-term forecast over the history."""
+    from scoredclub.analytics import BUCKET_NONE, BUCKET_INSUFFICIENT, compute_intelligence
+
+    _BUCKET = {"growth": "↑ growth", "strong": "⇈ strong", "explosive": "★ explosive"}
+    settings = _settings(config)
+    init_db(settings.database_url)
+    with get_session(settings.database_url) as session:
+        intel, run_ids = compute_intelligence(session, settings)
+        if not intel:
+            typer.echo("No score history yet. Run 'scoredclub run' first.")
+            return
+        names = {e.entity_id: e.name for e in repo.all_entities(session)}
+        rows = sorted(intel.values(), key=lambda i: i.current_score, reverse=True)
+        breakouts = [i for i in rows if i.breakout.bucket not in (BUCKET_NONE, BUCKET_INSUFFICIENT)]
+        if breakouts:
+            typer.secho(f"Breakouts ({len(breakouts)}):", fg=typer.colors.GREEN)
+            for i in breakouts:
+                typer.echo(
+                    f"  {_BUCKET.get(i.breakout.bucket, i.breakout.bucket):12s} "
+                    f"{names.get(i.entity_id, i.entity_id):24s} "
+                    f"slope {i.breakout.slope:+.1f}/run  z={i.breakout.z_score:.1f}"
+                )
+        if breakouts_only:
+            return
+        typer.echo(f"\nIntelligence (über {len(run_ids)} Läufe):")
+        for i in rows:
+            soon = " ⤴ rising-soon" if i.forecast.rising_soon else ""
+            typer.echo(
+                f"  {names.get(i.entity_id, i.entity_id):24s} {i.current_score:6.1f} "
+                f"P{i.percentile:5.1f} {i.career_phase:12s} "
+                f"→ {i.forecast.projected_score:6.1f}{soon}"
+            )
+
+
+@app.command()
 def compare(
     config_b: Path = typer.Option(..., "--config-b", help="Variant config to compare against"),
     config_a: Path = typer.Option(None, "--config-a", help="Baseline config (default: active)"),
