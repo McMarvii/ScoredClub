@@ -50,6 +50,15 @@
         <option value="score-asc">Score ↑</option>
         <option value="name-asc">Name A–Z</option>
       </select>
+      <label class="watch-toggle"><input type="checkbox" id="filter-watchlist" /> ★ Nur Watchlist</label>
+    </section>
+
+    <section class="saved-filters" aria-label="Gespeicherte Filter">
+      <select id="saved-filter-select" aria-label="Gespeicherten Filter laden">
+        <option value="">Gespeicherte Filter…</option>
+      </select>
+      <button type="button" id="saved-filter-save">Filter speichern</button>
+      <button type="button" id="saved-filter-delete" hidden>Löschen</button>
     </section>
 
     <div class="view-toggle" role="group" aria-label="Ansicht">

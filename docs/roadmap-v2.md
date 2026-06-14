@@ -177,8 +177,11 @@ das heutige Org-Entity-Scoring hinaus können sollte.
   `scoredclub.feeds`) plus **Slack-** und **E-Mail-Digest-Sender** (`deliver_slack`/
   `deliver_email`, beide off by default, fehlertolerant, mit gemocktem Client/SMTP getestet).
   **Offen:** gestufte Wochen-Digests (sofort-kritisch vs. wöchentlich).
-- **Watchlists + gespeicherte Filter** (nach Bezirk/Typ/Tier) als beobachtete Ansichten.
-- **Event-Kalender + Lineup-Ansicht** im Dashboard; pro Entität eine Gigography-Historie.
+- **Watchlists + gespeicherte Filter** → ✅ umgesetzt (★-Watchlist + benannte gespeicherte
+  Filter im Dashboard, `localStorage`). Siehe [Dashboard](frontend.md).
+- **Gigography pro Entität** → ✅ im Detail-Dialog (gespielte Venues bei Artists / gebuchte
+  DJs bei Orgs). **Offen:** dedizierter Event-Kalender (braucht pro-Event-Daten mit Datum,
+  bisher nur Zähler/letztes Event gespeichert).
 - **CSV-/BI-Export** → ✅ umgesetzt (`scoredclub export`, `GET /export.csv`: Summary +
   Dimensionspunkte je Entität). **Offen:** einbettbare Score-/Trend-Widgets für Partner.
 

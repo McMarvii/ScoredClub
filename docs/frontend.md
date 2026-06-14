@@ -13,10 +13,15 @@ hostbar.
   (genähert über statische Bezirks-Zentren, kein externer Geocoding-Dienst), Farbe = Tier,
   Klick → Detail. Filter wirken auch auf die Karte.
 - Suche (Name/Bezirk), Filter nach Typ und Tier, Sortierung (Score/Name).
+- **Watchlist:** ★-Stern je Entität (Karte + Dialog), persistiert in `localStorage`; Filter
+  „Nur Watchlist" blendet auf die beobachteten Entitäten ein.
+- **Gespeicherte Filter:** aktuelle Filter-/Sortier-/Watchlist-Auswahl benennen, speichern
+  und später wieder laden oder löschen (`localStorage`).
 - Entitäten-Karten mit Score, Tier-/Status-/Konfidenz-/Trend-Badges, IG-Followern und
   Mini-Balken der Dimensionen A–G.
 - Detail-Dialog pro Entität: **Score-Verlauf als Sparkline** (aus `trend.sparkline`),
-  Score-Breakdown (A–G mit Balken), Bonus/Malus, Datenkonfidenz, Presse-Highlights,
+  Score-Breakdown (A–G mit Balken), Bonus/Malus, Datenkonfidenz, **Gigography/Bookings**
+  (gespielte Venues bei Artists bzw. gebuchte DJs bei Orgs), Presse-Highlights,
   Quellen-Links, Notizen.
 
 ## Dateien

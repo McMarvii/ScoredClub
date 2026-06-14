@@ -26,6 +26,62 @@ const DIM_ORDER = Object.keys(DIM_LABELS);
 
 const state = { all: [], filtered: [] };
 
+// ---- watchlist + saved filters (localStorage, best-effort) -------------------
+
+const WATCH_KEY = "scoredclub.watchlist";
+const SAVED_KEY = "scoredclub.savedFilters";
+
+function lsGet(key, fallback) {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+function lsSet(key, value) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* storage unavailable (private mode/quota) — degrade silently */
+  }
+}
+
+function watchSet() {
+  return new Set(Array.isArray(lsGet(WATCH_KEY, [])) ? lsGet(WATCH_KEY, []) : []);
+}
+function isWatched(e) {
+  return e && e.entity_id != null && watchSet().has(e.entity_id);
+}
+function toggleWatch(e) {
+  if (!e || e.entity_id == null) return;
+  const set = watchSet();
+  set.has(e.entity_id) ? set.delete(e.entity_id) : set.add(e.entity_id);
+  lsSet(WATCH_KEY, [...set]);
+}
+
+// A ★ toggle usable inside the (button) card — role=button + stopPropagation.
+function watchStar(e, onChange) {
+  const star = el("span", {
+    class: `watch-star${isWatched(e) ? " on" : ""}`,
+    text: isWatched(e) ? "★" : "☆",
+    attrs: { role: "button", tabindex: "0", title: "Watchlist", "aria-label": "Watchlist" },
+  });
+  const flip = (ev) => {
+    ev.stopPropagation();
+    ev.preventDefault();
+    toggleWatch(e);
+    star.textContent = isWatched(e) ? "★" : "☆";
+    star.classList.toggle("on", isWatched(e));
+    if (onChange) onChange();
+  };
+  star.addEventListener("click", flip);
+  star.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter" || ev.key === " ") flip(ev);
+  });
+  return star;
+}
+
 // ---- small safe DOM helpers --------------------------------------------------
 
 function el(tag, opts = {}, children = []) {
@@ -209,6 +265,7 @@ function entityCard(e) {
   ]);
 
   const badges = el("div", { class: "badges" }, [
+    watchStar(e, () => { if (document.getElementById("filter-watchlist").checked) applyFilters(); }),
     el("span", { class: `badge ${tierClass(tierOf(e))}`, text: tierOf(e) }),
     el("span", { class: "badge type", text: e.status || "unknown" }),
     igFollowers ? el("span", { class: "badge type", text: `IG ${igFollowers}` }) : null,
@@ -326,6 +383,7 @@ function openModal(e) {
     el("h2", { text: e.name, attrs: { id: "modal-title" } }),
     el("div", { class: "modal-score", text: `${Math.round(scoreOf(e))}/100` }),
     el("div", { class: "badges" }, [
+      watchStar(e),
       el("span", { class: `badge ${tierClass(tierOf(e))}`, text: tierOf(e) }),
       el("span", { class: "badge type", text: TYPE_LABELS[e.type] || e.type }),
       el("span", { class: "badge type", text: e.status || "unknown" }),
@@ -365,8 +423,14 @@ function openModal(e) {
   const spark = e.trend && sparklineSvg(e.trend.sparkline);
   const sparkBlock = spark ? el("div", {}, [el("h3", { text: "Score-Verlauf" }), spark]) : null;
 
+  // Gigography / Bookings: for an artist the venues played, else the booked DJs.
+  const net = e.networking || {};
+  const gigTitle = e.type === "artist" ? "Gespielte Venues" : "Gebuchte DJs/Artists";
+  const gigItems = e.type === "artist" ? net.collaborations : net.booked_djs;
+
   const sections = [
     sparkBlock,
+    listSection(gigTitle, gigItems, (s) => String(s)),
     listSection("Besonderheiten", score.bonus_items, (s) => String(s)),
     listSection("Kritische Punkte", score.malus_items, (s) => String(s)),
     listSection("Presse-Highlights", e.press && e.press.major_features, (s) => String(s)),
@@ -390,10 +454,13 @@ function applyFilters() {
   const type = document.getElementById("filter-type").value;
   const tier = document.getElementById("filter-tier").value;
   const sort = document.getElementById("sort").value;
+  const watchOnly = document.getElementById("filter-watchlist").checked;
+  const watched = watchSet();
 
   let rows = state.all.filter((e) => {
     if (type && e.type !== type) return false;
     if (tier && tierOf(e) !== tier) return false;
+    if (watchOnly && !watched.has(e.entity_id)) return false;
     if (q) {
       const hay = `${e.name} ${e.district || ""}`.toLowerCase();
       if (!hay.includes(q)) return false;
@@ -410,6 +477,70 @@ function applyFilters() {
   state.filtered = rows;
   renderGrid();
   if (currentView() === "map") renderMap();
+}
+
+// ---- saved filters -----------------------------------------------------------
+
+function savedFilters() {
+  const data = lsGet(SAVED_KEY, {});
+  return data && typeof data === "object" && !Array.isArray(data) ? data : {};
+}
+
+function currentFilterState() {
+  return {
+    q: document.getElementById("search").value,
+    type: document.getElementById("filter-type").value,
+    tier: document.getElementById("filter-tier").value,
+    sort: document.getElementById("sort").value,
+    watchlist: document.getElementById("filter-watchlist").checked,
+  };
+}
+
+function refreshSavedFilterSelect(selected) {
+  const select = document.getElementById("saved-filter-select");
+  const names = Object.keys(savedFilters()).sort((a, b) => a.localeCompare(b, "de"));
+  select.replaceChildren(
+    el("option", { text: "Gespeicherte Filter…", attrs: { value: "" } }),
+    ...names.map((n) => el("option", { text: n, attrs: { value: n } })),
+  );
+  if (selected && names.includes(selected)) select.value = selected;
+  document.getElementById("saved-filter-delete").hidden = !select.value;
+}
+
+function applySavedFilter(name) {
+  const f = savedFilters()[name];
+  if (!f) return;
+  document.getElementById("search").value = f.q || "";
+  document.getElementById("filter-type").value = f.type || "";
+  document.getElementById("filter-tier").value = f.tier || "";
+  document.getElementById("sort").value = f.sort || "score-desc";
+  document.getElementById("filter-watchlist").checked = !!f.watchlist;
+  applyFilters();
+}
+
+function wireSavedFilters() {
+  const select = document.getElementById("saved-filter-select");
+  select.addEventListener("change", () => {
+    document.getElementById("saved-filter-delete").hidden = !select.value;
+    if (select.value) applySavedFilter(select.value);
+  });
+  document.getElementById("saved-filter-save").addEventListener("click", () => {
+    const name = (window.prompt("Filter speichern als:") || "").trim();
+    if (!name) return;
+    const all = savedFilters();
+    all[name] = currentFilterState();
+    lsSet(SAVED_KEY, all);
+    refreshSavedFilterSelect(name);
+  });
+  document.getElementById("saved-filter-delete").addEventListener("click", () => {
+    const name = select.value;
+    if (!name) return;
+    const all = savedFilters();
+    delete all[name];
+    lsSet(SAVED_KEY, all);
+    refreshSavedFilterSelect("");
+  });
+  refreshSavedFilterSelect("");
 }
 
 // ---- bootstrap ---------------------------------------------------------------
@@ -432,10 +563,11 @@ async function load() {
 }
 
 function wire() {
-  for (const id of ["search", "filter-type", "filter-tier", "sort"]) {
+  for (const id of ["search", "filter-type", "filter-tier", "sort", "filter-watchlist"]) {
     const ev = id === "search" ? "input" : "change";
     document.getElementById(id).addEventListener(ev, applyFilters);
   }
+  wireSavedFilters();
   document.getElementById("view-list").addEventListener("click", () => setView("list"));
   document.getElementById("view-map").addEventListener("click", () => setView("map"));
   document.getElementById("modal-close").addEventListener("click", closeModal);
