@@ -35,6 +35,8 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "reddit_search_url": "https://www.reddit.com/search.json",
     "reddit_enabled": true,
     "reddit_max_threads": 5,
+    "bandsintown_url": "https://rest.bandsintown.com/artists",
+    "bandsintown_max_artists": 25,
     "extra_sources": []
   },
   "run": {
@@ -89,6 +91,8 @@ Details der Wirkung: [Scoring-Modell](scoring.md) (inkl. Datenkonfidenz).
 | `reddit_oauth_token_url` / `reddit_oauth_search_url` | Reddit-OAuth-Endpunkte (genutzt, wenn `REDDIT_CLIENT_ID`/`REDDIT_CLIENT_SECRET` gesetzt sind). |
 | `reddit_enabled` | Reddit-Collector an/aus. |
 | `reddit_max_threads` | Max. Threads pro Entität. |
+| `bandsintown_url` | Basis-URL der Bandsintown-Artists-API (Enrichment für `artist`-Entitäten). |
+| `bandsintown_max_artists` | Max. Artists pro Lauf, die über Bandsintown angereichert werden. |
 | `extra_sources` | Reserviert für zusätzliche Quellen. |
 
 ### `run`
@@ -131,6 +135,7 @@ Details: [Datenerhebung](data-collection.md).
 | `SCOREDCLUB_API_KEY` | — | Aktiviert die Schreib-/Trigger-Endpunkte der API (`X-API-Key`). Ohne Key sind sie deaktiviert. |
 | `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET` | — | Reddit-OAuth-App; aktiviert den authentifizierten Reddit-Collector (Dimension D). |
 | `REDDIT_USER_AGENT` | Default-UA | Eindeutiger Reddit-User-Agent (von Reddit verlangt). |
+| `BANDSINTOWN_APP_ID` | — | Aktiviert den Bandsintown-Collector (Event-/Booking-Daten für `artist`-Entitäten). |
 | `ANTHROPIC_API_KEY` | — | Für den agentischen LLM-Research-Collector (`llm.enabled`). |
 
 > **Sicherheitshinweis:** Geheimnisse (Webhook-URLs, künftige API-Tokens) gehören in

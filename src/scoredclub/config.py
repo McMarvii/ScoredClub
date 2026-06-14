@@ -84,6 +84,11 @@ class SourcesConfig(_Base):
     reddit_oauth_search_url: str = "https://oauth.reddit.com/search"
     reddit_enabled: bool = True
     reddit_max_threads: int = 5
+    # Bandsintown is the sanctioned event source for artist-type entities.
+    # The collector is a no-op unless BANDSINTOWN_APP_ID is set in the
+    # environment and at least one artist entity is present.
+    bandsintown_url: str = "https://rest.bandsintown.com/artists"
+    bandsintown_max_artists: int = 25
     extra_sources: list[str] = Field(default_factory=list)
 
 

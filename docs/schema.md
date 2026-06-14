@@ -12,7 +12,7 @@ Scoring-Rubriken toleriert.
 | `entity_id` | string | Stabiler Slug. Wird aus `name` abgeleitet, wenn leer (z. B. „://about blank" → `about-blank`). |
 | `name` | string | **Pflicht.** Anzeigename. |
 | `aliases` | string[] | Alternative Namen (für Dedup). |
-| `type` | enum | **Pflicht.** `club | collective | label | series` |
+| `type` | enum | **Pflicht.** `club | collective | label | series | artist` |
 | `status` | enum | **Pflicht.** `active | emerging | inactive | closed | unknown` |
 | `address` | string\|null | Adresse / Hauptort. |
 | `district` | string\|null | Berliner Bezirk. |
