@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 211 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 221 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -181,8 +181,11 @@ das heutige Org-Entity-Scoring hinaus können sollte.
   Dimensionspunkte je Entität). **Offen:** einbettbare Score-/Trend-Widgets für Partner.
 
 ### Ops / Trust
-- **Per-Feld-Provenance** (Quelle + Konfidenz je Feld, nicht nur je Entität), GDPR-/
-  Retention-Policy für Community-Daten, robots.txt-/ToS-Konformitätsnachweis je Collector.
+- **Per-Feld-Provenance** (Quelle + Konfidenz je Feld) → ✅ als optionale `provenance`-Map
+  im Schema umgesetzt (Merge: neuere Quelle gewinnt je Feldpfad). **GDPR-Retention** → ✅
+  `scoredclub.retention` + CLI `retention` (redigiert veraltete Community-/Personendaten).
+  **ToS-/robots-Konformität** → ✅ Matrix je Collector dokumentiert. Siehe
+  [Compliance](compliance.md).
 
 ### Differenzierter Niche: Kulturökosystem-Monitoring (Berlin-spezifisch, weitgehend greenfield)
 - **Clubsterben-Register:** Eröffnungen/Schließungen als Ereignisse mit Ursachen-Taxonomie
@@ -210,7 +213,7 @@ das heutige Org-Entity-Scoring hinaus können sollte.
 - Alerting über Webhooks hinaus: Digest-Mails, RSS der Movers (siehe P3).
 - Watchlists / gespeicherte Filter als beobachtete Ansichten (siehe P3).
 - Anomalie-/Breakout-Erkennung statt fixer Alert-Schwellen (siehe P3).
-- Per-Feld-Provenance + GDPR-/Retention-Policy für Community-Daten (siehe P3).
+- Per-Feld-Provenance + GDPR-/Retention-Policy für Community-Daten → ✅ (siehe [Compliance](compliance.md)).
 - Observability: strukturiertes Logging, Run-Metriken, Error-Tracking.
 - Collector-Tests gegen aufgezeichnete Fixtures (VCR-Stil), damit Layout-Änderungen
   externer Seiten im CI auffallen.

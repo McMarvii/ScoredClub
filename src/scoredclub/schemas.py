@@ -155,6 +155,20 @@ class SourceRef(_Base):
     note: str | None = None
 
 
+class FieldProvenance(_Base):
+    """Where a single field's value came from, and how trustworthy it is.
+
+    Keyed in :attr:`EntityProfile.provenance` by a dotted field path
+    (e.g. ``"events.ra_followers"``). Optional throughout — entities without
+    provenance simply carry an empty map.
+    """
+
+    source: str  # URL or source name
+    confidence: float | None = None  # 0..100
+    accessed_at: date | None = None
+    note: str | None = None
+
+
 class CulturalRecognition(_Base):
     clubcommission_member: bool | None = None
     unesco_mention: bool | None = None
@@ -195,6 +209,8 @@ class EntityProfile(_Base):
     cultural_recognition: CulturalRecognition = Field(default_factory=CulturalRecognition)
     incidents: list[Incident] = Field(default_factory=list)
     sources: list[SourceRef] = Field(default_factory=list)
+    # Per-field provenance: dotted field path -> source/confidence. Optional.
+    provenance: dict[str, FieldProvenance] = Field(default_factory=dict)
     notes: str | None = None
     last_verification: datetime | None = None
 

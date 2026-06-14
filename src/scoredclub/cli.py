@@ -340,6 +340,36 @@ def analytics(
             )
 
 
+@app.command()
+def retention(
+    apply: bool = typer.Option(False, "--apply", help="Write changes (default: dry-run)"),
+    days: int = typer.Option(None, help="Override retention window in days"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Redact stale community/personal data (GDPR retention)."""
+    import json as _json
+
+    from scoredclub.retention import apply_retention
+
+    settings = _settings(config)
+    init_db(settings.database_url)
+    window = days if days is not None else settings.retention.community_days
+    total = 0
+    with get_session(settings.database_url) as session:
+        for entity in repo.all_entities(session):
+            profile = repo.profile_from_row(entity)
+            redacted = apply_retention(profile, retention_days=window)
+            if redacted:
+                total += 1
+                typer.echo(f"{entity.entity_id}: {', '.join(redacted)}")
+                if apply:
+                    entity.profile = _json.loads(profile.model_dump_json())
+        if apply:
+            session.commit()
+    action = "redigiert" if apply else "betroffen (dry-run)"
+    typer.echo(f"{total} Entitäten {action} (Fenster: {window} Tage)")
+
+
 @app.command("export")
 def export_cmd(
     output: Path = typer.Option(None, "--output", "-o", help="Write CSV to a file (default: stdout)"),

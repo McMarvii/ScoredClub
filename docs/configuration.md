@@ -62,6 +62,10 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "stable_epsilon": 1.0,
     "movers_limit": 5
   },
+  "retention": {
+    "enabled": false,
+    "community_days": 365
+  },
   "analytics": {
     "history_window": 12,
     "breakout_baseline_floor": 1.0,
@@ -150,6 +154,14 @@ Details: [Trending](trending.md).
 | `elite_percentile` / `established_percentile` / `emerging_percentile` | Perzentil-Grenzen der Karrierephasen. |
 
 Details: [Analytics](analytics.md).
+
+### `retention`
+| Schlüssel | Bedeutung |
+|-----------|-----------|
+| `enabled` | GDPR-Retention aktiv (informativ; angewandt via `scoredclub retention`). |
+| `community_days` | Aufbewahrungsfenster für Community-/Personendaten (Tage). |
+
+Details: [Compliance](compliance.md).
 
 ### `llm`
 Agentischer LLM-Research-Collector (optional, standardmäßig aus). Braucht

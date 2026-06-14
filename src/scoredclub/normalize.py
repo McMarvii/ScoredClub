@@ -176,6 +176,12 @@ def merge_profiles(existing: EntityProfile, incoming: EntityProfile) -> EntityPr
     merged.aliases = _union(existing.aliases, [incoming.name, *incoming.aliases])
     merged.incidents = _union(existing.incidents, incoming.incidents)
     merged.sources = _union(existing.sources, incoming.sources)
+    # Per-field provenance: incoming entries win when newer, else fill gaps.
+    merged_provenance = dict(existing.provenance)
+    for key, value in incoming.provenance.items():
+        if incoming_newer or key not in merged_provenance:
+            merged_provenance[key] = value
+    merged.provenance = merged_provenance
     if incoming.last_verification and (
         existing.last_verification is None
         or incoming.last_verification > existing.last_verification
