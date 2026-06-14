@@ -42,6 +42,7 @@
     "reddit_max_threads": 5,
     "bandsintown_url": "https://rest.bandsintown.com/artists",
     "bandsintown_max_artists": 25,
+    "sentiment_enabled": false,
     "extra_sources": []
   },
   "run": {

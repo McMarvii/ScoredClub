@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 174 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 186 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -160,7 +160,10 @@ das heutige Org-Entity-Scoring hinaus können sollte.
 - **Breakout-/Anomalie-Erkennung** auf dem Score-Momentum → ✅ umgesetzt. Slope-Buckets
   Growth/Strong/Explosive mit **dynamischer Baseline** (Volatilität der Entität) statt fixer
   Schwellen. `scoredclub.analytics`, CLI `analytics`, API `GET /analytics`. Siehe [Analytics](analytics.md).
-- **Echte NLP-Sentiment-Analyse** auf Presse/Reddit (ersetzt den manuellen Hint; P2 §9).
+- **NLP-Sentiment-Analyse** auf Reddit/Notizen → ✅ umgesetzt (deterministische
+  Lexikon-Analyse, DE+EN, Negation/Verstärker; `SentimentCollector`, off by default, füllt
+  nur unbekannte Hints). Eine ML-/Transformer-Variante bliebe optionaler Ausbau. Siehe
+  [Sentiment](sentiment.md).
 - **Perzentil-/Karrierephasen-Klassifikation** (Developing → Elite) → ✅ umgesetzt
   (Perzentilrang der Kohorte → Phase). Siehe [Analytics](analytics.md).
 - **Kurzfrist-Forecast** der Score-Trajektorie für „steigt bald"-Flags → ✅ umgesetzt

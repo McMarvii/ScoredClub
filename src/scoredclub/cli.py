@@ -341,6 +341,43 @@ def analytics(
 
 
 @app.command()
+def sentiment(
+    entity_id: str = typer.Argument(None, help="Analyze one entity (default: all with signal)"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Lexicon sentiment over an entity's community text (Reddit/notes), no write."""
+    from scoredclub.sentiment import analyze_texts, texts_for_profile
+
+    settings = _settings(config)
+    init_db(settings.database_url)
+    with get_session(settings.database_url) as session:
+        if entity_id:
+            entity = repo.get_entity(session, entity_id)
+            if entity is None:
+                typer.secho(f"Entity '{entity_id}' not found", fg=typer.colors.RED)
+                raise typer.Exit(code=1)
+            entities = [entity]
+        else:
+            entities = repo.all_entities(session)
+        shown = 0
+        for entity in entities:
+            profile = repo.profile_from_row(entity)
+            texts = texts_for_profile(profile)
+            if not texts:
+                continue
+            res = analyze_texts(texts)
+            shown += 1
+            current = profile.community.community_sentiment_hint.value
+            typer.echo(
+                f"{entity.name:28s} {res.hint.value:9s} "
+                f"polarity {res.polarity:+.2f} (+{res.positive_hits:.1f}/-{res.negative_hits:.1f}, "
+                f"{res.samples} Texte)  [aktuell: {current}]"
+            )
+        if not shown:
+            typer.echo("Keine analysierbaren Texte (Reddit-Threads/Notizen).")
+
+
+@app.command()
 def graph(
     export: Path = typer.Option(None, "--export", help="Write the full graph (nodes/edges) as JSON"),
     top: int = typer.Option(10, help="How many entries per ranking"),

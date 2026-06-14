@@ -4,6 +4,7 @@ from scoredclub.collectors.clubcommission import ClubcommissionCollector
 from scoredclub.collectors.llm_research import LLMResearchCollector
 from scoredclub.collectors.reddit import RedditCollector
 from scoredclub.collectors.resident_advisor import ResidentAdvisorCollector
+from scoredclub.collectors.sentiment import SentimentCollector
 
 # Discovery collectors may introduce new entities (upserted, create allowed).
 DISCOVERY_COLLECTORS = [ClubcommissionCollector, ResidentAdvisorCollector]
@@ -12,8 +13,14 @@ DISCOVERY_COLLECTORS = [ClubcommissionCollector, ResidentAdvisorCollector]
 # receive the current entity list and return partial profiles matched by name.
 # LLMResearchCollector is a no-op unless llm.enabled is set in the config.
 # BandsintownCollector is a no-op unless BANDSINTOWN_APP_ID is set and artist
-# entities are present.
-ENRICHMENT_COLLECTORS = [LLMResearchCollector, RedditCollector, BandsintownCollector]
+# entities are present. SentimentCollector runs after Reddit (so it sees the
+# freshly attached threads) and is a no-op unless sources.sentiment_enabled.
+ENRICHMENT_COLLECTORS = [
+    LLMResearchCollector,
+    RedditCollector,
+    BandsintownCollector,
+    SentimentCollector,
+]
 
 # Backwards-compatible alias.
 NETWORK_COLLECTORS = DISCOVERY_COLLECTORS
@@ -25,6 +32,7 @@ __all__ = [
     "RedditCollector",
     "LLMResearchCollector",
     "BandsintownCollector",
+    "SentimentCollector",
     "DISCOVERY_COLLECTORS",
     "ENRICHMENT_COLLECTORS",
     "NETWORK_COLLECTORS",
