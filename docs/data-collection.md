@@ -10,13 +10,14 @@ Parse-Fehler werden zu Warnungen, ein Lauf wird nie abgebrochen.
 LLM-Research (research.json)  ──┐
 Clubcommission-Collector        ├─► Dedup/Merge ─► DB ─► Scoring ─► Reports
 Resident-Advisor-Collector      │
-Reddit-Collector (Enrichment) ──┘
+Reddit-Collector (Enrichment)   │
+Bandsintown-Collector (Artists) ┘
 ```
 
 Zwei Kategorien (siehe `src/scoredclub/collectors/__init__.py`):
 
 - **Discovery-Collector** dürfen neue Entitäten anlegen: `ClubcommissionCollector`, `ResidentAdvisorCollector`.
-- **Enrichment-Collector** reichern nur bestehende Entitäten an (legen keine neuen an): `LLMResearchCollector`, `RedditCollector`.
+- **Enrichment-Collector** reichern nur bestehende Entitäten an (legen keine neuen an): `LLMResearchCollector`, `RedditCollector`, `BandsintownCollector`.
 
 Die Pipeline führt erst Discovery, dann Enrichment aus.
 
@@ -108,6 +109,36 @@ scoredclub run        # Reddit-Collector nutzt automatisch OAuth
 > Erster Teil von **P0.2** der [Roadmap v2](roadmap-v2.md). RA-Follower/Events und Ticketing
 > brauchen einen authentifizierten Zugang bzw. einen Scraping-Dienst und bleiben vorerst
 > best effort (siehe Roadmap).
+
+## 5. Bandsintown-Collector (Enrichment) — für DJ/Artist-Entitäten
+
+Resident Advisor hat keine sanktionierte öffentliche API (Scraping ist ToS-riskant), daher
+kommt das Booking-Signal für DJs/Artists aus der offiziellen **Bandsintown-REST-API**. Für
+jede Entität vom Typ `artist` holt der Collector die Events und reichert an:
+
+- Event-Zahlen in den letzten 3/6 Monaten (`events.events_last_3_months/6_months`) → **Dimension A**,
+- das jüngste vergangene Event als `last_event_date` (Freshness/Kontinuität),
+- die bespielten Venues als `networking.collaborations` — der Keim eines **Booking-Graphen**
+  (welche Clubs ein Artist tatsächlich bespielt).
+
+**Setup:** Eine Bandsintown-`app_id` unter
+<https://www.artists.bandsintown.com/support/api-installation> registrieren und als
+`BANDSINTOWN_APP_ID` ins Environment setzen.
+
+```bash
+export BANDSINTOWN_APP_ID=...
+scoredclub run        # reichert vorhandene artist-Entitäten an
+```
+
+- **No-op ohne `BANDSINTOWN_APP_ID`** oder ohne `artist`-Entitäten — der kanonische Lauf
+  enthält keine Artists, der Collector bleibt dort still.
+- Konfigurierbar: `sources.bandsintown_url`, `sources.bandsintown_max_artists`.
+- Fehlertolerant: wiederholte Abruffehler → sauberer Abbruch mit Teilresultaten. Da die API
+  in Sandbox/CI ohne `app_id` nicht erreichbar ist, wird die Logik mit einem gemockten
+  Client getestet; der reale Lauf passiert in deiner Umgebung.
+
+> Artists werden über `ingest`/Research (Typ `artist`) eingespielt, nicht über die Seeds —
+> so bleibt der kanonische Lauf stabil. Siehe **P3** der [Roadmap v2](roadmap-v2.md).
 
 ## Dedup & Merge
 

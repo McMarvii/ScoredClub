@@ -40,6 +40,8 @@
     "reddit_oauth_search_url": "https://oauth.reddit.com/search",
     "reddit_enabled": true,
     "reddit_max_threads": 5,
+    "bandsintown_url": "https://rest.bandsintown.com/artists",
+    "bandsintown_max_artists": 25,
     "extra_sources": []
   },
   "run": {

@@ -100,7 +100,7 @@ scoredclub list [--type TYPE] [--tier TIER] [--status STATUS] [--config PATH]
 ```
 Listet Entitäten mit Score, Tier und Status. Filter:
 
-- `--type` — `club | collective | label | series`
+- `--type` — `club | collective | label | series | artist`
 - `--tier` — z. B. `TOP-TIER`, `MID-TIER`, `EMERGING`, `INAKTIV/GESCHLOSSEN`
 - `--status` — `active | emerging | inactive | closed | unknown`
 

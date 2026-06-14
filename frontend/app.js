@@ -8,7 +8,7 @@
 
 const DATA_URL = "./data/entities.json";
 
-const TYPE_LABELS = { club: "Club", collective: "Kollektiv", series: "Partyreihe", label: "Label" };
+const TYPE_LABELS = { club: "Club", collective: "Kollektiv", series: "Partyreihe", label: "Label", artist: "DJ/Artist" };
 const DIM_LABELS = {
   A_event_activity: "Event-Aktivität",
   B_online_reach: "Online-Reichweite",

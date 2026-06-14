@@ -24,6 +24,7 @@ class EntityType(str, Enum):
     collective = "collective"
     label = "label"
     series = "series"
+    artist = "artist"
 
 
 class EntityStatus(str, Enum):

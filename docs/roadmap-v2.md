@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 143 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 152 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -136,10 +136,16 @@ das heutige Org-Entity-Scoring hinaus können sollte.
 > robots.txt-/ToS-konforme Erhebung.
 
 ### Datenquellen
-- **Upcoming-Events + Lineup-Ingestion** (zuerst Bandsintown/Songkick, dann RA vorsichtig) →
-  speist die Event-Aktivitäts-Dimension mit echten statt geschätzten Zahlen.
-- **DJ/Artist-Entitäten** als First-Class-Records (über die heutigen Org-Typen
-  club/collective/label/series hinaus) — größere Schema-Erweiterung.
+- **Event-/Lineup-Ingestion (Bandsintown) → 🟡 erster Schritt ausgeliefert.** Der
+  `BandsintownCollector` (Enrichment, no-op ohne `BANDSINTOWN_APP_ID`/ohne Artists) holt
+  über die *sanktionierte* Bandsintown-API die Events einer Artist-Entität und speist
+  Event-Zahlen (3/6 Monate, Dimension A), `last_event_date` und die bespielten Venues. Mit
+  gemocktem Client getestet. Siehe [Datenerhebung](data-collection.md) → Bandsintown.
+  **Offen:** Songkick als zweite Quelle, RA (vorsichtig), Org-Entitäten (nicht nur Artists).
+- **DJ/Artist-Entitäten → 🟡 erster Schritt ausgeliefert.** `artist` ist ein First-Class
+  `EntityType` (Schema, Report, Dashboard-Filter). Artists werden über `ingest`/Research
+  eingespielt (nicht über Seeds, damit der kanonische Lauf stabil bleibt). **Offen:**
+  Artist-spezifische Scoring-Rubrik, Discovery von Artists.
 - **Event-Nachfragesignale:** RA-„going"-Zahlen, ausverkauft/Warteliste (Dice/Shotgun) als
   belastbare Proxys für Dimension A.
 - **Cross-Plattform-Follower-/Streaming-Zeitreihen** je Entität (löst die offene
@@ -147,7 +153,9 @@ das heutige Org-Entity-Scoring hinaus können sollte.
 
 ### Analytics / Intelligence
 - **Booking-/Kollaborations-Graph** (Venue↔Artist↔Kollektiv) — macht die `networking`-
-  Dimension zum echten Graphen (siehe P2 §9).
+  Dimension zum echten Graphen (siehe P2 §9). 🟡 **Keim gelegt:** der Bandsintown-Collector
+  schreibt die von einem Artist bespielten Venues in `networking.collaborations` (Kanten
+  Artist→Venue); offen sind die Graph-Aggregation/-Abfrage und ein Graph-View.
 - **Breakout-/Anomalie-Erkennung** auf dem Score-Momentum (Slope-Buckets
   Growth/Strong/Explosive + dynamische Baseline statt fixer Schwellen).
 - **Echte NLP-Sentiment-Analyse** auf Presse/Reddit (ersetzt den manuellen Hint; P2 §9).
@@ -210,6 +218,8 @@ das heutige Org-Entity-Scoring hinaus können sollte.
 3. **P1** Frontend-Ausbau (Trending-, Compare-, Karten-Ansicht). ✅ erledigt
 4. **P3** Event-/Lineup-Ingestion (Bandsintown/Songkick) + DJ/Artist-Entitäten + Booking-Graph
    — der nächste hohe Hebel: bringt echte Event-/Beziehungsdaten in alle Dimensionen.
+   🟡 erster Schritt erledigt (artist-Typ + Bandsintown-Collector + Venue-Kanten); offen:
+   Songkick, Artist-Scoring, Graph-Aggregation/-View.
 5. **P3** Kulturökosystem-Monitoring (Clubsterben-Register, Förder-/Policy-Feed) — am stärksten
    differenziert, weitgehend greenfield.
 6. **P2** Multi-City, Lernkomponente.

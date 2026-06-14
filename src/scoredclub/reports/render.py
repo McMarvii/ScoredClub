@@ -19,6 +19,7 @@ TYPE_LABELS = {
     "collective": "Kollektiv",
     "label": "Label",
     "series": "Partyreihe",
+    "artist": "DJ/Artist",
 }
 
 SENTIMENT_LABELS = {

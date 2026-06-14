@@ -73,7 +73,7 @@ Awareness-Policies etc. recherchiert.
 **Wichtige Regeln** (sonst schlägt die Validierung fehl):
 
 - Pflichtfelder pro Entität: `name`, `type`, `status`, plus sinnvollerweise `sources` und `last_verification`.
-- `type` ∈ `club | collective | label | series`
+- `type` ∈ `club | collective | label | series | artist`
 - `status` ∈ `active | emerging | inactive | closed | unknown`
 - `community.community_sentiment_hint` ∈ `positive | mixed | negative | unknown` (ein Wort!)
 - Zähler (Follower, Events) sind **ganze Zahlen**, keine Bereiche/Strings.
