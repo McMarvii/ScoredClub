@@ -23,6 +23,7 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | `list` | Entitäten auflisten |
 | `show` | Profil + Score-Historie einer Entität anzeigen |
 | `trending` | Auf-/Absteiger und Leaderboard des letzten Laufs |
+| `analytics` | Breakout-Erkennung, Karrierephase und Forecast über die Historie |
 | `compare` | Zwei Scoring-Konfigurationen vergleichen (A/B) |
 | `serve` | FastAPI-Lese-API starten |
 
@@ -118,6 +119,15 @@ scoredclub trending [--movers N] [--config PATH]
 Zeigt für den letzten Lauf die stärksten Auf-/Absteiger und ein Leaderboard mit
 Richtungspfeilen (▲/▼/→/✦) und Rang-Änderungen. Braucht ≥ 2 Läufe für aussagekräftige
 Trends. Details: [Trending](trending.md).
+
+## `analytics`
+```bash
+scoredclub analytics [--breakouts-only] [--config PATH]
+```
+Berechnet aus der Score-Historie Breakout-/Anomalie-Buckets (dynamische Baseline),
+Karrierephasen (Perzentil) und einen Kurzfrist-Forecast pro Entität. `--breakouts-only`
+zeigt nur die als Ausbruch markierten Entitäten. Braucht ≥ 3 Läufe für aussagekräftige
+Breakouts. Details: [Analytics](analytics.md).
 
 ## `compare`
 ```bash

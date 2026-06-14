@@ -160,6 +160,20 @@ Vollständige Trend-Historie einer Entität (Sparkline über alle Läufe). `404`
   "latest": { "run_id": 2, "score": 55.1, "direction": "rising", "...": "..." } }
 ```
 
+### `GET /analytics`
+Breakout-/Anomalie-Erkennung (dynamische Baseline), Karrierephase (Perzentil) und
+Kurzfrist-Forecast pro Entität, berechnet aus der Score-Historie. Siehe [Analytics](analytics.md).
+
+```json
+{ "runs_considered": 3,
+  "entities": [
+    { "entity_id": "oxi", "name": "OXI", "current_score": 60.0, "percentile": 100.0,
+      "career_phase": "elite",
+      "breakout": { "bucket": "explosive", "slope": 10.0, "z_score": 10.0 },
+      "forecast": { "projected_score": 70.0, "slope": 10.0, "rising_soon": true } } ],
+  "breakouts": [ { "entity_id": "oxi", "...": "..." } ] }
+```
+
 ### `GET /runs`
 Liste aller Läufe (neueste zuerst).
 

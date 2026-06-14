@@ -109,6 +109,26 @@ class TrendingConfig(_Base):
     movers_limit: int = 5
 
 
+class AnalyticsConfig(_Base):
+    """Breakout/anomaly detection, career-phase and forecast tuning (pure)."""
+
+    # Runs considered for breakout/forecast (0 = full history).
+    history_window: int = 12
+    # Dynamic baseline never drops below this (points/run) so a steady climb
+    # still registers as a breakout.
+    breakout_baseline_floor: float = 1.0
+    # Slope-to-volatility z thresholds for the breakout buckets.
+    growth_z: float = 1.0
+    strong_z: float = 2.0
+    explosive_z: float = 3.0
+    # Minimum projected slope (points/run) to flag "rising soon".
+    forecast_epsilon: float = 0.5
+    # Percentile cut-offs for the career phases.
+    elite_percentile: float = 90.0
+    established_percentile: float = 70.0
+    emerging_percentile: float = 40.0
+
+
 class LLMResearchConfig(_Base):
     """Agentic LLM research collector (optional, off by default).
 
@@ -132,6 +152,7 @@ class Settings(_Base):
     sources: SourcesConfig = Field(default_factory=SourcesConfig)
     run: RunConfig = Field(default_factory=RunConfig)
     trending: TrendingConfig = Field(default_factory=TrendingConfig)
+    analytics: AnalyticsConfig = Field(default_factory=AnalyticsConfig)
     llm: LLMResearchConfig = Field(default_factory=LLMResearchConfig)
     database_url: str = DEFAULT_DATABASE_URL
 
