@@ -174,6 +174,14 @@ Kurzfrist-Forecast pro Entität, berechnet aus der Score-Historie. Siehe [Analyt
   "breakouts": [ { "entity_id": "oxi", "...": "..." } ] }
 ```
 
+### `GET /export.csv`
+Alle Entitäten als CSV (`text/csv`): Summary-Felder + gewichtete Punkte je Scoring-Dimension
+aus dem letzten Snapshot. Spaltenreihenfolge stabil, Dimensionsspalten alphabetisch angehängt.
+
+### `GET /feed.xml`
+RSS-2.0-Feed der jüngsten Alerts (`application/rss+xml`). **Query:** `limit` (1–200, Standard 50).
+Ein Push-Kanal über Webhooks hinaus — in jedem RSS-Reader abonnierbar.
+
 ### `GET /graph`
 Booking-/Kollaborations-Graph-Metriken (Top-Venues, -DJs, geteilte Bookings, Komponenten).
 **Query:** `include_graph` (vollständige Knoten/Kanten anhängen), `top` (1–50, Standard 10).

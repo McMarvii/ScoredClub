@@ -340,6 +340,25 @@ def analytics(
             )
 
 
+@app.command("export")
+def export_cmd(
+    output: Path = typer.Option(None, "--output", "-o", help="Write CSV to a file (default: stdout)"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Export all entities as CSV (summary + per-dimension points)."""
+    from scoredclub.export import export_csv
+
+    settings = _settings(config)
+    init_db(settings.database_url)
+    with get_session(settings.database_url) as session:
+        csv_text = export_csv(session)
+    if output:
+        output.write_text(csv_text, encoding="utf-8")
+        typer.echo(f"CSV exportiert: {output}")
+    else:
+        typer.echo(csv_text)
+
+
 @app.command()
 def sentiment(
     entity_id: str = typer.Argument(None, help="Analyze one entity (default: all with signal)"),
