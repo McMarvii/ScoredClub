@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 202 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 211 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -171,9 +171,10 @@ das heutige Org-Entity-Scoring hinaus können sollte.
   (Kleinste-Quadrate-Steigung + `rising_soon`). Siehe [Analytics](analytics.md).
 
 ### Produkt / UX
-- **Digests/Alerts über Webhooks hinaus:** 🟡 **RSS umgesetzt** — `GET /feed.xml` liefert
-  einen RSS-2.0-Feed der jüngsten Alerts (`scoredclub.feeds`). **Offen:** E-Mail/Slack-Sender,
-  gestufte Wochen-Digests.
+- **Digests/Alerts über Webhooks hinaus:** → ✅ umgesetzt — RSS-Feed (`GET /feed.xml`,
+  `scoredclub.feeds`) plus **Slack-** und **E-Mail-Digest-Sender** (`deliver_slack`/
+  `deliver_email`, beide off by default, fehlertolerant, mit gemocktem Client/SMTP getestet).
+  **Offen:** gestufte Wochen-Digests (sofort-kritisch vs. wöchentlich).
 - **Watchlists + gespeicherte Filter** (nach Bezirk/Typ/Tier) als beobachtete Ansichten.
 - **Event-Kalender + Lineup-Ansicht** im Dashboard; pro Entität eine Gigography-Historie.
 - **CSV-/BI-Export** → ✅ umgesetzt (`scoredclub export`, `GET /export.csv`: Summary +

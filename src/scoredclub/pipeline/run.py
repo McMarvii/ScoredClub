@@ -15,7 +15,7 @@ from scoredclub.collectors.llm_ingest import IngestReport, ingest_file
 from scoredclub.config import Settings
 from scoredclub.db import init_db, repo
 from scoredclub.db.models import Entity
-from scoredclub.pipeline.alerts import create_alerts, deliver_webhooks
+from scoredclub.pipeline.alerts import create_alerts, deliver_notifications
 from scoredclub.pipeline.diff import diff_runs
 from scoredclub.reports.render import ScoredEntity, write_reports
 from scoredclub.schemas import EntityProfile, utcnow
@@ -162,7 +162,7 @@ def execute_run(
             item.is_new = delta.is_new
 
     alerts = create_alerts(session, run, diff, settings)
-    deliver_webhooks(alerts, settings)
+    deliver_notifications(alerts, settings)
 
     # Compute and persist trends from the score history (incl. this run).
     trend_report = compute_run_trends(session, settings)
