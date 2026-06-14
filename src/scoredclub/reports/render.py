@@ -156,12 +156,20 @@ def render_entities_json(
     scored: list[ScoredEntity], run_date: date, settings: Settings
 ) -> dict:
     next_run = run_date + timedelta(days=settings.run.next_run_interval_days)
+
+    def _profile_dict(profile) -> dict:
+        data = json.loads(profile.model_dump_json())
+        # Keep the output clean: omit provenance when no field carries any.
+        if not data.get("provenance"):
+            data.pop("provenance", None)
+        return data
+
     return {
         "generated_at": run_date.isoformat(),
         "next_run": next_run.isoformat(),
         "entities": [
             {
-                **json.loads(e.profile.model_dump_json()),
+                **_profile_dict(e.profile),
                 "score": json.loads(e.breakdown.model_dump_json()),
                 "trend": e.trend,
             }

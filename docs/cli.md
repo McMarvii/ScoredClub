@@ -27,6 +27,7 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | `graph` | Booking-/Kollaborations-Graph (Top-Venues, -DJs, geteilte Bookings) |
 | `sentiment` | Lexikon-Sentiment über Community-Text einer Entität (kein Schreiben) |
 | `export` | Alle Entitäten als CSV exportieren (Summary + Dimensionspunkte) |
+| `retention` | Veraltete Community-/Personendaten redigieren (GDPR) |
 | `compare` | Zwei Scoring-Konfigurationen vergleichen (A/B) |
 | `serve` | FastAPI-Lese-API starten |
 
@@ -131,6 +132,14 @@ Berechnet aus der Score-Historie Breakout-/Anomalie-Buckets (dynamische Baseline
 Karrierephasen (Perzentil) und einen Kurzfrist-Forecast pro Entität. `--breakouts-only`
 zeigt nur die als Ausbruch markierten Entitäten. Braucht ≥ 3 Läufe für aussagekräftige
 Breakouts. Details: [Analytics](analytics.md).
+
+## `retention`
+```bash
+scoredclub retention [--apply] [--days N] [--config PATH]
+```
+Redigiert veraltete Community-/Personendaten (Reddit-Threads, Twitter-Handles) anhand des
+Aufbewahrungsfensters (`retention.community_days`). Standard ist Dry-run; `--apply` schreibt.
+Details: [Compliance](compliance.md).
 
 ## `export`
 ```bash

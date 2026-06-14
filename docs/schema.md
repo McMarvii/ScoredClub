@@ -13,6 +13,7 @@ Scoring-Rubriken toleriert.
 | `name` | string | **Pflicht.** Anzeigename. |
 | `aliases` | string[] | Alternative Namen (für Dedup). |
 | `type` | enum | **Pflicht.** `club | collective | label | series | artist` |
+| `provenance` | map | Optional. Feldpfad → `{source, confidence?, accessed_at?, note?}`. Siehe [Compliance](compliance.md). |
 | `status` | enum | **Pflicht.** `active | emerging | inactive | closed | unknown` |
 | `address` | string\|null | Adresse / Hauptort. |
 | `district` | string\|null | Berliner Bezirk. |

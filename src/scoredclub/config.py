@@ -134,6 +134,14 @@ class TrendingConfig(_Base):
     movers_limit: int = 5
 
 
+class RetentionConfig(_Base):
+    """GDPR retention for community/personal data (applied via ``scoredclub retention``)."""
+
+    enabled: bool = False
+    # Redact community/personal data older than this many days (by last_verification).
+    community_days: int = 365
+
+
 class AnalyticsConfig(_Base):
     """Breakout/anomaly detection, career-phase and forecast tuning (pure)."""
 
@@ -178,6 +186,7 @@ class Settings(_Base):
     run: RunConfig = Field(default_factory=RunConfig)
     trending: TrendingConfig = Field(default_factory=TrendingConfig)
     analytics: AnalyticsConfig = Field(default_factory=AnalyticsConfig)
+    retention: RetentionConfig = Field(default_factory=RetentionConfig)
     llm: LLMResearchConfig = Field(default_factory=LLMResearchConfig)
     database_url: str = DEFAULT_DATABASE_URL
 

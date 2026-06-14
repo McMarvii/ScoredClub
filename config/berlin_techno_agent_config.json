@@ -68,6 +68,10 @@
     "stable_epsilon": 1.0,
     "movers_limit": 5
   },
+  "retention": {
+    "enabled": false,
+    "community_days": 365
+  },
   "analytics": {
     "history_window": 12,
     "breakout_baseline_floor": 1.0,
