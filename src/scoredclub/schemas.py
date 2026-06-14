@@ -155,6 +155,52 @@ class SourceRef(_Base):
     note: str | None = None
 
 
+class LifecycleEventType(str, Enum):
+    opening = "opening"
+    closure = "closure"
+    reopening = "reopening"
+    relocation = "relocation"
+    threatened = "threatened"  # at risk but not (yet) closed
+
+
+class ClosureCause(str, Enum):
+    """Taxonomy of why a venue closes/is threatened (Berlin 'Clubsterben')."""
+
+    rent = "rent"
+    noise = "noise"
+    redevelopment = "redevelopment"
+    insolvency = "insolvency"
+    pandemic = "pandemic"
+    licensing = "licensing"
+    sale = "sale"
+    other = "other"
+    unknown = "unknown"
+
+
+class LifecycleEvent(_Base):
+    date: dt.date | None = None  # field name shadows the type, hence the dt alias
+    event_type: LifecycleEventType
+    cause: ClosureCause | None = None
+    description: str | None = None
+    source: str | None = None
+
+
+class DisplacementSignalType(str, Enum):
+    rent_increase = "rent_increase"
+    property_sale = "property_sale"
+    rezoning = "rezoning"
+    noise_complaint = "noise_complaint"
+    construction = "construction"
+    other = "other"
+
+
+class DisplacementSignal(_Base):
+    signal_type: DisplacementSignalType = DisplacementSignalType.other
+    description: str | None = None
+    date: dt.date | None = None
+    source: str | None = None
+
+
 class FieldProvenance(_Base):
     """Where a single field's value came from, and how trustworthy it is.
 
@@ -209,6 +255,9 @@ class EntityProfile(_Base):
     cultural_recognition: CulturalRecognition = Field(default_factory=CulturalRecognition)
     incidents: list[Incident] = Field(default_factory=list)
     sources: list[SourceRef] = Field(default_factory=list)
+    # Cultural-ecosystem monitoring (Berlin 'Clubsterben'). Both optional.
+    lifecycle_events: list[LifecycleEvent] = Field(default_factory=list)
+    displacement_signals: list[DisplacementSignal] = Field(default_factory=list)
     # Per-field provenance: dotted field path -> source/confidence. Optional.
     provenance: dict[str, FieldProvenance] = Field(default_factory=dict)
     notes: str | None = None

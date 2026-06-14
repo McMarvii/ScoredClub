@@ -118,6 +118,15 @@ def test_entity_trend(client):
     assert data["latest"]["direction"] == "new"
 
 
+def test_clubsterben_endpoint(client):
+    data = client.get("/clubsterben").json()
+    # Seeded test entities carry no lifecycle events -> zeroed register, valid shape.
+    assert data["openings"] == 0
+    assert data["closures"] == 0
+    assert data["net_change"] == 0
+    assert "by_year" in data and "at_risk" in data
+
+
 def test_export_csv_endpoint(client):
     response = client.get("/export.csv")
     assert response.status_code == 200

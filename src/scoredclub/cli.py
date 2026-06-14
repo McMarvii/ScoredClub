@@ -341,6 +341,38 @@ def analytics(
 
 
 @app.command()
+def clubsterben(
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Clubsterben-Register: Eröffnungen/Schließungen, Ursachen, gefährdete Venues."""
+    from scoredclub.clubsterben import build_register_from_db
+
+    settings = _settings(config)
+    init_db(settings.database_url)
+    with get_session(settings.database_url) as session:
+        reg = build_register_from_db(session)
+    typer.echo(
+        f"Eröffnungen: {reg.openings}  Schließungen: {reg.closures}  "
+        f"Netto: {reg.net_change:+d}"
+    )
+    if reg.closures_by_cause:
+        typer.secho("\nSchließungs-Ursachen:", fg=typer.colors.RED)
+        for cause, count in reg.closures_by_cause.items():
+            typer.echo(f"  {cause:16s} {count}")
+    if reg.by_year:
+        typer.echo("\nNach Jahr (Eröffnungen / Schließungen):")
+        for year, counts in reg.by_year.items():
+            typer.echo(f"  {year}: +{counts['openings']} / -{counts['closures']}")
+    if reg.at_risk:
+        typer.secho(f"\nGefährdet ({len(reg.at_risk)}):", fg=typer.colors.YELLOW)
+        for item in reg.at_risk:
+            signals = f" [{', '.join(item['displacement_signals'])}]" if item["displacement_signals"] else ""
+            typer.echo(f"  {item['name']:28s} {item['status']}{signals}")
+    if not (reg.openings or reg.closures or reg.at_risk):
+        typer.echo("\nKeine Lifecycle-/Verdrängungsdaten erfasst.")
+
+
+@app.command()
 def retention(
     apply: bool = typer.Option(False, "--apply", help="Write changes (default: dry-run)"),
     days: int = typer.Option(None, help="Override retention window in days"),

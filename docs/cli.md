@@ -28,6 +28,7 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | `sentiment` | Lexikon-Sentiment über Community-Text einer Entität (kein Schreiben) |
 | `export` | Alle Entitäten als CSV exportieren (Summary + Dimensionspunkte) |
 | `retention` | Veraltete Community-/Personendaten redigieren (GDPR) |
+| `clubsterben` | Kulturökosystem-Register: Eröffnungen/Schließungen, Ursachen, gefährdete Venues |
 | `compare` | Zwei Scoring-Konfigurationen vergleichen (A/B) |
 | `serve` | FastAPI-Lese-API starten |
 
@@ -132,6 +133,14 @@ Berechnet aus der Score-Historie Breakout-/Anomalie-Buckets (dynamische Baseline
 Karrierephasen (Perzentil) und einen Kurzfrist-Forecast pro Entität. `--breakouts-only`
 zeigt nur die als Ausbruch markierten Entitäten. Braucht ≥ 3 Läufe für aussagekräftige
 Breakouts. Details: [Analytics](analytics.md).
+
+## `clubsterben`
+```bash
+scoredclub clubsterben [--config PATH]
+```
+Aggregiert die `lifecycle_events`/`displacement_signals` der Entitäten zu einem Register
+(Eröffnungen/Schließungen, Ursachen, Jahresverlauf, gefährdete Venues). Pendant zur API
+`GET /clubsterben`. Details: [Clubsterben-Register](clubsterben.md).
 
 ## `retention`
 ```bash
