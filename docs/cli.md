@@ -24,6 +24,7 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | `show` | Profil + Score-Historie einer Entität anzeigen |
 | `trending` | Auf-/Absteiger und Leaderboard des letzten Laufs |
 | `analytics` | Breakout-Erkennung, Karrierephase und Forecast über die Historie |
+| `graph` | Booking-/Kollaborations-Graph (Top-Venues, -DJs, geteilte Bookings) |
 | `compare` | Zwei Scoring-Konfigurationen vergleichen (A/B) |
 | `serve` | FastAPI-Lese-API starten |
 
@@ -128,6 +129,15 @@ Berechnet aus der Score-Historie Breakout-/Anomalie-Buckets (dynamische Baseline
 Karrierephasen (Perzentil) und einen Kurzfrist-Forecast pro Entität. `--breakouts-only`
 zeigt nur die als Ausbruch markierten Entitäten. Braucht ≥ 3 Läufe für aussagekräftige
 Breakouts. Details: [Analytics](analytics.md).
+
+## `graph`
+```bash
+scoredclub graph [--export FILE.json] [--top N] [--config PATH]
+```
+Baut aus der `networking`-Dimension den Booking-/Kollaborations-Graphen und zeigt
+Top-Venues (nach Artists), meistgebuchte DJs und geteilte Bookings (Orgs mit gemeinsamen
+DJs). `--export` schreibt den vollständigen Graphen (Knoten/Kanten) als JSON. Details:
+[Graph](graph.md).
 
 ## `compare`
 ```bash

@@ -385,6 +385,22 @@ def analytics(session: Session = Depends(db_session)) -> dict:
     return {"runs_considered": len(run_ids), "entities": entities, "breakouts": breakouts}
 
 
+@app.get("/graph")
+def booking_graph(
+    include_graph: bool = Query(default=False, description="Include full nodes/edges"),
+    top: int = Query(default=10, ge=1, le=50),
+    session: Session = Depends(db_session),
+) -> dict:
+    """Booking/collaboration graph metrics (and optionally the full graph)."""
+    from scoredclub.graph import build_graph_from_db, graph_metrics, graph_to_dict
+
+    graph_obj, _ = build_graph_from_db(session)
+    payload = {"metrics": graph_metrics(graph_obj, top=top)}
+    if include_graph:
+        payload["graph"] = graph_to_dict(graph_obj)
+    return payload
+
+
 @app.get("/runs/latest/report", response_class=PlainTextResponse)
 def latest_report(session: Session = Depends(db_session)) -> str:
     run = session.scalar(

@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 166 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 174 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -152,10 +152,11 @@ das heutige Org-Entity-Scoring hinaus können sollte.
   RA-Follower-Lücke; pro-Plattform-Verlauf statt nur Score).
 
 ### Analytics / Intelligence
-- **Booking-/Kollaborations-Graph** (Venue↔Artist↔Kollektiv) — macht die `networking`-
-  Dimension zum echten Graphen (siehe P2 §9). 🟡 **Keim gelegt:** der Bandsintown-Collector
-  schreibt die von einem Artist bespielten Venues in `networking.collaborations` (Kanten
-  Artist→Venue); offen sind die Graph-Aggregation/-Abfrage und ein Graph-View.
+- **Booking-/Kollaborations-Graph** (Venue↔Artist↔Kollektiv) → ✅ Aggregation/Abfrage
+  umgesetzt. `scoredclub.graph` baut aus `networking` (`booked_djs`/`collaborations`/
+  `cross_promotions`) einen Graphen mit Namensauflösung auf bestehende Entitäten, plus
+  Metriken (Top-Venues/-DJs, geteilte Bookings, Degree, Komponenten). CLI `graph`, API
+  `GET /graph`. Siehe [Graph](graph.md). **Offen:** visueller Graph-View im Dashboard.
 - **Breakout-/Anomalie-Erkennung** auf dem Score-Momentum → ✅ umgesetzt. Slope-Buckets
   Growth/Strong/Explosive mit **dynamischer Baseline** (Volatilität der Entität) statt fixer
   Schwellen. `scoredclub.analytics`, CLI `analytics`, API `GET /analytics`. Siehe [Analytics](analytics.md).
