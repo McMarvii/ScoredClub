@@ -40,8 +40,9 @@ Idempotent.
 scoredclub migrate [--revision head] [--config PATH]
 ```
 Wendet die Alembic-Migrationen auf die Datenbank aus `DATABASE_URL` an (`upgrade head`).
-Der maßgebliche Weg für Postgres/Produktion. Aus dem Projektverzeichnis ausführen
-(`alembic.ini` + `migrations/` müssen erreichbar sein). Details: [Deployment](deployment.md).
+Der maßgebliche Weg für Postgres/Produktion. Die Migrationen sind ins Paket gebündelt,
+daher funktioniert der Befehl auch aus einem installierten Wheel (kein Repo nötig).
+Details: [Deployment](deployment.md).
 
 ## `seed`
 ```bash

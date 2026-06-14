@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY pyproject.toml README.md alembic.ini ./
 COPY src/ src/
-COPY migrations/ migrations/
 COPY config/ config/
 COPY data/seeds/ data/seeds/
 

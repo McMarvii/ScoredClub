@@ -46,8 +46,10 @@ scoredclub migrate          # wendet alle Migrationen an (alembic upgrade head)
 # oder direkt: alembic upgrade head   (aus dem Projektverzeichnis)
 ```
 
-Die Migrationen liegen unter `migrations/` und sind aus den ORM-Modellen
-generiert; `migrations/env.py` liest `DATABASE_URL`. Für künftige Schema-Änderungen:
+Die Migrationen sind ins Paket gebündelt (`src/scoredclub/migrations/`), daher funktioniert
+`scoredclub migrate` auch aus einem installierten Wheel — ohne Repo-Checkout oder
+`alembic.ini`. `env.py` liest `DATABASE_URL`. Für künftige Schema-Änderungen (aus dem
+Projektverzeichnis, `alembic.ini` zeigt auf `src/scoredclub/migrations`):
 Modelle anpassen, dann `alembic revision --autogenerate -m "…"` und die generierte
 Migration prüfen/committen.
 

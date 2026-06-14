@@ -1,22 +1,19 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 from alembic import command
-from alembic.config import Config
 from sqlalchemy import create_engine, inspect
 
-ROOT = Path(__file__).resolve().parent.parent
+from scoredclub.cli import _alembic_config
+
 EXPECTED_TABLES = {
     "entities", "entity_aliases", "runs", "score_snapshots", "trend_snapshots", "alerts",
 }
 
 
-def _cfg(db_url: str) -> Config:
-    cfg = Config(str(ROOT / "alembic.ini"))
-    cfg.set_main_option("script_location", str(ROOT / "migrations"))
-    cfg.set_main_option("sqlalchemy.url", db_url)
+def _cfg(db_url: str):
+    # Use the same package-bundled migrations config the CLI uses.
+    cfg, _ = _alembic_config(db_url)
     return cfg
 
 

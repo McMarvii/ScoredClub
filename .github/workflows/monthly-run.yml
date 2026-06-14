@@ -46,11 +46,11 @@ jobs:
       - name: Install package
         run: pip install .
 
-      - name: Initialize and seed (idempotent)
+      - name: Migrate and seed (idempotent)
         env:
           DATABASE_URL: sqlite:///state/scoredclub.db
         run: |
-          scoredclub init-db
+          scoredclub migrate
           scoredclub seed
 
       - name: Execute run
