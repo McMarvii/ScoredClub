@@ -11,13 +11,14 @@ LLM-Research (research.json)  ──┐
 Clubcommission-Collector        ├─► Dedup/Merge ─► DB ─► Scoring ─► Reports
 Resident-Advisor-Collector      │
 Reddit-Collector (Enrichment)   │
-Bandsintown-Collector (Artists) ┘
+Bandsintown-Collector (Artists) │
+Sentiment-Collector (offline)   ┘
 ```
 
 Zwei Kategorien (siehe `src/scoredclub/collectors/__init__.py`):
 
 - **Discovery-Collector** dürfen neue Entitäten anlegen: `ClubcommissionCollector`, `ResidentAdvisorCollector`.
-- **Enrichment-Collector** reichern nur bestehende Entitäten an (legen keine neuen an): `LLMResearchCollector`, `RedditCollector`, `BandsintownCollector`.
+- **Enrichment-Collector** reichern nur bestehende Entitäten an (legen keine neuen an): `LLMResearchCollector`, `RedditCollector`, `BandsintownCollector`, `SentimentCollector`.
 
 Die Pipeline führt erst Discovery, dann Enrichment aus.
 
@@ -139,6 +140,13 @@ scoredclub run        # reichert vorhandene artist-Entitäten an
 
 > Artists werden über `ingest`/Research (Typ `artist`) eingespielt, nicht über die Seeds —
 > so bleibt der kanonische Lauf stabil. Siehe **P3** der [Roadmap v2](roadmap-v2.md).
+
+## 6. Sentiment-Collector (Enrichment, offline)
+
+Leitet den `community_sentiment_hint` deterministisch aus Reddit-Thread-Titeln + Notizen
+ab (Lexikon-Analyse, kein Netz/Modell) und ersetzt so den manuellen Hint. **Standardmäßig
+aus** (`sources.sentiment_enabled`); aktiviert füllt er nur *unbekannte* Hints und läuft
+nach dem Reddit-Collector. Details: [Sentiment](sentiment.md).
 
 ## Dedup & Merge
 

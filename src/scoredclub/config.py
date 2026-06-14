@@ -89,6 +89,10 @@ class SourcesConfig(_Base):
     # environment and at least one artist entity is present.
     bandsintown_url: str = "https://rest.bandsintown.com/artists"
     bandsintown_max_artists: int = 25
+    # Deterministic lexicon sentiment analysis (no network). Off by default so
+    # the canonical run is unaffected; when on it fills only *unknown* hints and
+    # never overrides a researcher-supplied sentiment.
+    sentiment_enabled: bool = False
     extra_sources: list[str] = Field(default_factory=list)
 
 

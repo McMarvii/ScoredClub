@@ -37,6 +37,7 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "reddit_max_threads": 5,
     "bandsintown_url": "https://rest.bandsintown.com/artists",
     "bandsintown_max_artists": 25,
+    "sentiment_enabled": false,
     "extra_sources": []
   },
   "run": {
@@ -104,6 +105,7 @@ Details der Wirkung: [Scoring-Modell](scoring.md) (inkl. Datenkonfidenz).
 | `reddit_max_threads` | Max. Threads pro Entität. |
 | `bandsintown_url` | Basis-URL der Bandsintown-Artists-API (Enrichment für `artist`-Entitäten). |
 | `bandsintown_max_artists` | Max. Artists pro Lauf, die über Bandsintown angereichert werden. |
+| `sentiment_enabled` | Offline-Sentiment-Collector an/aus (füllt nur unbekannte Hints). |
 | `extra_sources` | Reserviert für zusätzliche Quellen. |
 
 ### `run`

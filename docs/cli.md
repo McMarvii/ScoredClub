@@ -25,6 +25,7 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | `trending` | Auf-/Absteiger und Leaderboard des letzten Laufs |
 | `analytics` | Breakout-Erkennung, Karrierephase und Forecast über die Historie |
 | `graph` | Booking-/Kollaborations-Graph (Top-Venues, -DJs, geteilte Bookings) |
+| `sentiment` | Lexikon-Sentiment über Community-Text einer Entität (kein Schreiben) |
 | `compare` | Zwei Scoring-Konfigurationen vergleichen (A/B) |
 | `serve` | FastAPI-Lese-API starten |
 
@@ -129,6 +130,14 @@ Berechnet aus der Score-Historie Breakout-/Anomalie-Buckets (dynamische Baseline
 Karrierephasen (Perzentil) und einen Kurzfrist-Forecast pro Entität. `--breakouts-only`
 zeigt nur die als Ausbruch markierten Entitäten. Braucht ≥ 3 Läufe für aussagekräftige
 Breakouts. Details: [Analytics](analytics.md).
+
+## `sentiment`
+```bash
+scoredclub sentiment [ENTITY_ID] [--config PATH]
+```
+Analysiert den Community-Text (Reddit-Thread-Titel + Notizen) per Lexikon und zeigt
+Polarität/Hint pro Entität — **ohne** zu schreiben. Den automatischen Hint im Lauf
+aktiviert `sources.sentiment_enabled`. Details: [Sentiment](sentiment.md).
 
 ## `graph`
 ```bash
