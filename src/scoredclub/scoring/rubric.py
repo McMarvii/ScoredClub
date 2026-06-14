@@ -167,6 +167,9 @@ def bonus_items(profile: EntityProfile) -> list[str]:
         items.append("Eigenes Label oder Podcast-Reihe")
     if profile.networking.international_booking or profile.press.international_mentions:
         items.append("Internationales Booking / internationale Resonanz")
+    demand = profile.demand
+    if demand and (demand.sold_out or demand.waitlist or (demand.going_count or 0) >= 500):
+        items.append("Hohe Event-Nachfrage (ausverkauft/Warteliste/hohe Resonanz)")
     return items
 
 

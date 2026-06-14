@@ -91,6 +91,25 @@ class EventsInfo(_Base):
     ticketing_platforms: list[str] = Field(default_factory=list)
 
 
+class DemandInfo(_Base):
+    """Event-demand proxies (RA 'going', sold-out/waitlist from Dice/Shotgun)."""
+
+    going_count: int | None = None  # interest/"going" count for recent events
+    sold_out: bool | None = None
+    waitlist: bool | None = None
+    source: str | None = None
+
+    @field_validator("sold_out", "waitlist", mode="before")
+    @classmethod
+    def _coerce_yes_no(cls, v: object) -> object:
+        return PolicySafety._coerce_yes_no(v)
+
+
+class FollowerPoint(_Base):
+    date: dt.date | None = None
+    followers: int
+
+
 class PressInfo(_Base):
     major_features: list[str] = Field(default_factory=list)
     local_press_mentions: list[str] = Field(default_factory=list)
@@ -247,6 +266,9 @@ class EntityProfile(_Base):
     last_event_date: date | None = None
     online: OnlinePresence = Field(default_factory=OnlinePresence)
     events: EventsInfo = Field(default_factory=EventsInfo)
+    # Optional event-demand proxies and per-platform follower time-series.
+    demand: DemandInfo | None = None
+    follower_history: dict[str, list[FollowerPoint]] = Field(default_factory=dict)
     press: PressInfo = Field(default_factory=PressInfo)
     community: CommunityInfo = Field(default_factory=CommunityInfo)
     networking: NetworkingInfo = Field(default_factory=NetworkingInfo)
