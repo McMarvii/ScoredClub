@@ -37,6 +37,8 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "reddit_max_threads": 5,
     "bandsintown_url": "https://rest.bandsintown.com/artists",
     "bandsintown_max_artists": 25,
+    "songkick_url": "https://api.songkick.com/api/3.0",
+    "songkick_max_artists": 25,
     "sentiment_enabled": false,
     "extra_sources": []
   },
@@ -105,6 +107,7 @@ Details der Wirkung: [Scoring-Modell](scoring.md) (inkl. Datenkonfidenz).
 | `reddit_max_threads` | Max. Threads pro Entität. |
 | `bandsintown_url` | Basis-URL der Bandsintown-Artists-API (Enrichment für `artist`-Entitäten). |
 | `bandsintown_max_artists` | Max. Artists pro Lauf, die über Bandsintown angereichert werden. |
+| `songkick_url` / `songkick_max_artists` | Songkick-API (zweite sanktionierte Event-Quelle für Artists). |
 | `sentiment_enabled` | Offline-Sentiment-Collector an/aus (füllt nur unbekannte Hints). |
 | `extra_sources` | Reserviert für zusätzliche Quellen. |
 
@@ -160,6 +163,7 @@ Details: [Datenerhebung](data-collection.md).
 | `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET` | — | Reddit-OAuth-App; aktiviert den authentifizierten Reddit-Collector (Dimension D). |
 | `REDDIT_USER_AGENT` | Default-UA | Eindeutiger Reddit-User-Agent (von Reddit verlangt). |
 | `BANDSINTOWN_APP_ID` | — | Aktiviert den Bandsintown-Collector (Event-/Booking-Daten für `artist`-Entitäten). |
+| `SONGKICK_API_KEY` | — | Aktiviert den Songkick-Collector (zweite Event-Quelle für `artist`-Entitäten). |
 | `ANTHROPIC_API_KEY` | — | Für den agentischen LLM-Research-Collector (`llm.enabled`). |
 
 > **Sicherheitshinweis:** Geheimnisse (Webhook-URLs, künftige API-Tokens) gehören in

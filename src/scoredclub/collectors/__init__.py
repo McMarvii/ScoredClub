@@ -5,6 +5,7 @@ from scoredclub.collectors.llm_research import LLMResearchCollector
 from scoredclub.collectors.reddit import RedditCollector
 from scoredclub.collectors.resident_advisor import ResidentAdvisorCollector
 from scoredclub.collectors.sentiment import SentimentCollector
+from scoredclub.collectors.songkick import SongkickCollector
 
 # Discovery collectors may introduce new entities (upserted, create allowed).
 DISCOVERY_COLLECTORS = [ClubcommissionCollector, ResidentAdvisorCollector]
@@ -19,6 +20,7 @@ ENRICHMENT_COLLECTORS = [
     LLMResearchCollector,
     RedditCollector,
     BandsintownCollector,
+    SongkickCollector,
     SentimentCollector,
 ]
 
@@ -32,6 +34,7 @@ __all__ = [
     "RedditCollector",
     "LLMResearchCollector",
     "BandsintownCollector",
+    "SongkickCollector",
     "SentimentCollector",
     "DISCOVERY_COLLECTORS",
     "ENRICHMENT_COLLECTORS",

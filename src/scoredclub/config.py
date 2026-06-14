@@ -89,6 +89,10 @@ class SourcesConfig(_Base):
     # environment and at least one artist entity is present.
     bandsintown_url: str = "https://rest.bandsintown.com/artists"
     bandsintown_max_artists: int = 25
+    # Songkick is a second sanctioned event source for artists (needs
+    # SONGKICK_API_KEY); no-op without the key or without artist entities.
+    songkick_url: str = "https://api.songkick.com/api/3.0"
+    songkick_max_artists: int = 25
     # Deterministic lexicon sentiment analysis (no network). Off by default so
     # the canonical run is unaffected; when on it fills only *unknown* hints and
     # never overrides a researcher-supplied sentiment.
