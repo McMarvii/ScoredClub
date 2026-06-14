@@ -118,6 +118,18 @@ def test_entity_trend(client):
     assert data["latest"]["direction"] == "new"
 
 
+def test_graph_endpoint(client):
+    data = client.get("/graph").json()
+    metrics = data["metrics"]
+    # The top profile has booked_djs + collaborations + cross_promotions.
+    assert metrics["edge_count"] > 0
+    assert metrics["entity_nodes"] == 2
+    assert "graph" not in data  # full graph omitted unless requested
+    full = client.get("/graph", params={"include_graph": True}).json()
+    assert "graph" in full
+    assert any(n["id"] == "testclub" for n in full["graph"]["nodes"])
+
+
 def test_analytics_endpoint(client):
     data = client.get("/analytics").json()
     assert data["runs_considered"] == 1

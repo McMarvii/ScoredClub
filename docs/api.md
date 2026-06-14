@@ -174,6 +174,20 @@ Kurzfrist-Forecast pro Entität, berechnet aus der Score-Historie. Siehe [Analyt
   "breakouts": [ { "entity_id": "oxi", "...": "..." } ] }
 ```
 
+### `GET /graph`
+Booking-/Kollaborations-Graph-Metriken (Top-Venues, -DJs, geteilte Bookings, Komponenten).
+**Query:** `include_graph` (vollständige Knoten/Kanten anhängen), `top` (1–50, Standard 10).
+Siehe [Graph](graph.md).
+
+```json
+{ "metrics": {
+    "node_count": 40, "edge_count": 60, "entity_nodes": 26, "external_nodes": 14,
+    "components": 3,
+    "top_venues": [ { "id": "berghain", "label": "Berghain", "artist_count": 5 } ],
+    "top_djs": [ { "id": "dettmann", "label": "Marcel Dettmann", "booker_count": 3 } ],
+    "shared_bookings": [ { "a": "berghain", "b": "tresor", "shared_djs": 2, "...": "..." } ] } }
+```
+
 ### `GET /runs`
 Liste aller Läufe (neueste zuerst).
 

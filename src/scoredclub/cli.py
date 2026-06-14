@@ -341,6 +341,50 @@ def analytics(
 
 
 @app.command()
+def graph(
+    export: Path = typer.Option(None, "--export", help="Write the full graph (nodes/edges) as JSON"),
+    top: int = typer.Option(10, help="How many entries per ranking"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Booking/collaboration graph: top venues, DJs and shared-booking links."""
+    import json as _json
+
+    from scoredclub.graph import build_graph_from_db, graph_metrics, graph_to_dict
+
+    settings = _settings(config)
+    init_db(settings.database_url)
+    with get_session(settings.database_url) as session:
+        graph_obj, _ = build_graph_from_db(session)
+        if not graph_obj.edges:
+            typer.echo("No booking/collaboration edges yet (no networking data).")
+            return
+        metrics = graph_metrics(graph_obj, top=top)
+        typer.echo(
+            f"Graph: {metrics['node_count']} Knoten "
+            f"({metrics['entity_nodes']} Entitäten, {metrics['external_nodes']} extern), "
+            f"{metrics['edge_count']} Kanten, {metrics['components']} Komponenten"
+        )
+        if metrics["top_venues"]:
+            typer.secho("\nTop Venues (nach Anzahl Artists):", fg=typer.colors.GREEN)
+            for v in metrics["top_venues"]:
+                typer.echo(f"  {v['label']:30s} {v['artist_count']} Artists")
+        if metrics["top_djs"]:
+            typer.secho("\nMeistgebuchte DJs/Artists:", fg=typer.colors.GREEN)
+            for d in metrics["top_djs"]:
+                typer.echo(f"  {d['label']:30s} {d['booker_count']} Bucher")
+        if metrics["shared_bookings"]:
+            typer.secho("\nGeteilte Bookings (gleiche DJs):", fg=typer.colors.CYAN)
+            for s in metrics["shared_bookings"]:
+                typer.echo(f"  {s['a_label']} ↔ {s['b_label']}: {s['shared_djs']} gemeinsame DJs")
+        if export:
+            export.write_text(
+                _json.dumps(graph_to_dict(graph_obj), indent=2, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            typer.echo(f"\nGraph exportiert: {export}")
+
+
+@app.command()
 def compare(
     config_b: Path = typer.Option(..., "--config-b", help="Variant config to compare against"),
     config_a: Path = typer.Option(None, "--config-a", help="Baseline config (default: active)"),
