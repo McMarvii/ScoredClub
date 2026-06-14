@@ -26,6 +26,7 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | `analytics` | Breakout-Erkennung, Karrierephase und Forecast über die Historie |
 | `graph` | Booking-/Kollaborations-Graph (Top-Venues, -DJs, geteilte Bookings) |
 | `sentiment` | Lexikon-Sentiment über Community-Text einer Entität (kein Schreiben) |
+| `export` | Alle Entitäten als CSV exportieren (Summary + Dimensionspunkte) |
 | `compare` | Zwei Scoring-Konfigurationen vergleichen (A/B) |
 | `serve` | FastAPI-Lese-API starten |
 
@@ -130,6 +131,13 @@ Berechnet aus der Score-Historie Breakout-/Anomalie-Buckets (dynamische Baseline
 Karrierephasen (Perzentil) und einen Kurzfrist-Forecast pro Entität. `--breakouts-only`
 zeigt nur die als Ausbruch markierten Entitäten. Braucht ≥ 3 Läufe für aussagekräftige
 Breakouts. Details: [Analytics](analytics.md).
+
+## `export`
+```bash
+scoredclub export [--output FILE.csv] [--config PATH]
+```
+Exportiert alle Entitäten als CSV (Summary-Felder + gewichtete Punkte je Scoring-Dimension
+aus dem letzten Snapshot). Ohne `--output` nach stdout. Pendant zur API `GET /export.csv`.
 
 ## `sentiment`
 ```bash

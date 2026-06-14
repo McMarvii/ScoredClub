@@ -118,6 +118,25 @@ def test_entity_trend(client):
     assert data["latest"]["direction"] == "new"
 
 
+def test_export_csv_endpoint(client):
+    response = client.get("/export.csv")
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/csv")
+    lines = response.text.strip().splitlines()
+    assert lines[0].startswith("entity_id,name,type")
+    assert any(line.startswith("testclub,") for line in lines)
+
+
+def test_feed_endpoint(client):
+    response = client.get("/feed.xml")
+    assert response.status_code == 200
+    assert "rss" in response.headers["content-type"] or response.text.startswith("<?xml")
+    import xml.etree.ElementTree as ET
+
+    root = ET.fromstring(response.text)
+    assert root.tag == "rss"  # valid even with no alerts
+
+
 def test_graph_endpoint(client):
     data = client.get("/graph").json()
     metrics = data["metrics"]

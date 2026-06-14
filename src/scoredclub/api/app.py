@@ -401,6 +401,26 @@ def booking_graph(
     return payload
 
 
+@app.get("/export.csv", response_class=PlainTextResponse)
+def export_csv_endpoint(session: Session = Depends(db_session)) -> PlainTextResponse:
+    """All entities as CSV (summary + per-dimension points)."""
+    from scoredclub.export import export_csv
+
+    return PlainTextResponse(content=export_csv(session), media_type="text/csv")
+
+
+@app.get("/feed.xml", response_class=PlainTextResponse)
+def feed_endpoint(
+    limit: int = Query(default=50, ge=1, le=200), session: Session = Depends(db_session)
+) -> PlainTextResponse:
+    """RSS 2.0 feed of the most recent alerts."""
+    from scoredclub.feeds import build_feed
+
+    return PlainTextResponse(
+        content=build_feed(session, limit=limit), media_type="application/rss+xml"
+    )
+
+
 @app.get("/runs/latest/report", response_class=PlainTextResponse)
 def latest_report(session: Session = Depends(db_session)) -> str:
     run = session.scalar(
