@@ -68,9 +68,26 @@ class ScoringConfig(_Base):
     confidence: ConfidenceConfig = Field(default_factory=ConfidenceConfig)
 
 
+class EmailConfig(_Base):
+    """SMTP digest e-mails (off by default). Password via SCOREDCLUB_SMTP_PASSWORD."""
+
+    enabled: bool = False
+    smtp_host: str = "localhost"
+    smtp_port: int = 587
+    use_tls: bool = True
+    username: str | None = None
+    from_addr: str = "scoredclub@localhost"
+    to_addrs: list[str] = Field(default_factory=list)
+    subject_prefix: str = "[ScoredClub]"
+
+
 class AlertsConfig(_Base):
     score_change_threshold: float = 10.0
     webhook_url: str | None = None
+    # Optional Slack incoming-webhook URL (off unless set). One digest message
+    # per run. Overridable via SCOREDCLUB_SLACK_WEBHOOK_URL.
+    slack_webhook_url: str | None = None
+    email: EmailConfig = Field(default_factory=EmailConfig)
 
 
 class SourcesConfig(_Base):
@@ -178,4 +195,7 @@ class Settings(_Base):
         webhook_env = os.environ.get("SCOREDCLUB_WEBHOOK_URL")
         if webhook_env:
             settings.alerts.webhook_url = webhook_env
+        slack_env = os.environ.get("SCOREDCLUB_SLACK_WEBHOOK_URL")
+        if slack_env:
+            settings.alerts.slack_webhook_url = slack_env
         return settings

@@ -27,7 +27,18 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
   },
   "alerts": {
     "score_change_threshold": 10,
-    "webhook_url": null
+    "webhook_url": null,
+    "slack_webhook_url": null,
+    "email": {
+      "enabled": false,
+      "smtp_host": "localhost",
+      "smtp_port": 587,
+      "use_tls": true,
+      "username": null,
+      "from_addr": "scoredclub@localhost",
+      "to_addrs": [],
+      "subject_prefix": "[ScoredClub]"
+    }
   },
   "sources": {
     "clubcommission_url": "https://www.clubcommission.de/",
@@ -95,6 +106,8 @@ Details der Wirkung: [Scoring-Modell](scoring.md) (inkl. Datenkonfidenz).
 |-----------|-----------|
 | `score_change_threshold` | Δ-Score, ab dem ein Alert ausgelöst wird (Standard 10). |
 | `webhook_url` | Ziel-URL für Alert-Webhooks (oder `null`). |
+| `slack_webhook_url` | Slack-Incoming-Webhook für eine Digest-Nachricht pro Lauf (oder `null`). |
+| `email` | SMTP-Digest-Mails (`enabled`, `smtp_host`/`smtp_port`, `use_tls`, `username`, `from_addr`, `to_addrs`, `subject_prefix`). Passwort via `SCOREDCLUB_SMTP_PASSWORD`. |
 
 ### `sources`
 | Schlüssel | Bedeutung |
@@ -158,6 +171,8 @@ Details: [Datenerhebung](data-collection.md).
 |----------|-------------|--------------|
 | `DATABASE_URL` | `sqlite:///data/scoredclub.db` | SQLAlchemy-Verbindung. SQLite oder Postgres (`postgresql+psycopg2://user:pass@host/db`). |
 | `SCOREDCLUB_WEBHOOK_URL` | `alerts.webhook_url` | Webhook für Alerts. |
+| `SCOREDCLUB_SLACK_WEBHOOK_URL` | `alerts.slack_webhook_url` | Slack-Webhook für den Alert-Digest. |
+| `SCOREDCLUB_SMTP_PASSWORD` | — | Passwort für den SMTP-Login der Digest-Mails. |
 | `SCOREDCLUB_CONFIG` | Standardpfad | Pfad zur Konfigurationsdatei. |
 | `SCOREDCLUB_API_KEY` | — | Aktiviert die Schreib-/Trigger-Endpunkte der API (`X-API-Key`). Ohne Key sind sie deaktiviert. |
 | `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET` | — | Reddit-OAuth-App; aktiviert den authentifizierten Reddit-Collector (Dimension D). |

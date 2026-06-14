@@ -30,7 +30,18 @@
   },
   "alerts": {
     "score_change_threshold": 10,
-    "webhook_url": null
+    "webhook_url": null,
+    "slack_webhook_url": null,
+    "email": {
+      "enabled": false,
+      "smtp_host": "localhost",
+      "smtp_port": 587,
+      "use_tls": true,
+      "username": null,
+      "from_addr": "scoredclub@localhost",
+      "to_addrs": [],
+      "subject_prefix": "[ScoredClub]"
+    }
   },
   "sources": {
     "clubcommission_url": "https://www.clubcommission.de/",
