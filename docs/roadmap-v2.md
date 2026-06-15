@@ -250,8 +250,12 @@ wem was, und was ist davon das Beste**".
   Paar-Rangliste aus direkten Kanten + geteilten DJs/Venues), die kollaborativsten Akteure
   und je Entität `books`/`booked_by`/`collaborates_with`/`shared_booking_partners`. CLI
   `collaborations`, API `GET /collaborations` + `GET /entities/{id}/relationships`.
-- **Residency-Erkennung** — wiederkehrende Artist↔Venue-Bindungen aus der Gigography
-  (regelmäßige Auftritte = Residency) als eigenes Beziehungs-Label.
+- **Residency-Erkennung** → ✅ umgesetzt. Wiederkehrende Artist↔Venue-Bindungen aus der
+  Gigography (`parties`) werden automatisch erkannt: ≥ `analytics.residency_min_appearances`
+  (Default 3) Auftritte an derselben Venue → `resident`-Kante im Booking-Graphen (eigenständig
+  gegenüber `played_at`). Venues mit Residents in `entity_relationships.residents`, Venues des
+  Artists in `entity_relationships.residencies`, Graph-Übersicht in `graph_metrics.top_residencies`.
+  Deterministisch, kanonischer Lauf unverändert. Schwellwert konfigurierbar. Siehe [Graph](graph.md).
 - **Szene-Karte / Cluster** — Community-Detection auf dem Booking-Graphen (welche
   Kollektive/Venues/DJs bilden ein Cluster), plus Brücken-Knoten („Szene-Verbinder").
 - **Lineup-/Matching-Vorschläge** — aus dem Graphen abgeleitet: passende DJs für ein Venue,
@@ -319,9 +323,9 @@ wem was, und was ist davon das Beste**".
    Songkick, Artist-Scoring, Graph-Aggregation/-View.
 5. **P3** Kulturökosystem-Monitoring (Clubsterben-Register, Förder-/Policy-Feed) — am stärksten
    differenziert, weitgehend greenfield. ✅ erledigt
-6. **v3** Musik-Tiefe & Beziehungen: Steckbrief (Top-Songs/Sets/Partys) + Kollaborations-
-   Ranking ✅, SoundCloud/Mixcloud-Quellen (Auto-Befüllung des Steckbriefs) ✅; offen:
-   Discogs/Spotify/Bandcamp, Residencies und Szene-Cluster. 🟡 in Arbeit
+6. **v3** Musik-Tiefe & Beziehungen: Steckbrief (Top-Songs/Sets/Partys) ✅,
+   Kollaborations-Ranking ✅, SoundCloud/Mixcloud-Quellen ✅, Residency-Erkennung ✅;
+   offen: Discogs/Spotify/Bandcamp, Szene-Cluster/Lineup-Matching. 🟡 in Arbeit
 7. **P2** Multi-City, Lernkomponente.
 
 ## Bezug zu v1-Komponenten

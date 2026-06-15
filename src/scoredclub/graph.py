@@ -31,6 +31,7 @@ REL_BOOKS = "books"
 REL_PLAYED_AT = "played_at"
 REL_COLLABORATES = "collaborates"
 REL_CROSS_PROMOTES = "cross_promotes"
+REL_RESIDENT = "resident"
 
 KIND_ENTITY = "entity"
 KIND_EXTERNAL = "external"
@@ -78,8 +79,40 @@ class _Resolver:
         return None
 
 
+def detect_residencies(
+    profiles: list[EntityProfile], min_appearances: int = 3
+) -> dict[str, list[str]]:
+    """Return, per artist entity_id, the venues where they are a resident.
+
+    A residency is detected when an ``artist`` entity's ``parties`` list
+    contains at least ``min_appearances`` entries for the same venue (matched
+    by the normalized venue name). Venue strings are kept as-is (original
+    capitalisation) so they can be fed into :func:`build_booking_graph` and
+    resolved to existing entity nodes.
+    """
+    result: dict[str, list[str]] = {}
+    for profile in profiles:
+        if profile.type != EntityType.artist or not profile.parties:
+            continue
+        counts: Counter[str] = Counter()
+        canonical: dict[str, str] = {}  # normalized -> first-seen original
+        for party in profile.parties:
+            venue = (party.venue or "").strip()
+            if not venue:
+                continue
+            norm = normalize_name(venue)
+            counts[norm] += 1
+            canonical.setdefault(norm, venue)
+        venues = [canonical[n] for n, c in counts.items() if c >= min_appearances]
+        if venues:
+            result[profile.entity_id] = venues
+    return result
+
+
 def build_booking_graph(
-    profiles: list[EntityProfile], scores: dict[str, float] | None = None
+    profiles: list[EntityProfile],
+    scores: dict[str, float] | None = None,
+    min_appearances: int = 3,
 ) -> BookingGraph:
     scores = scores or {}
     resolver = _Resolver(profiles)
@@ -132,6 +165,13 @@ def build_booking_graph(
         for promo in net.cross_promotions:
             add_edge(src, promo, REL_CROSS_PROMOTES)
 
+    # Residency detection: recurring artist↔venue appearances (>= min_appearances)
+    # from the parties/gigography get a REL_RESIDENT edge — a stronger label than
+    # a one-off played_at and independent of the networking.collaborations data.
+    for entity_id, venues in detect_residencies(profiles, min_appearances).items():
+        for venue in venues:
+            add_edge(entity_id, venue, REL_RESIDENT)
+
     return graph
 
 
@@ -153,12 +193,13 @@ def _undirected_components(graph: BookingGraph) -> int:
 
 
 def graph_metrics(graph: BookingGraph, top: int = 10) -> dict:
-    """Degree, top venues/DJs and co-booking links derived from the graph."""
+    """Degree, top venues/DJs, co-booking links and residencies from the graph."""
     label = {nid: node.label for nid, node in graph.nodes.items()}
 
     degree: Counter[str] = Counter()
     venue_artists: dict[str, set[str]] = defaultdict(set)
     dj_bookers: dict[str, set[str]] = defaultdict(set)
+    venue_residents: dict[str, set[str]] = defaultdict(set)
     for edge in graph.edges:
         degree[edge.source] += 1
         degree[edge.target] += 1
@@ -166,6 +207,8 @@ def graph_metrics(graph: BookingGraph, top: int = 10) -> dict:
             venue_artists[edge.target].add(edge.source)
         elif edge.relation == REL_BOOKS:
             dj_bookers[edge.target].add(edge.source)
+        elif edge.relation == REL_RESIDENT:
+            venue_residents[edge.target].add(edge.source)
 
     # Co-booking: organisation pairs that book the same DJ (shared-talent links).
     co_booking: Counter[tuple[str, str]] = Counter()
@@ -188,6 +231,12 @@ def graph_metrics(graph: BookingGraph, top: int = 10) -> dict:
     top_connected = [
         {"id": nid, "label": label.get(nid, nid), "degree": deg}
         for nid, deg in degree.most_common(top)
+    ]
+    top_residencies = [
+        {"id": vid, "label": label.get(vid, vid), "resident_count": len(residents)}
+        for vid, residents in sorted(
+            venue_residents.items(), key=lambda kv: (-len(kv[1]), kv[0])
+        )[:top]
     ]
     shared = [
         {
@@ -212,6 +261,7 @@ def graph_metrics(graph: BookingGraph, top: int = 10) -> dict:
         "shared_bookings": shared,
         "top_collaborations": collaboration_pairs(graph, top=top),
         "most_collaborative": most_collaborative(graph, top=top),
+        "top_residencies": top_residencies,
     }
 
 
@@ -325,6 +375,8 @@ def entity_relationships(graph: BookingGraph, entity_id: str) -> dict:
         return {"id": nid, "label": label.get(nid, nid)}
 
     books, booked_by, collaborates, cross, played_venues, played_by = ([] for _ in range(6))
+    residencies: list[dict] = []   # venues where this entity is a resident (artist → venue)
+    residents: list[dict] = []     # artists who are residents here (venue → artist)
     for edge in graph.edges:
         if edge.source == entity_id:
             if edge.relation == REL_BOOKS:
@@ -335,6 +387,8 @@ def entity_relationships(graph: BookingGraph, entity_id: str) -> dict:
                 collaborates.append(lab(edge.target))
             elif edge.relation == REL_CROSS_PROMOTES:
                 cross.append(lab(edge.target))
+            elif edge.relation == REL_RESIDENT:
+                residencies.append(lab(edge.target))
         elif edge.target == entity_id:
             if edge.relation == REL_BOOKS:
                 booked_by.append(lab(edge.source))
@@ -344,6 +398,8 @@ def entity_relationships(graph: BookingGraph, entity_id: str) -> dict:
                 collaborates.append(lab(edge.source))
             elif edge.relation == REL_CROSS_PROMOTES:
                 cross.append(lab(edge.source))
+            elif edge.relation == REL_RESIDENT:
+                residents.append(lab(edge.source))
 
     shared = []
     for (a, b), counts in _collaboration_index(graph).items():
@@ -361,18 +417,25 @@ def entity_relationships(graph: BookingGraph, entity_id: str) -> dict:
         "cross_promotes": cross,
         "played_venues": played_venues,
         "played_by": played_by,
+        "residencies": residencies,
+        "residents": residents,
         "shared_booking_partners": shared,
     }
 
 
-def build_graph_from_db(session) -> tuple[BookingGraph, dict[str, float]]:
+def build_graph_from_db(
+    session, min_appearances: int = 3
+) -> tuple[BookingGraph, dict[str, float]]:
     """Load profiles + current scores from the DB and build the graph.
 
-    Lazy ``repo`` import keeps this module otherwise pure/DB-free.
+    ``min_appearances`` is forwarded to :func:`build_booking_graph` for
+    residency detection (pass ``settings.analytics.residency_min_appearances``
+    when settings are available). Lazy ``repo`` import keeps this module
+    otherwise pure/DB-free.
     """
     from scoredclub.db import repo
 
     entities = repo.all_entities(session)
     profiles = [repo.profile_from_row(e) for e in entities]
     scores = {e.entity_id: e.current_score for e in entities if e.current_score is not None}
-    return build_booking_graph(profiles, scores), scores
+    return build_booking_graph(profiles, scores, min_appearances=min_appearances), scores

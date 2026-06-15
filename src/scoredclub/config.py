@@ -188,6 +188,9 @@ class AnalyticsConfig(_Base):
     elite_percentile: float = 90.0
     established_percentile: float = 70.0
     emerging_percentile: float = 40.0
+    # Minimum party appearances at the same venue before the link is labelled
+    # "resident" in the booking graph (artist↔venue residency detection).
+    residency_min_appearances: int = 3
 
 
 class LLMResearchConfig(_Base):

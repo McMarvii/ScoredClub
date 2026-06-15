@@ -88,7 +88,8 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "forecast_epsilon": 0.5,
     "elite_percentile": 90.0,
     "established_percentile": 70.0,
-    "emerging_percentile": 40.0
+    "emerging_percentile": 40.0,
+    "residency_min_appearances": 3
   },
   "llm": {
     "enabled": false,
@@ -169,8 +170,9 @@ Details: [Trending](trending.md).
 | `growth_z` / `strong_z` / `explosive_z` | z-Schwellen der Breakout-Buckets. |
 | `forecast_epsilon` | Mindeststeigung für das „rising soon"-Flag. |
 | `elite_percentile` / `established_percentile` / `emerging_percentile` | Perzentil-Grenzen der Karrierephasen. |
+| `residency_min_appearances` | Mindestanzahl Auftritte an derselben Venue, ab der ein Artist als Resident gilt (Booking-Graph, Default 3). |
 
-Details: [Analytics](analytics.md).
+Details: [Analytics](analytics.md) · [Graph](graph.md).
 
 ### `retention`
 | Schlüssel | Bedeutung |
