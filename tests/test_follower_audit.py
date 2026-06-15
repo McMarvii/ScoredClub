@@ -35,6 +35,24 @@ def test_instagram_handle_from_handle_and_url():
     assert _instagram_handle(EntityProfile(name="X")) is None
 
 
+def test_instagram_handle_strips_query_and_fragment():
+    # Regression: a URL with ?query / #fragment must not leak into the handle.
+    for url, expected in [
+        ("https://instagram.com/berghain?hl=en", "berghain"),
+        ("https://www.instagram.com/berghain/?igshid=abc", "berghain"),
+        ("https://instagram.com/berghain#about", "berghain"),
+    ]:
+        p = EntityProfile(name="X", online=OnlinePresence(instagram=SocialPresence(url=url)))
+        assert _instagram_handle(p) == expected
+
+
+def test_parse_audit_ignores_bool_for_numeric_fields():
+    # Regression: bool is a subclass of int; ``true`` must not become 1.0.
+    audit, _ = _parse_audit({"fake_follower_pct": True, "engagement_rate": False})
+    assert audit.fake_follower_pct is None
+    assert audit.engagement_rate is None
+
+
 def test_parse_audit_maps_fields_and_history():
     audit, history = _parse_audit({
         "fake_follower_pct": 42.0, "engagement_rate": 0.4, "quality_score": 35,
