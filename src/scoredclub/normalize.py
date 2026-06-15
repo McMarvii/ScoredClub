@@ -183,6 +183,8 @@ def merge_profiles(existing: EntityProfile, incoming: EntityProfile) -> EntityPr
     # Event-demand: newer non-null wins; follower history merges per platform.
     if incoming.demand is not None and (merged.demand is None or incoming_newer):
         merged.demand = incoming.demand
+    if incoming.follower_audit is not None and (merged.follower_audit is None or incoming_newer):
+        merged.follower_audit = incoming.follower_audit
     follower_history = {k: list(v) for k, v in existing.follower_history.items()}
     for platform, points in incoming.follower_history.items():
         series = follower_history.setdefault(platform, [])

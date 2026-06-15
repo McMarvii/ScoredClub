@@ -38,6 +38,14 @@ PENALTY_REACH = 35
 PENALTY_DORMANT = 25
 PENALTY_DROP = 35       # sharp follower loss = likely bot purge / churned bought followers
 
+# External audit-dataset thresholds (verified follower quality, not internal comparison).
+FAKE_PCT_HIGH = 30.0      # suspected-fake share that warrants a flag
+FAKE_PCT_SEVERE = 50.0    # share at which the account is almost certainly inflated
+ENGAGEMENT_LOW = 0.5      # avg engagement rate (%) below which large reach is implausible
+PENALTY_FAKE = 30
+PENALTY_FAKE_SEVERE = 55
+PENALTY_ENGAGEMENT = 20
+
 VERDICT_AUTHENTIC = "authentic"
 VERDICT_QUESTIONABLE = "questionable"
 VERDICT_SUSPICIOUS = "suspicious"
@@ -202,6 +210,29 @@ def assess(profile: EntityProfile) -> FollowerAuthenticity:
             dormant.append(name)
             score -= PENALTY_DORMANT
 
+    # External audit dataset (pulled by the follower-audit collector) — verified
+    # follower quality, not an internal comparison.
+    audit = profile.follower_audit
+    if audit is not None:
+        fake = audit.fake_follower_pct
+        if fake is not None and fake >= FAKE_PCT_SEVERE:
+            flags.append(
+                f"Externe Prüfung ({audit.source or 'Audit'}): ~{fake:.0f}% unechte Follower"
+            )
+            score -= PENALTY_FAKE_SEVERE
+        elif fake is not None and fake >= FAKE_PCT_HIGH:
+            flags.append(
+                f"Externe Prüfung ({audit.source or 'Audit'}): ~{fake:.0f}% unechte Follower"
+            )
+            score -= PENALTY_FAKE
+        eng = audit.engagement_rate
+        if eng is not None and eng < ENGAGEMENT_LOW and max_followers >= DORMANT_FOLLOWERS:
+            flags.append(
+                f"Externe Prüfung ({audit.source or 'Audit'}): sehr niedrige "
+                f"Engagement-Rate ({eng:.2f}%)"
+            )
+            score -= PENALTY_ENGAGEMENT
+
     score = max(0.0, min(100.0, score))
     if score >= THRESHOLD_AUTHENTIC:
         verdict = VERDICT_AUTHENTIC
@@ -223,6 +254,17 @@ def assess(profile: EntityProfile) -> FollowerAuthenticity:
             "dormant_platforms": dormant,
             # Retrieved + evaluated historical trajectory per platform.
             "history": evaluate_history(profile.follower_history),
+            # External verification dataset (None unless an audit was pulled).
+            "audit": (
+                {
+                    "fake_follower_pct": audit.fake_follower_pct,
+                    "engagement_rate": audit.engagement_rate,
+                    "quality_score": audit.quality_score,
+                    "source": audit.source,
+                    "checked_at": audit.checked_at.isoformat() if audit.checked_at else None,
+                }
+                if audit is not None else None
+            ),
         },
     )
 

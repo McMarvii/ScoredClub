@@ -160,6 +160,8 @@ const AUTH = {
   HIGH_FOLLOWERS: 50000, LOW_FOOTPRINT: 2, DORMANT_FOLLOWERS: 20000, DORMANT_POSTS: 0.5,
   SPIKE_MIN_ABS: 5000, SPIKE_RATIO: 5.0, SPIKE_PCT: 0.5,
   PEN_SPIKE: 45, PEN_REACH: 35, PEN_DORMANT: 25, PEN_DROP: 35, T_AUTH: 80, T_QUEST: 50,
+  FAKE_PCT_HIGH: 30, FAKE_PCT_SEVERE: 50, ENGAGEMENT_LOW: 0.5,
+  PEN_FAKE: 30, PEN_FAKE_SEVERE: 55, PEN_ENGAGEMENT: 20,
 };
 
 function median(nums) {
@@ -248,6 +250,24 @@ function followerAuthenticity(e) {
         typeof p.posts_per_month === "number" && p.posts_per_month < AUTH.DORMANT_POSTS) {
       flags.push(`${name}: große Reichweite, aber kaum Aktivität (${fmtFollowers(p.followers)} Follower)`);
       score -= AUTH.PEN_DORMANT;
+    }
+  }
+  // External audit dataset (pulled by the follower-audit collector).
+  const audit = e.follower_audit;
+  if (audit) {
+    const src = audit.source || "Audit";
+    const fake = audit.fake_follower_pct;
+    if (typeof fake === "number" && fake >= AUTH.FAKE_PCT_SEVERE) {
+      flags.push(`Externe Prüfung (${src}): ~${Math.round(fake)}% unechte Follower`);
+      score -= AUTH.PEN_FAKE_SEVERE;
+    } else if (typeof fake === "number" && fake >= AUTH.FAKE_PCT_HIGH) {
+      flags.push(`Externe Prüfung (${src}): ~${Math.round(fake)}% unechte Follower`);
+      score -= AUTH.PEN_FAKE;
+    }
+    const eng = audit.engagement_rate;
+    if (typeof eng === "number" && eng < AUTH.ENGAGEMENT_LOW && max >= AUTH.DORMANT_FOLLOWERS) {
+      flags.push(`Externe Prüfung (${src}): sehr niedrige Engagement-Rate (${eng.toFixed(2)} %)`);
+      score -= AUTH.PEN_ENGAGEMENT;
     }
   }
   score = Math.max(0, Math.min(100, score));

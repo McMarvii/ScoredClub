@@ -57,6 +57,8 @@
     "songkick_max_artists": 25,
     "sentiment_enabled": false,
     "funding_feed_path": "data/funding/berlin_funding.json",
+    "follower_audit_url": "https://api.follower-audit.example/v1/audit",
+    "follower_audit_max_entities": 25,
     "extra_sources": []
   },
   "run": {

@@ -18,7 +18,7 @@ Sentiment-Collector (offline)   ┘
 Zwei Kategorien (siehe `src/scoredclub/collectors/__init__.py`):
 
 - **Discovery-Collector** dürfen neue Entitäten anlegen: `ClubcommissionCollector`, `ResidentAdvisorCollector`.
-- **Enrichment-Collector** reichern nur bestehende Entitäten an (legen keine neuen an): `LLMResearchCollector`, `RedditCollector`, `BandsintownCollector`, `SentimentCollector`.
+- **Enrichment-Collector** reichern nur bestehende Entitäten an (legen keine neuen an): `LLMResearchCollector`, `RedditCollector`, `BandsintownCollector`, `SongkickCollector`, `SentimentCollector`, `FollowerAuditCollector`.
 
 Die Pipeline führt erst Discovery, dann Enrichment aus.
 
@@ -159,6 +159,15 @@ Leitet den `community_sentiment_hint` deterministisch aus Reddit-Thread-Titeln +
 ab (Lexikon-Analyse, kein Netz/Modell) und ersetzt so den manuellen Hint. **Standardmäßig
 aus** (`sources.sentiment_enabled`); aktiviert füllt er nur *unbekannte* Hints und läuft
 nach dem Reddit-Collector. Details: [Sentiment](sentiment.md).
+
+## 7. Follower-Audit-Collector (Enrichment, extern)
+
+Zieht einen *externen* Datensatz zur **Follower-Echtheit** (vermuteter Fake-Anteil,
+Engagement-Rate, historische Follower-Zahlen) und hängt ihn als `follower_audit` an die
+Entität; die gelieferte Historie fließt in `follower_history`. **No-op ohne
+`FOLLOWER_AUDIT_API_KEY`** oder ohne Instagram-Handle; provider-agnostisch über
+`sources.follower_audit_url`. Speist die [Follower-Echtheit](authenticity.md) (nicht das
+Scoring). Fehlertolerant, mit gemocktem Client getestet.
 
 ## Dedup & Merge
 

@@ -52,6 +52,8 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "songkick_max_artists": 25,
     "sentiment_enabled": false,
     "funding_feed_path": "data/funding/berlin_funding.json",
+    "follower_audit_url": "https://api.follower-audit.example/v1/audit",
+    "follower_audit_max_entities": 25,
     "extra_sources": []
   },
   "run": {
@@ -131,6 +133,7 @@ Details der Wirkung: [Scoring-Modell](scoring.md) (inkl. Datenkonfidenz).
 | `songkick_url` / `songkick_max_artists` | Songkick-API (zweite sanktionierte Event-Quelle für Artists). |
 | `sentiment_enabled` | Offline-Sentiment-Collector an/aus (füllt nur unbekannte Hints). |
 | `funding_feed_path` | JSON-Datei des Förder-/Policy-Feeds (siehe [Förder-Feed](funding.md)). |
+| `follower_audit_url` / `follower_audit_max_entities` | Externer Follower-Audit-Provider (siehe [Follower-Echtheit](authenticity.md)). |
 | `extra_sources` | Reserviert für zusätzliche Quellen. |
 
 ### `run`
@@ -203,6 +206,7 @@ Details: [Datenerhebung](data-collection.md).
 | `REDDIT_USER_AGENT` | Default-UA | Eindeutiger Reddit-User-Agent (von Reddit verlangt). |
 | `BANDSINTOWN_APP_ID` | — | Aktiviert den Bandsintown-Collector (Event-/Booking-Daten für `artist`-Entitäten). |
 | `SONGKICK_API_KEY` | — | Aktiviert den Songkick-Collector (zweite Event-Quelle für `artist`-Entitäten). |
+| `FOLLOWER_AUDIT_API_KEY` | — | Aktiviert den externen Follower-Audit-Collector (Fake-Anteil/Engagement/Verlauf). |
 | `ANTHROPIC_API_KEY` | — | Für den agentischen LLM-Research-Collector (`llm.enabled`). |
 
 > **Sicherheitshinweis:** Geheimnisse (Webhook-URLs, künftige API-Tokens) gehören in
