@@ -49,7 +49,9 @@ def event_activity(profile: EntityProfile, today: date) -> float:
     last_3 = profile.events.events_last_3_months
     last_6 = profile.events.events_last_6_months
 
-    if last_3:
+    # An explicit 0 in the last 3 months is real data ("no recent events"), not
+    # "unknown" — only fall through to the 6-month band when last_3 is None.
+    if last_3 is not None and last_3 > 0:
         per_month = last_3 / 3.0
         if per_month >= 4:
             score = 100.0
@@ -59,6 +61,10 @@ def event_activity(profile: EntityProfile, today: date) -> float:
             score = 50.0
         else:
             score = 30.0
+    elif last_3 is not None and last_3 == 0:
+        # Confirmed no events in the last 3 months: at most the 6-month signal,
+        # otherwise inactive.
+        score = 15.0 if last_6 else 0.0
     elif last_6:
         score = 15.0
     else:
@@ -132,6 +138,9 @@ def continuity(profile: EntityProfile, today: date) -> float:
     if year is None:
         return 10.0
     years = today.year - year
+    if years < 0:
+        # Future "active_since" (typo/bad data) is not evidence of continuity.
+        return 10.0
     if years >= 20:
         return 100.0
     if years >= 10:

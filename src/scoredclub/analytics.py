@@ -238,9 +238,14 @@ def compute_intelligence(session, settings) -> tuple[dict[str, EntityIntelligenc
     run_ids = [r.id for r in runs]
     series_map = repo.run_score_series(session, run_ids)
     ordered = [series_map.get(rid, {}) for rid in run_ids]
+    by_entity = series_from_runs(ordered)
+    # Cohort percentiles use each entity's *latest available* score, so an
+    # entity missing from the very last run is ranked by its real standing
+    # rather than collapsing to percentile 0 / "developing".
+    current_scores = {eid: vals[-1] for eid, vals in by_entity.items() if vals}
     intel = analyze_cohort(
-        series_from_runs(ordered),
-        ordered[-1] if ordered else {},
+        by_entity,
+        current_scores,
         baseline_floor=cfg.breakout_baseline_floor,
         growth_z=cfg.growth_z,
         strong_z=cfg.strong_z,

@@ -131,6 +131,11 @@ class BandsintownCollector:
                     break
                 continue
 
+            # No events (artist not found / nothing booked) -> emit nothing, so a
+            # zero-count stub can't overwrite richer research-sourced counts.
+            if not events:
+                continue
+
             parsed = _parse_events(events, today)
             result.profiles.append(
                 EntityProfile(

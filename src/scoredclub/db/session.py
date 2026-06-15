@@ -17,6 +17,8 @@ _session_factory: sessionmaker | None = None
 def get_engine(database_url: str) -> Engine:
     global _engine, _session_factory
     if _engine is None or str(_engine.url) != database_url:
+        if _engine is not None:
+            _engine.dispose()
         url = make_url(database_url)
         connect_args: dict = {}
         if url.drivername.startswith("sqlite"):

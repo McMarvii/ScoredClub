@@ -146,7 +146,8 @@ class RedditCollector:
         response = httpx.get(
             base,
             params={
-                "q": f'"{name}" berlin',
+                # Strip embedded quotes so the phrase query stays well-formed.
+                "q": f'"{name.replace(chr(34), "")}" berlin',
                 "limit": max(limit * 2, 10),
                 "sort": "relevance",
                 "type": "link",
@@ -158,7 +159,8 @@ class RedditCollector:
         )
         response.raise_for_status()
         payload = response.json()
-        children = payload.get("data", {}).get("children", [])
+        # Reddit can answer with {"data": null} -> guard against AttributeError.
+        children = (payload.get("data") or {}).get("children") or []
         threads: list[str] = []
         for child in children:
             data = child.get("data", {})

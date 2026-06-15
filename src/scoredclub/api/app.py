@@ -38,6 +38,9 @@ def db_session() -> Iterator[Session]:
     session = get_session(_settings.database_url)
     try:
         yield session
+    except Exception:
+        session.rollback()
+        raise
     finally:
         session.close()
 
@@ -129,7 +132,22 @@ def _entity_summary(entity) -> dict:
 
 @app.get("/health")
 def health() -> dict:
-    return {"status": "ok", "version": __version__}
+    from scoredclub.overview import build_health
+
+    report = build_health(_settings)
+    return {
+        "status": "ok" if report["healthy"] else "degraded",
+        "version": __version__,
+        **report,
+    }
+
+
+@app.get("/pulse")
+def pulse(top: int = Query(default=5, ge=1, le=20), session: Session = Depends(db_session)) -> dict:
+    """The living heartbeat: leaderboard, movers, breakouts, at-risk, collabs, funding."""
+    from scoredclub.overview import build_pulse
+
+    return build_pulse(session, _settings, top=top)
 
 
 @app.post("/ingest")
@@ -245,18 +263,19 @@ def list_entities(
     min_score: float | None = Query(default=None),
     session: Session = Depends(db_session),
 ) -> list[dict]:
-    results = []
-    for entity in repo.all_entities(session):
-        if type and entity.type != type:
-            continue
-        if tier and (entity.tier or "") != tier:
-            continue
-        if status and entity.status != status:
-            continue
-        if min_score is not None and (entity.current_score or 0) < min_score:
-            continue
-        results.append(_entity_summary(entity))
-    return sorted(results, key=lambda e: e["current_score"] or 0, reverse=True)
+    from scoredclub.db.models import Entity
+
+    stmt = select(Entity)
+    if type is not None:
+        stmt = stmt.where(Entity.type == type)
+    if tier is not None:
+        stmt = stmt.where(Entity.tier == tier)
+    if status is not None:
+        stmt = stmt.where(Entity.status == status)
+    if min_score is not None:
+        stmt = stmt.where(Entity.current_score >= min_score)
+    stmt = stmt.order_by(Entity.current_score.desc().nulls_last())
+    return [_entity_summary(e) for e in session.scalars(stmt).all()]
 
 
 @app.get("/entities/{entity_id}")
@@ -514,9 +533,12 @@ def latest_report(session: Session = Depends(db_session)) -> str:
     )
     if run is None or not run.report_md_path:
         raise HTTPException(status_code=404, detail="no report available yet")
-    path = Path(run.report_md_path)
+    path = Path(run.report_md_path).resolve()
+    output_dir = Path(_settings.run.output_dir).resolve()
+    if not str(path).startswith(str(output_dir) + "/") and path != output_dir:
+        raise HTTPException(status_code=403, detail="report path outside output directory")
     if not path.exists():
-        raise HTTPException(status_code=404, detail=f"report file {path} missing")
+        raise HTTPException(status_code=404, detail=f"report file {path.name} missing")
     return path.read_text(encoding="utf-8")
 
 

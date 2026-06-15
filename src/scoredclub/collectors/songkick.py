@@ -129,8 +129,10 @@ class SongkickCollector:
                     break
                 continue
 
-            if artist_id is None:
-                continue  # artist not found on Songkick -> nothing to add
+            if artist_id is None or not events:
+                # Not found, or no gigography -> add nothing, so a zero-count
+                # stub can't overwrite richer research-sourced counts.
+                continue
 
             parsed = _parse_events(events, today)
             result.profiles.append(

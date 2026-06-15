@@ -27,6 +27,7 @@ _POSITIVE: dict[str, float] = {
     "beautiful": 1.0, "magic": 1.0, "magical": 1.2, "fun": 1.0, "recommend": 1.0,
     "recommended": 1.0, "welcoming": 1.2, "inclusive": 1.2, "friendly": 1.0,
     "safe": 1.0, "respectful": 1.0, "wonderful": 1.2, "stellar": 1.2,
+    "good": 1.0, "nice": 1.0, "solid": 1.0,
     # German (folded)
     "super": 1.0, "toll": 1.0, "geil": 1.2, "beste": 1.2, "liebe": 1.0,
     "wunderbar": 1.2, "grossartig": 1.2, "genial": 1.2, "fantastisch": 1.2,

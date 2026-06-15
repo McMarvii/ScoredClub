@@ -9,9 +9,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from email.utils import format_datetime
 from xml.sax.saxutils import escape
-
-_RSS_DATE = "%a, %d %b %Y %H:%M:%S +0000"
 
 
 @dataclass
@@ -24,10 +23,12 @@ class FeedItem:
 
 
 def _rfc822(dt: datetime | None) -> str:
+    # email.utils.format_datetime always emits English RFC-822 day/month names,
+    # so the feed stays valid regardless of the process locale (LC_TIME).
     dt = dt or datetime.now(timezone.utc)
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc).strftime(_RSS_DATE)
+    return format_datetime(dt.astimezone(timezone.utc))
 
 
 def render_rss(

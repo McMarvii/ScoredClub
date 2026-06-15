@@ -53,7 +53,7 @@ class ResidentAdvisorCollector:
             )
             response.raise_for_status()
             payload = response.json()
-            hits = payload.get("data", {}).get("search") or []
+            hits = (payload.get("data") or {}).get("search") or []
             for hit in hits:
                 name = hit.get("value")
                 content_url = hit.get("contentUrl")

@@ -120,9 +120,9 @@ def test_collect_error_object_yields_no_events(monkeypatch):
     entities = [EntityProfile(name="Nobody", type=EntityType.artist)]
     result = collector.collect(Settings(), entities=entities)
     assert result.ok
-    assert len(result.profiles) == 1
-    assert result.profiles[0].events.events_last_3_months == 0
-    assert result.profiles[0].networking.collaborations == []
+    # An error-object response means artist not found → no stub emitted, so
+    # existing research-sourced event counts are never overwritten with zeros.
+    assert len(result.profiles) == 0
 
 
 def test_collect_aborts_after_failures(monkeypatch):

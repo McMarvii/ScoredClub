@@ -6,6 +6,8 @@ import re
 import unicodedata
 from difflib import SequenceMatcher
 
+from pydantic import BaseModel
+
 from scoredclub.schemas import EntityProfile
 
 # Tokens dropped from the start/end of names during normalization.
@@ -85,9 +87,13 @@ def find_match(
     if alias_target and alias_target in by_id:
         return by_id[alias_target]
 
+    # Names take priority over aliases, and ties resolve to the first entity
+    # (deterministic) rather than the last — so a later entity no longer
+    # silently shadows an earlier one that normalizes to the same name.
     norm_index: dict[str, EntityProfile] = {}
     for entity in existing:
-        norm_index[normalize_name(entity.name)] = entity
+        norm_index.setdefault(normalize_name(entity.name), entity)
+    for entity in existing:
         for alias in entity.aliases:
             norm_index.setdefault(normalize_name(alias), entity)
     if incoming_norm in norm_index:
@@ -107,7 +113,10 @@ def _union(a: list, b: list) -> list:
         key = str(item).strip().lower()
         if key and key not in seen:
             seen.add(key)
-            merged.append(item)
+            # Deep-copy model items so the merged profile never aliases the
+            # inputs — otherwise mutating the incoming profile later would
+            # corrupt the merged (and persisted) result.
+            merged.append(item.model_copy(deep=True) if isinstance(item, BaseModel) else item)
     return merged
 
 

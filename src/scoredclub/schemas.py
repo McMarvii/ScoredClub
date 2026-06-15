@@ -350,8 +350,11 @@ class EntityProfile(_Base):
     @field_validator("active_since", mode="before")
     @classmethod
     def _coerce_active_since(cls, v: object) -> object:
-        if isinstance(v, int):
-            return str(v)
+        # Tolerate numeric years from LLM JSON: 1995 and 1995.0 -> "1995".
+        if isinstance(v, bool):
+            return v
+        if isinstance(v, (int, float)):
+            return str(int(v))
         return v
 
     def active_since_year(self) -> int | None:

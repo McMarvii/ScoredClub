@@ -341,6 +341,94 @@ def analytics(
 
 
 @app.command()
+def pulse(
+    top: int = typer.Option(5, help="Top-N je Kategorie"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """♥  Der lebendige Überblick: Leaderboard, Aufsteiger, Breakouts, Kollaborationen."""
+    from scoredclub.overview import HEART, build_pulse
+
+    settings = _settings(config)
+    init_db(settings.database_url)
+    with get_session(settings.database_url) as session:
+        p = build_pulse(session, settings, top=top)
+
+    ov = p["overview"]
+    typer.secho(f"\n{HEART}  ScoredClub Pulse", fg=typer.colors.MAGENTA, bold=True)
+    typer.echo(
+        f"  {ov.get('entities', '?')} Entitäten  ·  "
+        f"Letzter Lauf: #{ov.get('last_run', '—')} ({ov.get('last_run_finished', '—')})"
+    )
+
+    if p["leaderboard"]:
+        typer.secho(f"\n  Leaderboard (Top {top}):", fg=typer.colors.CYAN)
+        for i, e in enumerate(p["leaderboard"], 1):
+            typer.echo(f"  {i:2d}. {e['name']:28s} {e['score']:6.1f}  {e['tier'] or ''}")
+
+    m = p["movers"]
+    if m["risers"]:
+        typer.secho(f"\n  Aufsteiger:", fg=typer.colors.GREEN)
+        for e in m["risers"]:
+            typer.echo(f"  ▲ {e['name']:28s} Δ {e['score_delta']:+.1f}")
+    if m["fallers"]:
+        typer.secho(f"  Absteiger:", fg=typer.colors.RED)
+        for e in m["fallers"]:
+            typer.echo(f"  ▼ {e['name']:28s} Δ {e['score_delta']:+.1f}")
+
+    if p["breakouts"]:
+        typer.secho(f"\n  Breakouts:", fg=typer.colors.YELLOW)
+        for b in p["breakouts"]:
+            typer.echo(f"  ★ {b['name']:28s} {b['bucket']}  slope {b['slope']:+.1f}/Lauf")
+
+    if p["at_risk"]:
+        typer.secho(f"\n  Gefährdete Venues:", fg=typer.colors.RED)
+        for r in p["at_risk"]:
+            typer.echo(f"  ⚠ {r.get('name', '?')}")
+
+    if p["funding_deadlines"]:
+        typer.secho(f"\n  Anstehende Förder-Deadlines:", fg=typer.colors.CYAN)
+        for f in p["funding_deadlines"]:
+            typer.echo(f"  {f['deadline'] or '—'}  {f['name']}")
+
+    dh = p["data_health"]
+    if dh:
+        conf = f"{dh['avg_confidence']:.0f}%" if dh.get("avg_confidence") is not None else "—"
+        typer.echo(
+            f"\n  Datenqualität: ⌀ Konfidenz {conf}  ·  "
+            f"{dh.get('low_confidence_entities', 0)} low-conf  ·  "
+            f"{dh.get('follower_flagged', 0)} Follower-Flags"
+        )
+    typer.echo("")
+
+
+@app.command()
+def health(
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """System-Gesundheitscheck: Konfig, DB, Schema, Seeds, Integrationen."""
+    from scoredclub.overview import build_health
+
+    settings = _settings(config)
+    report = build_health(settings)
+
+    status_color = typer.colors.GREEN if report["healthy"] else typer.colors.RED
+    status_label = "healthy" if report["healthy"] else "DEGRADED"
+    typer.secho(f"\nSystem: {status_label}", fg=status_color, bold=True)
+
+    for c in report["checks"]:
+        icon = "✓" if c["ok"] else ("✕" if c["critical"] else "!")
+        color = typer.colors.GREEN if c["ok"] else (typer.colors.RED if c["critical"] else typer.colors.YELLOW)
+        typer.secho(f"  {icon} {c['name']:16s} {c['detail']}", fg=color)
+
+    typer.secho("\nIntegrationen:", fg=typer.colors.CYAN)
+    for env, info in report["integrations"].items():
+        icon = "✓" if info["enabled"] else "○"
+        color = typer.colors.GREEN if info["enabled"] else typer.colors.WHITE
+        typer.secho(f"  {icon} {env:32s} {info['unlocks']}", fg=color)
+    typer.echo("")
+
+
+@app.command()
 def authenticity(
     entity_id: str = typer.Argument(None, help="Eine Entität (Standard: alle mit Follower-Daten)"),
     flagged_only: bool = typer.Option(False, "--flagged-only", help="Nur auffällige/verdächtige"),

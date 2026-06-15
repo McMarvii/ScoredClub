@@ -121,9 +121,11 @@ def execute_run(
             summary.warnings.extend(result.warnings)
             for profile in result.profiles:
                 repo.upsert_profile(session, profile, run_id=run.id)
-        # Enrichment collectors augment the current entities only.
-        current = [repo.profile_from_row(e) for e in repo.all_entities(session)]
+        # Enrichment collectors augment the current entities only. Re-read the
+        # entity snapshot before each one so a later collector sees what earlier
+        # collectors attached this run (e.g. sentiment reads Reddit's threads).
         for collector_cls in ENRICHMENT_COLLECTORS:
+            current = [repo.profile_from_row(e) for e in repo.all_entities(session)]
             result = collector_cls().collect(settings, entities=current)
             summary.warnings.extend(result.warnings)
             for profile in result.profiles:
