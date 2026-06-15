@@ -234,6 +234,21 @@ Siehe [Graph](graph.md).
     "shared_bookings": [ { "a": "berghain", "b": "tresor", "shared_djs": 2, "...": "..." } ] } }
 ```
 
+### `GET /collaborations`
+Wer arbeitet/bucht am meisten mit wem: gewichtete Paar-Rangliste + kollaborativste Akteure.
+**Query:** `top` (1–100, Standard 20). Siehe [Graph](graph.md).
+
+```json
+{ "top_collaborations": [
+    { "a": "berghain", "a_label": "Berghain", "b": "tresor", "b_label": "Tresor",
+      "weight": 7, "direct": 1, "shared_djs": 2, "shared_venues": 0 } ],
+  "most_collaborative": [ { "id": "berghain", "label": "Berghain", "collaborators": 12, "weight": 40 } ] }
+```
+
+### `GET /entities/{entity_id}/relationships`
+Die Beziehungen einer Entität: `books` / `booked_by` / `collaborates_with` / `cross_promotes`
+/ `played_venues` / `played_by` / `shared_booking_partners`. `404` bei unbekannter Entität.
+
 ### `GET /runs`
 Liste aller Läufe (neueste zuerst).
 

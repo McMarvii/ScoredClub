@@ -210,6 +210,8 @@ def graph_metrics(graph: BookingGraph, top: int = 10) -> dict:
         "top_venues": top_venues,
         "top_djs": top_djs,
         "shared_bookings": shared,
+        "top_collaborations": collaboration_pairs(graph, top=top),
+        "most_collaborative": most_collaborative(graph, top=top),
     }
 
 
@@ -226,6 +228,140 @@ def graph_to_dict(graph: BookingGraph) -> dict:
             {"source": e.source, "target": e.target, "relation": e.relation}
             for e in graph.edges
         ],
+    }
+
+
+# --- collaboration / relationship ranking ------------------------------------
+# "Who works with / books whom the most." A collaboration between two nodes is
+# weighted from three signals: a direct edge (strongest), booking the same DJ,
+# or playing the same venue.
+WEIGHT_DIRECT = 3
+WEIGHT_SHARED_DJ = 2
+WEIGHT_SHARED_VENUE = 1
+
+
+def _pair_key(a: str, b: str) -> tuple[str, str]:
+    return (a, b) if a <= b else (b, a)
+
+
+def _collaboration_index(graph: BookingGraph) -> dict[tuple[str, str], dict]:
+    """Build, per unordered node pair, the direct/shared-DJ/shared-venue counts."""
+    pairs: dict[tuple[str, str], dict] = defaultdict(
+        lambda: {"direct": 0, "shared_djs": 0, "shared_venues": 0}
+    )
+
+    dj_bookers: dict[str, set[str]] = defaultdict(set)
+    venue_artists: dict[str, set[str]] = defaultdict(set)
+    for edge in graph.edges:
+        if edge.source != edge.target:
+            pairs[_pair_key(edge.source, edge.target)]["direct"] += 1
+        if edge.relation == REL_BOOKS:
+            dj_bookers[edge.target].add(edge.source)
+        elif edge.relation == REL_PLAYED_AT:
+            venue_artists[edge.target].add(edge.source)
+
+    for bookers in dj_bookers.values():
+        for a, b in combinations(sorted(bookers), 2):
+            pairs[_pair_key(a, b)]["shared_djs"] += 1
+    for artists in venue_artists.values():
+        for a, b in combinations(sorted(artists), 2):
+            pairs[_pair_key(a, b)]["shared_venues"] += 1
+    return pairs
+
+
+def _weight(counts: dict) -> int:
+    return (
+        WEIGHT_DIRECT * counts["direct"]
+        + WEIGHT_SHARED_DJ * counts["shared_djs"]
+        + WEIGHT_SHARED_VENUE * counts["shared_venues"]
+    )
+
+
+def collaboration_pairs(graph: BookingGraph, top: int = 20) -> list[dict]:
+    """Strongest "works-with" node pairs, ranked by weighted collaboration."""
+    label = {nid: node.label for nid, node in graph.nodes.items()}
+    rows = []
+    for (a, b), counts in _collaboration_index(graph).items():
+        weight = _weight(counts)
+        if weight <= 0:
+            continue
+        rows.append({
+            "a": a, "a_label": label.get(a, a),
+            "b": b, "b_label": label.get(b, b),
+            "weight": weight,
+            "direct": counts["direct"],
+            "shared_djs": counts["shared_djs"],
+            "shared_venues": counts["shared_venues"],
+        })
+    rows.sort(key=lambda r: (-r["weight"], r["a"], r["b"]))
+    return rows[:top]
+
+
+def most_collaborative(graph: BookingGraph, top: int = 20) -> list[dict]:
+    """Entities ranked by how many partners they work with (and total weight)."""
+    label = {nid: node.label for nid, node in graph.nodes.items()}
+    by_node: dict[str, dict] = defaultdict(lambda: {"collaborators": 0, "weight": 0})
+    for (a, b), counts in _collaboration_index(graph).items():
+        weight = _weight(counts)
+        if weight <= 0:
+            continue
+        for node in (a, b):
+            by_node[node]["collaborators"] += 1
+            by_node[node]["weight"] += weight
+    rows = [
+        {"id": nid, "label": label.get(nid, nid),
+         "collaborators": v["collaborators"], "weight": v["weight"]}
+        for nid, v in by_node.items()
+    ]
+    rows.sort(key=lambda r: (-r["collaborators"], -r["weight"], r["id"]))
+    return rows[:top]
+
+
+def entity_relationships(graph: BookingGraph, entity_id: str) -> dict:
+    """Who an entity works with: books / booked-by / collaborates / venues / shared."""
+    label = {nid: node.label for nid, node in graph.nodes.items()}
+
+    def lab(nid: str) -> dict:
+        return {"id": nid, "label": label.get(nid, nid)}
+
+    books, booked_by, collaborates, cross, played_venues, played_by = ([] for _ in range(6))
+    for edge in graph.edges:
+        if edge.source == entity_id:
+            if edge.relation == REL_BOOKS:
+                books.append(lab(edge.target))
+            elif edge.relation == REL_PLAYED_AT:
+                played_venues.append(lab(edge.target))
+            elif edge.relation == REL_COLLABORATES:
+                collaborates.append(lab(edge.target))
+            elif edge.relation == REL_CROSS_PROMOTES:
+                cross.append(lab(edge.target))
+        elif edge.target == entity_id:
+            if edge.relation == REL_BOOKS:
+                booked_by.append(lab(edge.source))
+            elif edge.relation == REL_PLAYED_AT:
+                played_by.append(lab(edge.source))
+            elif edge.relation == REL_COLLABORATES:
+                collaborates.append(lab(edge.source))
+            elif edge.relation == REL_CROSS_PROMOTES:
+                cross.append(lab(edge.source))
+
+    shared = []
+    for (a, b), counts in _collaboration_index(graph).items():
+        if entity_id in (a, b) and counts["shared_djs"] > 0:
+            other = b if a == entity_id else a
+            shared.append({**lab(other), "shared_djs": counts["shared_djs"]})
+    shared.sort(key=lambda r: (-r["shared_djs"], r["id"]))
+
+    return {
+        "entity_id": entity_id,
+        "name": label.get(entity_id, entity_id),
+        "books": books,
+        "booked_by": booked_by,
+        "collaborates_with": collaborates,
+        "cross_promotes": cross,
+        "played_venues": played_venues,
+        "played_by": played_by,
+        "shared_booking_partners": shared,
     }
 
 
