@@ -27,6 +27,23 @@ Ohne Follower-Daten: `inconclusive`.
 > Heuristik, kein Beweis. Eine Tiefenprüfung (Engagement-Rate, Konto-Alter der Follower,
 > Audience-Geografie) braucht Plattform-APIs und bleibt Ausbau.
 
+### Beispiel
+
+Ein Artist mit 70.000 Followern, einem Verlauf `5.000 → 5.200 → 70.000` (Spike), ohne
+Events/Presse (Reichweite ohne Footprint) und einem externen Audit „60 % unecht, 0,2 %
+Engagement" ergibt:
+
+```
+verdict: suspicious  (score 0)
+ - Auffälliger Follower-Sprung (instagram): +64.800 am 2026-03-01
+ - Hohe Reichweite (70.000 Follower) bei geringer realer Aktivität/Resonanz
+ - Externe Prüfung (audit-x): ~60% unechte Follower
+ - Externe Prüfung (audit-x): sehr niedrige Engagement-Rate (0.20%)
+```
+
+Eine gut belegte Entität (viele Events, Presse, Bookings, plausibler Verlauf) bleibt
+`authentic` ohne Flags.
+
 ## Externe Datensätze — abrufen & verifizieren
 
 Über die internen Vergleiche hinaus zieht der **`FollowerAuditCollector`** einen *externen*

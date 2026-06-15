@@ -50,12 +50,21 @@ def _api_key() -> str | None:
 
 
 def _instagram_handle(profile: EntityProfile) -> str | None:
+    """Best-effort Instagram handle for the audit query.
+
+    Prefers an explicit handle, else derives it from the profile URL. We strip a
+    leading ``@`` and any query string / fragment, because a URL like
+    ``instagram.com/berghain?hl=en`` must yield ``berghain`` — sending the raw
+    ``berghain?hl=en`` would be a malformed handle the provider can't resolve.
+    """
     ig = profile.online.instagram
     if ig.handle:
-        return ig.handle.lstrip("@")
+        return ig.handle.lstrip("@").strip() or None
     if ig.url and "instagram.com/" in ig.url:
-        tail = ig.url.rstrip("/").split("instagram.com/")[-1].split("/")[0]
-        return tail or None
+        tail = ig.url.rstrip("/").split("instagram.com/")[-1]
+        # Drop the path tail after the username plus any ?query / #fragment.
+        handle = tail.split("/")[0].split("?")[0].split("#")[0].lstrip("@").strip()
+        return handle or None
     return None
 
 
@@ -63,7 +72,11 @@ def _parse_audit(payload: dict) -> tuple[FollowerAudit, list[FollowerPoint]]:
     """Map the normalised provider response to a FollowerAudit + history points."""
     def _num(key):
         v = payload.get(key)
-        return float(v) if isinstance(v, (int, float)) else None
+        # bool is a subclass of int — exclude it so a stray ``true`` does not
+        # silently become ``1.0`` for a percentage/rate field.
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            return None
+        return float(v)
 
     checked = payload.get("checked_at")
     checked_date = None
@@ -108,6 +121,8 @@ class FollowerAuditCollector:
         if not api_key or not entities:
             return result  # no key or nothing to enrich -> silent no-op
 
+        # Only entities with a resolvable handle can be audited; the cap keeps a
+        # single run's external API spend (and rate-limit exposure) bounded.
         candidates = [(e, _instagram_handle(e)) for e in entities]
         candidates = [(e, h) for e, h in candidates if h]
         candidates = candidates[: settings.sources.follower_audit_max_entities]

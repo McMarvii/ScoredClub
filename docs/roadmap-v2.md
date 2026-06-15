@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 279 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 282 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 

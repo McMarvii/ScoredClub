@@ -166,6 +166,22 @@ def test_evaluate_history_summary():
     assert "volatility" in ig and "spikes" in ig and "drops" in ig
 
 
+def test_assess_spikes_drops_match_standalone_detectors():
+    # The single-pass optimisation in assess() must produce the same spikes/drops
+    # as the standalone detect_spikes/detect_drops helpers.
+    profile = EntityProfile(
+        name="X", type=EntityType.artist,
+        online=OnlinePresence(instagram=SocialPresence(followers=20000)),
+        follower_history={
+            "instagram": _fh(5000, 5200, 70000, 70100)["instagram"],
+            "soundcloud": _fh(60000, 60500, 11000, 11500, platform="soundcloud")["soundcloud"],
+        },
+    )
+    sig = assess(profile).signals
+    assert sig["spikes"] == detect_spikes(profile.follower_history)
+    assert sig["drops"] == detect_drops(profile.follower_history)
+
+
 def test_assess_signals_include_history():
     profile = EntityProfile(
         name="X", type=EntityType.artist,

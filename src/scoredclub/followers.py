@@ -25,14 +25,24 @@ class GrowthStat:
 
 
 def compute_growth(history: list[FollowerPoint]) -> GrowthStat | None:
-    """Growth over a per-platform follower series (needs ≥ 2 points)."""
+    """Growth over a per-platform follower series (needs ≥ 2 points).
+
+    Returns ``None`` for fewer than two points (no trajectory to measure).
+    """
+    # Sort chronologically. The ``p.date is None`` part of the key pushes
+    # undated points to the end *without* ever comparing ``None`` to a date:
+    # tuple comparison checks equality first, so two ``(True, None)`` keys are
+    # equal and a date is only ever compared against another date.
     ordered = sorted(history, key=lambda p: (p.date is None, p.date))
     values = [p.followers for p in ordered]
     if len(values) < 2:
         return None
     start, end = values[0], values[-1]
     delta = end - start
+    # Percentage change is undefined from a zero base, so report None there.
     pct = round(100.0 * delta / start, 1) if start else None
+    # The slope is "followers per step" (least squares over the index, not the
+    # calendar gap) — a direction/strength signal, not a calendar-rate forecast.
     return GrowthStat(
         start=start, end=end, delta=delta, pct=pct,
         slope=round(linear_slope([float(v) for v in values]), 2), points=len(values),

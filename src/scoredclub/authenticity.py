@@ -22,8 +22,15 @@ from __future__ import annotations
 import statistics
 from dataclasses import dataclass, field
 
+from scoredclub.analytics import linear_slope
 from scoredclub.schemas import EntityProfile, FollowerPoint
 
+# Verdict calibration: each signal subtracts a penalty from a starting 100, and
+# the thresholds below are chosen so that ONE signal lands in "questionable"
+# (auffällig) while TWO push into "suspicious" (verdächtig). The smallest single
+# penalty (25) leaves 75 < THRESHOLD_AUTHENTIC, so any signal at all forfeits the
+# "authentic" verdict — a deliberately cautious design.
+#
 # --- thresholds (kept in sync with the JS port in frontend/app.js) -----------
 HIGH_FOLLOWERS = 50_000      # "high reach" trigger for the footprint check
 LOW_FOOTPRINT = 2            # footprint at/below this counts as "almost none"
@@ -133,24 +140,27 @@ def detect_drops(follower_history: dict[str, list]) -> list[dict]:
 def evaluate_history(follower_history: dict[str, list]) -> dict:
     """Retrieve and summarise the historical follower trajectory per platform.
 
-    Reuses the growth analysis from :mod:`scoredclub.followers` and adds the
-    volatility of the step-to-step changes — the basis for the spike/drop checks.
+    This is the single place that walks each series: it returns growth (delta %,
+    least-squares slope), volatility of the step-to-step changes, and the spike/
+    drop anomalies — so :func:`assess` can reuse this one pass instead of
+    re-scanning the history three times. Platforms with fewer than two points are
+    skipped (no trajectory to evaluate; they also carry no anomalies anyway).
     """
-    from scoredclub.followers import compute_growth
-
     summary: dict[str, dict] = {}
     for platform, points in follower_history.items():
         values, dates = _ordered(points)
         if len(values) < 2:
             continue
         steps = [values[i] - values[i - 1] for i in range(1, len(values))]
-        growth = compute_growth(points)
+        start, end = values[0], values[-1]
+        delta = end - start
         summary[platform] = {
             "points": len(values),
-            "start": values[0],
-            "end": values[-1],
-            "growth_pct": growth.pct if growth else None,
-            "slope": growth.slope if growth else 0.0,
+            "start": start,
+            "end": end,
+            # pct is undefined from a zero base; slope is per-step (least squares).
+            "growth_pct": round(100.0 * delta / start, 1) if start else None,
+            "slope": round(linear_slope([float(v) for v in values]), 2),
             "volatility": round(statistics.pstdev(steps), 1) if len(steps) >= 2 else 0.0,
             "spikes": _anomalous_steps(values, dates, direction=1),
             "drops": _anomalous_steps(values, dates, direction=-1),
@@ -171,7 +181,12 @@ def assess(profile: EntityProfile) -> FollowerAuthenticity:
     score = 100.0
     flags: list[str] = []
 
-    spikes = detect_spikes(profile.follower_history)
+    # One walk over the history; spikes/drops are flattened from that result
+    # (each carries its platform) instead of re-scanning via detect_spikes/drops.
+    history = evaluate_history(profile.follower_history)
+    spikes = [{"platform": p, **s} for p, summary in history.items() for s in summary["spikes"]]
+    drops = [{"platform": p, **s} for p, summary in history.items() for s in summary["drops"]]
+
     for spike in spikes:
         when = f" am {spike['date']}" if spike["date"] else ""
         flags.append(
@@ -180,7 +195,6 @@ def assess(profile: EntityProfile) -> FollowerAuthenticity:
         )
         score -= PENALTY_SPIKE
 
-    drops = detect_drops(profile.follower_history)
     for drop in drops:
         when = f" am {drop['date']}" if drop["date"] else ""
         flags.append(
@@ -252,8 +266,9 @@ def assess(profile: EntityProfile) -> FollowerAuthenticity:
             "spikes": spikes,
             "drops": drops,
             "dormant_platforms": dormant,
-            # Retrieved + evaluated historical trajectory per platform.
-            "history": evaluate_history(profile.follower_history),
+            # Retrieved + evaluated historical trajectory per platform (reused
+            # from the single walk above — not recomputed).
+            "history": history,
             # External verification dataset (None unless an audit was pulled).
             "audit": (
                 {
