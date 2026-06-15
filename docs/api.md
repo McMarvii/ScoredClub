@@ -234,6 +234,11 @@ Siehe [Graph](graph.md).
     "shared_bookings": [ { "a": "berghain", "b": "tresor", "shared_djs": 2, "...": "..." } ] } }
 ```
 
+### `GET /entities/{entity_id}/dossier`
+Steckbrief einer Entität: `top_tracks` (≤10), `top_sets` (≤5), `parties` (≤20), Kernzahlen,
+`follower_authenticity` und `relationships`. `404` bei unbekannter Entität. Siehe
+[Steckbrief](dossier.md).
+
 ### `GET /collaborations`
 Wer arbeitet/bucht am meisten mit wem: gewichtete Paar-Rangliste + kollaborativste Akteure.
 **Query:** `top` (1–100, Standard 20). Siehe [Graph](graph.md).

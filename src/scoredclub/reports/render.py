@@ -161,7 +161,8 @@ def render_entities_json(
         data = json.loads(profile.model_dump_json())
         # Keep the output clean: omit optional structures when they are empty.
         for optional in ("provenance", "lifecycle_events", "displacement_signals",
-                         "demand", "follower_history", "follower_audit"):
+                         "demand", "follower_history", "follower_audit",
+                         "top_tracks", "top_sets", "parties"):
             if not data.get(optional):
                 data.pop(optional, None)
         return data

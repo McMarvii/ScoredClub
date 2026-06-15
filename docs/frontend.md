@@ -22,6 +22,8 @@ hostbar.
 - **Follower-Echtheit:** je Entität ein Badge (✓ echt / ⚠ auffällig / ✕ verdächtig) und im
   Detail-Dialog die Flags samt **historischem Follower-Verlauf** — eine Spiegelung des
   Moduls [`authenticity`](authenticity.md); **ohne Einfluss aufs Scoring**.
+- **Steckbrief:** Detail-Dialog-Sektion mit Top-Songs, Top-Sets und gespielten Partys
+  (sortiert/gekappt wie `scoredclub.dossier`), wenn die Daten vorliegen.
 - Detail-Dialog pro Entität: **Score-Verlauf als Sparkline** (aus `trend.sparkline`),
   Score-Breakdown (A–G mit Balken), Bonus/Malus, Datenkonfidenz, **Gigography/Bookings**
   (gespielte Venues bei Artists bzw. gebuchte DJs bei Orgs), Presse-Highlights,
