@@ -176,6 +176,18 @@ Kurzfrist-Forecast pro Entität, berechnet aus der Score-Historie. Siehe [Analyt
   "breakouts": [ { "entity_id": "oxi", "...": "..." } ] }
 ```
 
+### `GET /authenticity`
+Follower-Echtheits-Verdikte je Entität (informativ; **nie Teil des Scores**). **Query:**
+`flagged_only`. Pro-Entität liefert auch `GET /entities/{id}` ein `follower_authenticity`-Feld
+inkl. `signals.history` (ausgewertete Follower-Trajektorie). Siehe [Follower-Echtheit](authenticity.md).
+
+```json
+{ "entities": [
+  { "entity_id": "x", "name": "X", "verdict": "suspicious", "score": 20.0,
+    "flags": ["Auffälliger Follower-Sprung (instagram): +49.500 am 2026-03-01",
+              "Starker Follower-Verlust (instagram): -40.000 (mögliche Bot-Bereinigung)"] } ] }
+```
+
 ### `GET /funding`
 Förder-/Policy-Feed: Programme, Policy-Items und anstehende Deadlines. **Query:**
 `within_days` (1–730, Standard 90). Siehe [Förder-Feed](funding.md).

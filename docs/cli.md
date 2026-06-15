@@ -30,6 +30,7 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | `retention` | Veraltete Community-/Personendaten redigieren (GDPR) |
 | `clubsterben` | Kulturökosystem-Register: Eröffnungen/Schließungen, Ursachen, gefährdete Venues |
 | `funding` | Förder-/Policy-Feed: Programme, Deadlines, Policy-Items |
+| `authenticity` | Follower-Echtheit prüfen (informativ; kein Scoring-Einfluss) |
 | `compare` | Zwei Scoring-Konfigurationen vergleichen (A/B) |
 | `serve` | FastAPI-Lese-API starten |
 
@@ -134,6 +135,14 @@ Berechnet aus der Score-Historie Breakout-/Anomalie-Buckets (dynamische Baseline
 Karrierephasen (Perzentil) und einen Kurzfrist-Forecast pro Entität. `--breakouts-only`
 zeigt nur die als Ausbruch markierten Entitäten. Braucht ≥ 3 Läufe für aussagekräftige
 Breakouts. Details: [Analytics](analytics.md).
+
+## `authenticity`
+```bash
+scoredclub authenticity [ENTITY_ID] [--flagged-only] [--config PATH]
+```
+Prüft per Heuristik, ob die Follower einer Entität echt wirken (Spikes/Drops in der
+Historie, Reichweite ohne Footprint, inaktive Großkonten). **Beeinflusst das Scoring nicht.**
+`--flagged-only` zeigt nur Auffälligkeiten. Details: [Follower-Echtheit](authenticity.md).
 
 ## `funding`
 ```bash

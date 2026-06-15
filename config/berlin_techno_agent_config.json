@@ -73,6 +73,9 @@
     "enabled": false,
     "community_days": 365
   },
+  "authenticity": {
+    "capture_history": false
+  },
   "analytics": {
     "history_window": 12,
     "breakout_baseline_floor": 1.0,

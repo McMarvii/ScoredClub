@@ -341,6 +341,54 @@ def analytics(
 
 
 @app.command()
+def authenticity(
+    entity_id: str = typer.Argument(None, help="Eine Entität (Standard: alle mit Follower-Daten)"),
+    flagged_only: bool = typer.Option(False, "--flagged-only", help="Nur auffällige/verdächtige"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Follower-Echtheits-Heuristik (informativ; beeinflusst das Scoring NICHT)."""
+    from scoredclub.authenticity import (
+        VERDICT_INCONCLUSIVE,
+        VERDICT_AUTHENTIC,
+        assess,
+    )
+
+    _ICON = {"authentic": "✓", "questionable": "⚠", "suspicious": "✕", "inconclusive": "·"}
+    _COLOR = {
+        "authentic": typer.colors.GREEN, "questionable": typer.colors.YELLOW,
+        "suspicious": typer.colors.RED, "inconclusive": typer.colors.WHITE,
+    }
+    settings = _settings(config)
+    init_db(settings.database_url)
+    with get_session(settings.database_url) as session:
+        if entity_id:
+            entity = repo.get_entity(session, entity_id)
+            if entity is None:
+                typer.secho(f"Entity '{entity_id}' not found", fg=typer.colors.RED)
+                raise typer.Exit(code=1)
+            entities = [entity]
+        else:
+            entities = repo.all_entities(session)
+        shown = 0
+        for entity in entities:
+            result = assess(repo.profile_from_row(entity))
+            if result.verdict == VERDICT_INCONCLUSIVE:
+                continue
+            if flagged_only and result.verdict == VERDICT_AUTHENTIC:
+                continue
+            shown += 1
+            score = f"{result.score:.0f}" if result.score is not None else "—"
+            typer.secho(
+                f"{_ICON[result.verdict]} {entity.name:28s} {result.verdict:12s} ({score})",
+                fg=_COLOR[result.verdict],
+            )
+            for flag in result.flags:
+                typer.echo(f"      – {flag}")
+        if not shown:
+            typer.echo("Keine bewertbaren Follower-Daten." if not flagged_only else "Keine Auffälligkeiten.")
+
+
+@app.command()
 def funding(
     within: int = typer.Option(90, help="Deadline-Fenster in Tagen"),
     config: str = typer.Option(None, help="Path to config JSON"),
