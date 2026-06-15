@@ -241,8 +241,10 @@ wem was, und was ist davon das Beste**".
   Profilseite mit **Top-10-Songs**, **Top-5-Sets**, **max. Top-20 gespielten/besuchten
   Partys**, Kernzahlen (Score/Tier/Follower-Echtheit) und den wichtigsten Beziehungen.
   Schema-Felder `top_tracks`/`top_sets`/`parties`, `scoredclub.dossier`, CLI `dossier`, API
-  `GET /entities/{id}/dossier`, Dashboard-Sektion. Siehe [Steckbrief](dossier.md). **Offen:**
-  Musik-Collectors (SoundCloud/Mixcloud) zum automatischen Befüllen.
+  `GET /entities/{id}/dossier`, Dashboard-Sektion. Siehe [Steckbrief](dossier.md).
+  **Auto-Befüllung umgesetzt:** Musik-Collectors `SoundCloudCollector` (→ `top_tracks` +
+  Follower) und `MixcloudCollector` (→ `top_sets` + Follower) reichern den Steckbrief
+  automatisch an (siehe „Mehr Quellen" unten).
 - **Kollaborations-/Beziehungs-Ranking** → ✅ umgesetzt. Erweitert den
   [Booking-Graphen](graph.md): „**wer arbeitet/bucht am meisten mit wem**" (gewichtete
   Paar-Rangliste aus direkten Kanten + geteilten DJs/Venues), die kollaborativsten Akteure
@@ -263,9 +265,15 @@ wem was, und was ist davon das Beste**".
 
 ### Mehr Quellen (Collectors, off by default, sanktioniert/ToS-bewusst)
 
-- **SoundCloud / Mixcloud** → Sets/Tracks + Plays (Sets-Tiefe; offizielle bzw. dokumentierte
-  Endpunkte).
-- **Spotify / Bandcamp / Discogs** → Releases, Tracks, Label-Zugehörigkeit, Genres.
+- **SoundCloud / Mixcloud** → Sets/Tracks + Plays → ✅ umgesetzt. `SoundCloudCollector`
+  (Tracks/Releases → `top_tracks`, `SOUNDCLOUD_CLIENT_ID`) und `MixcloudCollector` (Sets/
+  Mixes → `top_sets`, öffentliche API, `mixcloud_enabled`) füllen den [Steckbrief](dossier.md)
+  automatisch und reichern zusätzlich die plattformeigenen **Follower** an (Dimension B). Beide
+  Enrichment-only, handle-gebunden, fehlertolerant, mit gemocktem Client getestet; erneute
+  Läufe aktualisieren Tracks/Sets in place (Merge-Dedup über Titel + URL). Siehe
+  [Datenerhebung](data-collection.md) → Musik-Collectors. **Offen:** Genres/BPM, Lineups.
+- **Spotify / Bandcamp / Discogs** → Releases, Tracks, Label-Zugehörigkeit, Genres. **Offen**
+  (nächste Quellen nach dem SoundCloud/Mixcloud-Muster).
 - **RA-Gigography / 1001 Tracklists** (ToS-bewusst) → gespielte Partys, Set-Tracklists,
   Lineups — primär über die sanktionierten Pfade (Bandsintown/Songkick), RA nur vorsichtig.
 - Jede Quelle als fehlertoleranter Enrichment-Collector mit API-Key-Gate (Muster wie
@@ -312,7 +320,8 @@ wem was, und was ist davon das Beste**".
 5. **P3** Kulturökosystem-Monitoring (Clubsterben-Register, Förder-/Policy-Feed) — am stärksten
    differenziert, weitgehend greenfield. ✅ erledigt
 6. **v3** Musik-Tiefe & Beziehungen: Steckbrief (Top-Songs/Sets/Partys) + Kollaborations-
-   Ranking, dann SoundCloud/Mixcloud/Discogs-Quellen, Residencies und Szene-Cluster. 🟡 begonnen
+   Ranking ✅, SoundCloud/Mixcloud-Quellen (Auto-Befüllung des Steckbriefs) ✅; offen:
+   Discogs/Spotify/Bandcamp, Residencies und Szene-Cluster. 🟡 in Arbeit
 7. **P2** Multi-City, Lernkomponente.
 
 ## Bezug zu v1-Komponenten

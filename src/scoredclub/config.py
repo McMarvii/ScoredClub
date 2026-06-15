@@ -110,6 +110,18 @@ class SourcesConfig(_Base):
     # SONGKICK_API_KEY); no-op without the key or without artist entities.
     songkick_url: str = "https://api.songkick.com/api/3.0"
     songkick_max_artists: int = 25
+    # SoundCloud fills the dossier's top_tracks (+ follower reach) for entities
+    # that have a soundcloud handle. No-op unless SOUNDCLOUD_CLIENT_ID is set.
+    soundcloud_url: str = "https://api.soundcloud.com"
+    soundcloud_max_entities: int = 25
+    soundcloud_max_tracks: int = 10
+    # Mixcloud fills the dossier's top_sets (+ follower reach) for entities with
+    # a mixcloud handle. Public API (no key); off by default so the canonical
+    # run stays reproducible.
+    mixcloud_enabled: bool = False
+    mixcloud_url: str = "https://api.mixcloud.com"
+    mixcloud_max_entities: int = 25
+    mixcloud_max_sets: int = 10
     # Deterministic lexicon sentiment analysis (no network). Off by default so
     # the canonical run is unaffected; when on it fills only *unknown* hints and
     # never overrides a researcher-supplied sentiment.
