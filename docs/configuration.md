@@ -67,6 +67,9 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "enabled": false,
     "community_days": 365
   },
+  "authenticity": {
+    "capture_history": false
+  },
   "analytics": {
     "history_window": 12,
     "breakout_baseline_floor": 1.0,
@@ -164,6 +167,13 @@ Details: [Analytics](analytics.md).
 | `community_days` | Aufbewahrungsfenster für Community-/Personendaten (Tage). |
 
 Details: [Compliance](compliance.md).
+
+### `authenticity`
+| Schlüssel | Bedeutung |
+|-----------|-----------|
+| `capture_history` | Bei jedem Lauf aktuelle Follower-Zahlen in `follower_history` fortschreiben (Standard aus). |
+
+Informatives Modul, **ohne Scoring-Einfluss**. Details: [Follower-Echtheit](authenticity.md).
 
 ### `llm`
 Agentischer LLM-Research-Collector (optional, standardmäßig aus). Braucht

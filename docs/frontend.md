@@ -19,6 +19,9 @@ hostbar.
   und später wieder laden oder löschen (`localStorage`).
 - Entitäten-Karten mit Score, Tier-/Status-/Konfidenz-/Trend-Badges, IG-Followern und
   Mini-Balken der Dimensionen A–G.
+- **Follower-Echtheit:** je Entität ein Badge (✓ echt / ⚠ auffällig / ✕ verdächtig) und im
+  Detail-Dialog die Flags samt **historischem Follower-Verlauf** — eine Spiegelung des
+  Moduls [`authenticity`](authenticity.md); **ohne Einfluss aufs Scoring**.
 - Detail-Dialog pro Entität: **Score-Verlauf als Sparkline** (aus `trend.sparkline`),
   Score-Breakdown (A–G mit Balken), Bonus/Malus, Datenkonfidenz, **Gigography/Bookings**
   (gespielte Venues bei Artists bzw. gebuchte DJs bei Orgs), Presse-Highlights,

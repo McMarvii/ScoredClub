@@ -144,6 +144,15 @@ class RetentionConfig(_Base):
     community_days: int = 365
 
 
+class AuthenticityConfig(_Base):
+    """Follower-authenticity module (informational; never affects scoring)."""
+
+    # Append current follower counts to follower_history on every run, so the
+    # historical trajectory the check evaluates builds up over time. Off by
+    # default to keep the canonical run reproducible.
+    capture_history: bool = False
+
+
 class AnalyticsConfig(_Base):
     """Breakout/anomaly detection, career-phase and forecast tuning (pure)."""
 
@@ -188,6 +197,7 @@ class Settings(_Base):
     run: RunConfig = Field(default_factory=RunConfig)
     trending: TrendingConfig = Field(default_factory=TrendingConfig)
     analytics: AnalyticsConfig = Field(default_factory=AnalyticsConfig)
+    authenticity: AuthenticityConfig = Field(default_factory=AuthenticityConfig)
     retention: RetentionConfig = Field(default_factory=RetentionConfig)
     llm: LLMResearchConfig = Field(default_factory=LLMResearchConfig)
     database_url: str = DEFAULT_DATABASE_URL

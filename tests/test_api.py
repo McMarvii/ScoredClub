@@ -120,6 +120,22 @@ def test_entity_trend(client):
     assert data["latest"]["direction"] == "new"
 
 
+def test_authenticity_in_entity_detail(client):
+    detail = client.get("/entities/testclub").json()
+    auth = detail["follower_authenticity"]
+    # Well-rounded fixture entity -> authentic, no flags; never affects the score.
+    assert auth["verdict"] == "authentic"
+    assert auth["flags"] == []
+
+
+def test_authenticity_list_endpoint(client):
+    data = client.get("/authenticity").json()
+    assert "entities" in data
+    # The minimal collective has no follower data -> inconclusive -> excluded.
+    ids = {r["entity_id"] for r in data["entities"]}
+    assert "api-kollektiv" not in ids
+
+
 def test_funding_endpoint(client):
     data = client.get("/funding").json()
     assert {"programs", "policies", "upcoming_deadlines"} <= data.keys()

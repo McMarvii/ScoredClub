@@ -265,6 +265,7 @@ def get_entity(entity_id: str, session: Session = Depends(db_session)) -> dict:
     if entity is None:
         raise HTTPException(status_code=404, detail=f"entity '{entity_id}' not found")
     history = repo.score_history(session, entity_id)
+    from scoredclub.authenticity import assess, to_dict as authenticity_dict
     from scoredclub.followers import growth_to_dict, profile_follower_growth
 
     profile = repo.profile_from_row(entity)
@@ -276,6 +277,8 @@ def get_entity(entity_id: str, session: Session = Depends(db_session)) -> dict:
             {"run_id": s.run_id, "score": s.score, "tier": s.tier} for s in history
         ],
         "follower_growth": growth_to_dict(profile_follower_growth(profile)),
+        # Informational only — never part of the score.
+        "follower_authenticity": authenticity_dict(assess(profile)),
     }
 
 
@@ -403,6 +406,30 @@ def booking_graph(
     if include_graph:
         payload["graph"] = graph_to_dict(graph_obj)
     return payload
+
+
+@app.get("/authenticity")
+def authenticity(
+    flagged_only: bool = Query(default=False),
+    session: Session = Depends(db_session),
+) -> dict:
+    """Follower-authenticity verdicts per entity (informational; not in the score)."""
+    from scoredclub.authenticity import VERDICT_AUTHENTIC, VERDICT_INCONCLUSIVE, assess
+
+    rows = []
+    for entity in repo.all_entities(session):
+        result = assess(repo.profile_from_row(entity))
+        if result.verdict == VERDICT_INCONCLUSIVE:
+            continue
+        if flagged_only and result.verdict == VERDICT_AUTHENTIC:
+            continue
+        rows.append({
+            "entity_id": entity.entity_id, "name": entity.name, "type": entity.type,
+            "verdict": result.verdict, "score": result.score, "flags": result.flags,
+        })
+    order = {"suspicious": 0, "questionable": 1, "authentic": 2}
+    rows.sort(key=lambda r: (order.get(r["verdict"], 9), -(r["score"] or 0)))
+    return {"entities": rows}
 
 
 @app.get("/funding")

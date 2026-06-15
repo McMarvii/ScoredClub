@@ -153,6 +153,159 @@ function fmtFollowers(n) {
   return n.toLocaleString("de-DE");
 }
 
+// ---- follower authenticity (mirrors src/scoredclub/authenticity.py) ----------
+// Informational only: this never touches the score. Thresholds kept in sync
+// with the Python module of record.
+const AUTH = {
+  HIGH_FOLLOWERS: 50000, LOW_FOOTPRINT: 2, DORMANT_FOLLOWERS: 20000, DORMANT_POSTS: 0.5,
+  SPIKE_MIN_ABS: 5000, SPIKE_RATIO: 5.0, SPIKE_PCT: 0.5,
+  PEN_SPIKE: 45, PEN_REACH: 35, PEN_DORMANT: 25, PEN_DROP: 35, T_AUTH: 80, T_QUEST: 50,
+};
+
+function median(nums) {
+  if (!nums.length) return 0;
+  const s = [...nums].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+
+function maxFollowers(e) {
+  const online = e.online || {};
+  let max = 0;
+  for (const p of Object.values(online)) {
+    if (p && typeof p.followers === "number") max = Math.max(max, p.followers);
+  }
+  const ra = e.events && e.events.ra_followers;
+  if (typeof ra === "number") max = Math.max(max, ra);
+  return max;
+}
+
+function footprintOf(e) {
+  const ev = e.events || {}, press = e.press || {}, comm = e.community || {}, net = e.networking || {};
+  let p = 0;
+  p += Math.min(ev.events_last_6_months || 0, 12);
+  p += 2 * ((press.major_features || []).length);
+  p += (press.international_mentions || []).length;
+  p += (press.local_press_mentions || []).length;
+  p += Math.min((comm.reddit_threads || []).length, 5);
+  p += (net.booked_djs || []).length;
+  p += (net.collaborations || []).length;
+  if (net.international_booking) p += 5;
+  if (e.cultural_recognition && e.cultural_recognition.clubcommission_member) p += 3;
+  return p;
+}
+
+// Abnormal steps in one direction (+1 spikes / -1 drops) — mirrors authenticity.py.
+function anomalousStepsJs(history, direction) {
+  const out = [];
+  for (const [platform, pts] of Object.entries(history || {})) {
+    if (!Array.isArray(pts)) continue;
+    const ordered = [...pts].sort((a, b) => String(a.date || "~").localeCompare(String(b.date || "~")));
+    const vals = ordered.map((p) => p.followers);
+    if (vals.length < 3) continue;
+    const steps = vals.slice(1).map((v, i) => v - vals[i]);
+    steps.forEach((step, i) => {
+      const signed = step * direction;
+      if (signed <= 0) return;
+      const others = steps.filter((_, j) => j !== i).map(Math.abs);
+      const baseline = median(others);
+      const prev = vals[i];
+      const bigAbs = signed >= AUTH.SPIKE_MIN_ABS;
+      const bigRel = signed >= AUTH.SPIKE_RATIO * Math.max(baseline, 1);
+      const bigPct = prev > 0 && signed >= AUTH.SPIKE_PCT * prev;
+      if (bigAbs && (bigRel || bigPct)) {
+        out.push({ platform, delta: step, date: ordered[i + 1].date || null });
+      }
+    });
+  }
+  return out;
+}
+
+function followerAuthenticity(e) {
+  const max = maxFollowers(e);
+  const hist = e.follower_history || {};
+  const hasData = max > 0 || Object.values(hist).some((a) => Array.isArray(a) && a.length);
+  if (!hasData) return { verdict: "inconclusive", score: null, flags: [] };
+
+  let score = 100;
+  const flags = [];
+  for (const s of anomalousStepsJs(hist, 1)) {
+    const when = s.date ? ` am ${s.date}` : "";
+    flags.push(`Auffälliger Follower-Sprung (${s.platform}): +${fmtFollowers(s.delta) || s.delta}${when}`);
+    score -= AUTH.PEN_SPIKE;
+  }
+  for (const s of anomalousStepsJs(hist, -1)) {
+    const when = s.date ? ` am ${s.date}` : "";
+    flags.push(`Starker Follower-Verlust (${s.platform}): ${fmtFollowers(s.delta) || s.delta}${when} (mögliche Bot-Bereinigung)`);
+    score -= AUTH.PEN_DROP;
+  }
+  if (max >= AUTH.HIGH_FOLLOWERS && footprintOf(e) <= AUTH.LOW_FOOTPRINT) {
+    flags.push(`Hohe Reichweite (${fmtFollowers(max)} Follower) bei geringer realer Aktivität`);
+    score -= AUTH.PEN_REACH;
+  }
+  for (const [name, p] of Object.entries(e.online || {})) {
+    if (p && (p.followers || 0) >= AUTH.DORMANT_FOLLOWERS &&
+        typeof p.posts_per_month === "number" && p.posts_per_month < AUTH.DORMANT_POSTS) {
+      flags.push(`${name}: große Reichweite, aber kaum Aktivität (${fmtFollowers(p.followers)} Follower)`);
+      score -= AUTH.PEN_DORMANT;
+    }
+  }
+  score = Math.max(0, Math.min(100, score));
+  const verdict = score >= AUTH.T_AUTH ? "authentic" : score >= AUTH.T_QUEST ? "questionable" : "suspicious";
+  return { verdict, score, flags };
+}
+
+const AUTH_LABEL = {
+  authentic: "Follower ✓ echt", questionable: "Follower ⚠ auffällig",
+  suspicious: "Follower ✕ verdächtig",
+};
+
+function authenticityBadge(e) {
+  const a = followerAuthenticity(e);
+  if (a.verdict === "inconclusive") return null;
+  return el("span", { class: `badge auth-${a.verdict}`, text: AUTH_LABEL[a.verdict] });
+}
+
+// Per-platform historical follower trajectory (retrieved + evaluated client-side).
+function followerHistorySummary(e) {
+  const out = [];
+  for (const [platform, pts] of Object.entries(e.follower_history || {})) {
+    if (!Array.isArray(pts) || pts.length < 2) continue;
+    const ordered = [...pts].sort((a, b) => String(a.date || "~").localeCompare(String(b.date || "~")));
+    const start = ordered[0].followers, end = ordered[ordered.length - 1].followers;
+    const delta = end - start;
+    const pct = start ? ` (${delta >= 0 ? "+" : ""}${Math.round((delta / start) * 100)} %)` : "";
+    out.push(`${platform}: ${fmtFollowers(start) || start} → ${fmtFollowers(end) || end}${pct}, ${ordered.length} Punkte`);
+  }
+  return out;
+}
+
+// Detail-dialog block: verdict, flags and the historical follower trajectory.
+function authenticityBlock(e) {
+  const a = followerAuthenticity(e);
+  if (a.verdict === "inconclusive") return null;
+  const head = el("div", { class: "auth-head" }, [
+    el("span", { class: `badge auth-${a.verdict}`, text: AUTH_LABEL[a.verdict] }),
+    a.score != null ? el("span", { class: "auth-score", text: `${Math.round(a.score)}/100` }) : null,
+  ].filter(Boolean));
+  const children = [el("h3", { text: "Follower-Echtheit (ohne Einfluss aufs Scoring)" }), head];
+  if (a.flags.length) {
+    const ul = el("ul");
+    for (const f of a.flags) ul.appendChild(el("li", { text: f }));
+    children.push(ul);
+  } else {
+    children.push(el("p", { class: "auth-ok", text: "Keine Auffälligkeiten erkannt." }));
+  }
+  const hist = followerHistorySummary(e);
+  if (hist.length) {
+    children.push(el("p", { class: "auth-hist-title", text: "Historischer Follower-Verlauf:" }));
+    const ul = el("ul");
+    for (const h of hist) ul.appendChild(el("li", { text: h }));
+    children.push(ul);
+  }
+  return el("div", { class: "auth-block" }, children);
+}
+
 // XSS-safe sparkline: all coordinates are numbers, built via createElementNS.
 function sparklineSvg(values) {
   if (!Array.isArray(values) || values.length < 2) return null;
@@ -271,6 +424,7 @@ function entityCard(e) {
     igFollowers ? el("span", { class: "badge type", text: `IG ${igFollowers}` }) : null,
     trendBadge(e),
     confidenceBadge(e),
+    authenticityBadge(e),
   ]);
 
   const bars = el("div", { class: "bars" });
@@ -430,6 +584,7 @@ function openModal(e) {
 
   const sections = [
     sparkBlock,
+    authenticityBlock(e),
     listSection(gigTitle, gigItems, (s) => String(s)),
     listSection("Besonderheiten", score.bonus_items, (s) => String(s)),
     listSection("Kritische Punkte", score.malus_items, (s) => String(s)),

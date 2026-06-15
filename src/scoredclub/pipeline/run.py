@@ -135,13 +135,21 @@ def execute_run(
     if settings.run.geocode_districts:
         from scoredclub.geocode import apply_geocoding as geocode
 
+    capture_history = None
+    if settings.authenticity.capture_history:
+        from scoredclub.authenticity import capture_follower_history as capture_history
+
     seed_ids = seed_entity_ids()
     entities: list[Entity] = repo.all_entities(session)
     scored: list[ScoredEntity] = []
     for entity in entities:
         profile = repo.profile_from_row(entity)
         # Fill empty geo from the district in the same pass (no scoring impact).
-        if geocode is not None and geocode(profile):
+        changed = geocode is not None and geocode(profile)
+        # Snapshot current followers into the historical record (no scoring impact).
+        if capture_history is not None and capture_history(profile, run_date):
+            changed = True
+        if changed:
             entity.profile = json.loads(profile.model_dump_json())
         breakdown = score_entity(profile, settings.scoring, today=run_date)
         repo.save_score(session, run, entity, breakdown)

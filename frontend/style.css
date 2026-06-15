@@ -178,6 +178,15 @@ body {
 .badge.trend-falling { color: var(--accent-2); border-color: var(--accent-2); }
 .badge.trend-stable { color: var(--text-dim); }
 .badge.trend-new { color: var(--mid); border-color: var(--mid); }
+.badge.auth-authentic { color: var(--top); border-color: var(--top); }
+.badge.auth-questionable { color: #ffce54; border-color: #ffce54; }
+.badge.auth-suspicious { color: var(--accent-2); border-color: var(--accent-2); }
+
+.auth-block { margin-top: 0.4rem; }
+.auth-head { display: flex; align-items: center; gap: 0.6rem; margin: 0.3rem 0; }
+.auth-score { color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.auth-ok { color: var(--text-dim); }
+.auth-hist-title { margin: 0.5rem 0 0.2rem; color: var(--text-dim); font-size: 0.85rem; }
 
 .bars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 0.6rem; }
 .bar { height: 34px; display: flex; flex-direction: column; justify-content: flex-end; }
