@@ -27,6 +27,30 @@ Ohne Follower-Daten: `inconclusive`.
 > Heuristik, kein Beweis. Eine Tiefenprüfung (Engagement-Rate, Konto-Alter der Follower,
 > Audience-Geografie) braucht Plattform-APIs und bleibt Ausbau.
 
+## Externe Datensätze — abrufen & verifizieren
+
+Über die internen Vergleiche hinaus zieht der **`FollowerAuditCollector`** einen *externen*
+Datensatz heran (Social-Blade-/HypeAuditor-Stil): vermuteter Fake-Follower-Anteil,
+Engagement-Rate und historische Follower-Zahlen. Damit wird die Echtheit **verifiziert**,
+nicht nur intern verglichen.
+
+- Provider-agnostisch: `FOLLOWER_AUDIT_API_KEY` setzen und `sources.follower_audit_url` auf
+  einen Endpunkt (oder dünnen Adapter) richten, der die normalisierte JSON-Form liefert:
+  `{ fake_follower_pct, engagement_rate, quality_score, source, checked_at, history:[{date,followers}] }`.
+- No-op ohne Key oder ohne Instagram-Handle; fehlertolerant; mit gemocktem Client getestet.
+- Das Ergebnis landet als `follower_audit` an der Entität; die gelieferte `history` fließt in
+  `follower_history` (echte externe Verlaufsdaten). Siehe [Datenerhebung](data-collection.md).
+
+**In die Bewertung einbezogen** (`assess`):
+
+| Externes Signal | Bedingung | Strafe |
+|-----------------|-----------|--------|
+| Sehr hoher Fake-Anteil | `fake_follower_pct ≥ 50 %` | −55 |
+| Erhöhter Fake-Anteil | `fake_follower_pct ≥ 30 %` | −30 |
+| Sehr niedrige Engagement-Rate | `< 0,5 %` bei hoher Reichweite | −20 |
+
+Die Audit-Daten erscheinen auch in `signals.audit` (API/Dashboard).
+
 ## Historische Daten — abrufen & auswerten
 
 Das Modul wertet die **historische Follower-Trajektorie** je Plattform aus (`follower_history`):

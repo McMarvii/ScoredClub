@@ -1,6 +1,7 @@
 from scoredclub.collectors.bandsintown import BandsintownCollector
 from scoredclub.collectors.base import CollectorResult
 from scoredclub.collectors.clubcommission import ClubcommissionCollector
+from scoredclub.collectors.follower_audit import FollowerAuditCollector
 from scoredclub.collectors.llm_research import LLMResearchCollector
 from scoredclub.collectors.reddit import RedditCollector
 from scoredclub.collectors.resident_advisor import ResidentAdvisorCollector
@@ -16,12 +17,15 @@ DISCOVERY_COLLECTORS = [ClubcommissionCollector, ResidentAdvisorCollector]
 # BandsintownCollector is a no-op unless BANDSINTOWN_APP_ID is set and artist
 # entities are present. SentimentCollector runs after Reddit (so it sees the
 # freshly attached threads) and is a no-op unless sources.sentiment_enabled.
+# FollowerAuditCollector pulls an external follower-quality dataset; no-op unless
+# FOLLOWER_AUDIT_API_KEY is set.
 ENRICHMENT_COLLECTORS = [
     LLMResearchCollector,
     RedditCollector,
     BandsintownCollector,
     SongkickCollector,
     SentimentCollector,
+    FollowerAuditCollector,
 ]
 
 # Backwards-compatible alias.
@@ -36,6 +40,7 @@ __all__ = [
     "BandsintownCollector",
     "SongkickCollector",
     "SentimentCollector",
+    "FollowerAuditCollector",
     "DISCOVERY_COLLECTORS",
     "ENRICHMENT_COLLECTORS",
     "NETWORK_COLLECTORS",

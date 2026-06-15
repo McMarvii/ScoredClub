@@ -116,6 +116,11 @@ class SourcesConfig(_Base):
     sentiment_enabled: bool = False
     # Förder-/Policy-Feed (JSON file; ingestable like research, no live scraper).
     funding_feed_path: str = "data/funding/berlin_funding.json"
+    # External follower-audit provider (fake-follower %, engagement, history).
+    # No-op unless FOLLOWER_AUDIT_API_KEY is set; provider-agnostic — point the
+    # URL at an adapter that returns the normalised shape (see docs).
+    follower_audit_url: str = "https://api.follower-audit.example/v1/audit"
+    follower_audit_max_entities: int = 25
     extra_sources: list[str] = Field(default_factory=list)
 
 

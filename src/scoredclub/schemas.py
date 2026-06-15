@@ -110,6 +110,20 @@ class FollowerPoint(_Base):
     followers: int
 
 
+class FollowerAudit(_Base):
+    """Verified follower-quality data pulled from an *external* audit dataset.
+
+    Filled by the follower-audit collector (off by default), not by research.
+    Feeds the authenticity assessment — never the score.
+    """
+
+    fake_follower_pct: float | None = None  # 0..100, suspected fake/inactive
+    engagement_rate: float | None = None    # %, average engagement
+    quality_score: float | None = None      # 0..100, provider's own quality score
+    source: str | None = None
+    checked_at: dt.date | None = None
+
+
 class PressInfo(_Base):
     major_features: list[str] = Field(default_factory=list)
     local_press_mentions: list[str] = Field(default_factory=list)
@@ -269,6 +283,8 @@ class EntityProfile(_Base):
     # Optional event-demand proxies and per-platform follower time-series.
     demand: DemandInfo | None = None
     follower_history: dict[str, list[FollowerPoint]] = Field(default_factory=dict)
+    # Verified follower-quality data from an external audit dataset (optional).
+    follower_audit: FollowerAudit | None = None
     press: PressInfo = Field(default_factory=PressInfo)
     community: CommunityInfo = Field(default_factory=CommunityInfo)
     networking: NetworkingInfo = Field(default_factory=NetworkingInfo)

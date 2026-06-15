@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 268 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 279 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -189,9 +189,13 @@ das heutige Org-Entity-Scoring hinaus können sollte.
 - **Follower-Echtheitsprüfung** → ✅ umgesetzt. `scoredclub.authenticity` bewertet
   informativ (ohne Scoring-Einfluss), ob Follower von DJs/Venues organisch wirken: Spikes/
   Drops in der historischen Follower-Trajektorie, Reichweite ohne Footprint, inaktive
-  Großkonten. Optionaler Pipeline-Schritt (`authenticity.capture_history`) baut die Historie
-  über Läufe auf. CLI `authenticity`, API `/authenticity` + `follower_authenticity` im
-  Entitäts-Detail, Dashboard-Badge + Verlauf. Siehe [Follower-Echtheit](authenticity.md).
+  Großkonten. Zusätzlich zieht der **`FollowerAuditCollector`** einen *externen* Datensatz
+  (Fake-Anteil, Engagement-Rate, Verlauf) zur **Verifikation** heran (`FOLLOWER_AUDIT_API_KEY`,
+  off by default) — nicht nur interne Vergleiche. Optionaler Pipeline-Schritt
+  (`authenticity.capture_history`) baut die Historie über Läufe auf. CLI `authenticity`, API
+  `/authenticity` + `follower_authenticity` im Entitäts-Detail, Dashboard-Badge + Verlauf.
+  Siehe [Follower-Echtheit](authenticity.md). **Offen:** Tiefenprüfung (Konto-Alter der
+  einzelnen Follower, Audience-Geografie) je nach Provider-Tiefe.
 - **Per-Feld-Provenance** (Quelle + Konfidenz je Feld) → ✅ als optionale `provenance`-Map
   im Schema umgesetzt (Merge: neuere Quelle gewinnt je Feldpfad). **GDPR-Retention** → ✅
   `scoredclub.retention` + CLI `retention` (redigiert veraltete Community-/Personendaten).

@@ -16,6 +16,7 @@ Scoring-Rubriken toleriert.
 | `provenance` | map | Optional. Feldpfad → `{source, confidence?, accessed_at?, note?}`. Siehe [Compliance](compliance.md). |
 | `demand` | object\|null | Optional. `{going_count?, sold_out?, waitlist?, source?}` — Event-Nachfrage-Proxys (RA „going", Dice/Shotgun). |
 | `follower_history` | map | Optional. Plattform → `[{date?, followers}]` (Follower-Zeitreihe). |
+| `follower_audit` | object\|null | Optional. `{fake_follower_pct?, engagement_rate?, quality_score?, source?, checked_at?}` aus externem Audit. Siehe [Follower-Echtheit](authenticity.md). |
 | `lifecycle_events` | list | Optional. `{date?, event_type, cause?, description?, source?}` (Clubsterben). Siehe [Clubsterben](clubsterben.md). |
 | `displacement_signals` | list | Optional. `{signal_type, description?, date?, source?}` (Verdrängung). Siehe [Clubsterben](clubsterben.md). |
 | `status` | enum | **Pflicht.** `active | emerging | inactive | closed | unknown` |
