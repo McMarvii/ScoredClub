@@ -228,6 +228,57 @@ das heutige Org-Entity-Scoring hinaus können sollte.
 
 ---
 
+## v3 — Großes Bild: Musik-Tiefe, Beziehungen, mehr Quellen
+
+v2/P3 hat Org-Scoring, Events, Sentiment, Compliance und das Kulturökosystem abgedeckt.
+v3 geht in die **Tiefe der Musik und der Szene-Beziehungen** — mehr Daten, mehr Quellen,
+mehr Tools. Leitfrage: nicht nur „wie relevant ist eine Entität", sondern „**wer macht mit
+wem was, und was ist davon das Beste**".
+
+### Mehr Tools
+
+- **Steckbrief / Dossier** je DJ, Venue oder Kollektiv → 🟡 in Arbeit. Eine verdichtete
+  Profilseite mit **Top-10-Songs**, **Top-5-Sets**, **max. Top-20 gespielten/besuchten
+  Partys**, Kernzahlen (Score/Tier/Konfidenz/Follower-Echtheit) und den wichtigsten
+  Beziehungen. `scoredclub.dossier`, CLI `dossier`, API `GET /entities/{id}/dossier`,
+  Dashboard-Sektion.
+- **Kollaborations-/Beziehungs-Ranking** → 🟡 in Arbeit. Erweitert den
+  [Booking-Graphen](graph.md): „**wer arbeitet/bucht am meisten mit wem**" (gewichtete
+  Paar-Rangliste), die kollaborativsten Entitäten und je Entität „arbeitet zusammen mit /
+  bucht / wird gebucht von". CLI `collaborations`, API `GET /collaborations`.
+- **Residency-Erkennung** — wiederkehrende Artist↔Venue-Bindungen aus der Gigography
+  (regelmäßige Auftritte = Residency) als eigenes Beziehungs-Label.
+- **Szene-Karte / Cluster** — Community-Detection auf dem Booking-Graphen (welche
+  Kollektive/Venues/DJs bilden ein Cluster), plus Brücken-Knoten („Szene-Verbinder").
+- **Lineup-/Matching-Vorschläge** — aus dem Graphen abgeleitet: passende DJs für ein Venue,
+  unter-vernetzte aufstrebende Acts.
+
+### Mehr Daten (Schema-Erweiterungen)
+
+- `top_tracks` (Titel, Label, Plays, Quelle), `top_sets` (Titel, Venue, Datum, Plays,
+  Quelle), `parties` (Name, Venue, Datum, Rolle) — die Bausteine des Steckbriefs.
+- Residencies, Lineups (wer-mit-wem an einem Abend), Labels/Releases, Genres/BPM-Profile.
+
+### Mehr Quellen (Collectors, off by default, sanktioniert/ToS-bewusst)
+
+- **SoundCloud / Mixcloud** → Sets/Tracks + Plays (Sets-Tiefe; offizielle bzw. dokumentierte
+  Endpunkte).
+- **Spotify / Bandcamp / Discogs** → Releases, Tracks, Label-Zugehörigkeit, Genres.
+- **RA-Gigography / 1001 Tracklists** (ToS-bewusst) → gespielte Partys, Set-Tracklists,
+  Lineups — primär über die sanktionierten Pfade (Bandsintown/Songkick), RA nur vorsichtig.
+- Jede Quelle als fehlertoleranter Enrichment-Collector mit API-Key-Gate (Muster wie
+  Bandsintown/Songkick/Follower-Audit), mit gemocktem Client getestet.
+
+### Leitplanken
+
+- **Scoring bleibt erklärbar und regelbasiert** — die Musik-/Beziehungs-Daten reichern den
+  Steckbrief und den Graphen an; „Top"-Ranglisten sind quellenbasiert (Plays/Presse), nicht
+  Blackbox-Geschmack.
+- Personen-/Community-Daten weiter unter der [Compliance](compliance.md)-Linie (Provenance,
+  Retention, ToS/robots).
+
+---
+
 ## Daten-Qualität & Ops (querschnittlich)
 
 - Dedup-Review-UI / Human-in-the-Loop für mehrdeutige Merges.
@@ -257,8 +308,10 @@ das heutige Org-Entity-Scoring hinaus können sollte.
    🟡 erster Schritt erledigt (artist-Typ + Bandsintown-Collector + Venue-Kanten); offen:
    Songkick, Artist-Scoring, Graph-Aggregation/-View.
 5. **P3** Kulturökosystem-Monitoring (Clubsterben-Register, Förder-/Policy-Feed) — am stärksten
-   differenziert, weitgehend greenfield.
-6. **P2** Multi-City, Lernkomponente.
+   differenziert, weitgehend greenfield. ✅ erledigt
+6. **v3** Musik-Tiefe & Beziehungen: Steckbrief (Top-Songs/Sets/Partys) + Kollaborations-
+   Ranking, dann SoundCloud/Mixcloud/Discogs-Quellen, Residencies und Szene-Cluster. 🟡 begonnen
+7. **P2** Multi-City, Lernkomponente.
 
 ## Bezug zu v1-Komponenten
 
