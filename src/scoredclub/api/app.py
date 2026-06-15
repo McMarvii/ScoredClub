@@ -441,6 +441,33 @@ def funding(within_days: int = Query(default=90, ge=1, le=730)) -> dict:
     return feed_to_dict(feed, within_days=within_days)
 
 
+@app.get("/collaborations")
+def collaborations(
+    top: int = Query(default=20, ge=1, le=100), session: Session = Depends(db_session)
+) -> dict:
+    """Who works with / books whom the most: ranked pairs + most collaborative."""
+    from scoredclub.graph import build_graph_from_db, collaboration_pairs, most_collaborative
+
+    graph_obj, _ = build_graph_from_db(session)
+    return {
+        "top_collaborations": collaboration_pairs(graph_obj, top=top),
+        "most_collaborative": most_collaborative(graph_obj, top=top),
+    }
+
+
+@app.get("/entities/{entity_id}/relationships")
+def entity_relationships_endpoint(
+    entity_id: str, session: Session = Depends(db_session)
+) -> dict:
+    """Who an entity works with: books / booked-by / collaborates / venues / shared."""
+    from scoredclub.graph import build_graph_from_db, entity_relationships
+
+    if repo.get_entity(session, entity_id) is None:
+        raise HTTPException(status_code=404, detail=f"entity '{entity_id}' not found")
+    graph_obj, _ = build_graph_from_db(session)
+    return entity_relationships(graph_obj, entity_id)
+
+
 @app.get("/clubsterben")
 def clubsterben(session: Session = Depends(db_session)) -> dict:
     """Cultural-ecosystem register: openings/closures, causes, at-risk venues."""

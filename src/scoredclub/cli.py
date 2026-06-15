@@ -579,6 +579,55 @@ def graph(
 
 
 @app.command()
+def collaborations(
+    entity_id: str = typer.Argument(None, help="Beziehungen einer Entität (Standard: Ranking)"),
+    top: int = typer.Option(15, help="Anzahl je Rangliste"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Wer arbeitet/bucht am meisten mit wem (Kollaborations-Ranking + Beziehungen)."""
+    from scoredclub.graph import (
+        build_graph_from_db,
+        collaboration_pairs,
+        entity_relationships,
+        most_collaborative,
+    )
+
+    settings = _settings(config)
+    init_db(settings.database_url)
+    with get_session(settings.database_url) as session:
+        graph_obj, _ = build_graph_from_db(session)
+        if entity_id:
+            rel = entity_relationships(graph_obj, entity_id)
+            typer.secho(f"Beziehungen: {rel['name']}", fg=typer.colors.CYAN)
+            _show = lambda title, items: (
+                typer.echo(f"  {title}: " + ", ".join(i["label"] for i in items))
+                if items else None
+            )
+            _show("bucht", rel["books"])
+            _show("gebucht von", rel["booked_by"])
+            _show("spielt Venues", rel["played_venues"])
+            _show("bespielt von", rel["played_by"])
+            _show("kollaboriert mit", rel["collaborates_with"])
+            _show("Cross-Promo", rel["cross_promotes"])
+            if rel["shared_booking_partners"]:
+                typer.echo("  geteilte Bookings: " + ", ".join(
+                    f"{p['label']} ({p['shared_djs']})" for p in rel["shared_booking_partners"]))
+            return
+
+        pairs = collaboration_pairs(graph_obj, top=top)
+        if not pairs:
+            typer.echo("Keine Kollaborationsdaten (keine networking-Kanten).")
+            return
+        typer.secho("Stärkste Zusammenarbeit (wer mit wem):", fg=typer.colors.GREEN)
+        for p in pairs:
+            typer.echo(f"  {p['a_label']} ↔ {p['b_label']}  (Gewicht {p['weight']}; "
+                       f"direkt {p['direct']}, geteilte DJs {p['shared_djs']}, Venues {p['shared_venues']})")
+        typer.secho("\nKollaborativste Akteure:", fg=typer.colors.GREEN)
+        for m in most_collaborative(graph_obj, top=top):
+            typer.echo(f"  {m['label']:28s} {m['collaborators']} Partner (Gewicht {m['weight']})")
+
+
+@app.command()
 def compare(
     config_b: Path = typer.Option(..., "--config-b", help="Variant config to compare against"),
     config_a: Path = typer.Option(None, "--config-a", help="Baseline config (default: active)"),

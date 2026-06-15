@@ -171,6 +171,20 @@ def test_feed_endpoint(client):
     assert root.tag == "rss"  # valid even with no alerts
 
 
+def test_collaborations_endpoint(client):
+    data = client.get("/collaborations").json()
+    assert "top_collaborations" in data
+    assert "most_collaborative" in data
+
+
+def test_entity_relationships_endpoint(client):
+    rel = client.get("/entities/testclub/relationships").json()
+    assert rel["entity_id"] == "testclub"
+    # The top fixture profile books several DJs.
+    assert isinstance(rel["books"], list)
+    assert client.get("/entities/nope/relationships").status_code == 404
+
+
 def test_graph_endpoint(client):
     data = client.get("/graph").json()
     metrics = data["metrics"]

@@ -29,10 +29,32 @@ Selbstbezüge verworfen.
 - **`shared_bookings`** — Org-Paare, die **denselben DJ** buchen (geteilte Talent-Links).
 - **`components`** — Anzahl zusammenhängender Komponenten (Union-Find, ungerichtet).
 
+## Kollaborations-/Beziehungs-Ranking
+
+„Wer arbeitet/bucht am meisten mit wem." Eine Zusammenarbeit zwischen zwei Knoten wird aus
+drei Signalen gewichtet: **direkte Kante** (Gewicht 3, am stärksten), **gleicher gebuchter
+DJ** (2) und **gleiches bespieltes Venue** (1).
+
+- **`collaboration_pairs`** — stärkste Paare (wer mit wem), mit Aufschlüsselung
+  `direct`/`shared_djs`/`shared_venues` und Gesamtgewicht.
+- **`most_collaborative`** — Akteure nach Anzahl Partner (und Gesamtgewicht).
+- **`entity_relationships`** — je Entität: `books` / `booked_by` / `collaborates_with` /
+  `cross_promotes` / `played_venues` / `played_by` / `shared_booking_partners`.
+
+DJs sind dabei vollwertige Akteure: Eine direkte Booking-Kante (Org → DJ) zählt als
+Zusammenarbeit, daher erscheinen vielbuchende Orgs und vielgebuchte DJs als „kollaborativ".
+
+```bash
+scoredclub collaborations                 # stärkste Paare + kollaborativste Akteure
+scoredclub collaborations berghain        # Beziehungen einer Entität
+curl localhost:8000/collaborations
+curl localhost:8000/entities/berghain/relationships
+```
+
 ## Nutzung
 
 ```bash
-scoredclub graph                       # Top-Venues, -DJs, geteilte Bookings
+scoredclub graph                       # Top-Venues, -DJs, geteilte Bookings, Kollaborationen
 scoredclub graph --export graph.json   # vollständige Knoten/Kanten als JSON
 curl localhost:8000/graph              # nur Metriken
 curl 'localhost:8000/graph?include_graph=true'   # Metriken + Knoten/Kanten

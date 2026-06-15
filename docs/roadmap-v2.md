@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 282 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 289 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -242,10 +242,11 @@ wem was, und was ist davon das Beste**".
   Partys**, Kernzahlen (Score/Tier/Konfidenz/Follower-Echtheit) und den wichtigsten
   Beziehungen. `scoredclub.dossier`, CLI `dossier`, API `GET /entities/{id}/dossier`,
   Dashboard-Sektion.
-- **Kollaborations-/Beziehungs-Ranking** → 🟡 in Arbeit. Erweitert den
+- **Kollaborations-/Beziehungs-Ranking** → ✅ umgesetzt. Erweitert den
   [Booking-Graphen](graph.md): „**wer arbeitet/bucht am meisten mit wem**" (gewichtete
-  Paar-Rangliste), die kollaborativsten Entitäten und je Entität „arbeitet zusammen mit /
-  bucht / wird gebucht von". CLI `collaborations`, API `GET /collaborations`.
+  Paar-Rangliste aus direkten Kanten + geteilten DJs/Venues), die kollaborativsten Akteure
+  und je Entität `books`/`booked_by`/`collaborates_with`/`shared_booking_partners`. CLI
+  `collaborations`, API `GET /collaborations` + `GET /entities/{id}/relationships`.
 - **Residency-Erkennung** — wiederkehrende Artist↔Venue-Bindungen aus der Gigography
   (regelmäßige Auftritte = Residency) als eigenes Beziehungs-Label.
 - **Szene-Karte / Cluster** — Community-Detection auf dem Booking-Graphen (welche

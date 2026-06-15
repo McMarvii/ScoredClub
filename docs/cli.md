@@ -25,6 +25,7 @@ scoredclub [OPTIONS] COMMAND [ARGS]...
 | `trending` | Auf-/Absteiger und Leaderboard des letzten Laufs |
 | `analytics` | Breakout-Erkennung, Karrierephase und Forecast über die Historie |
 | `graph` | Booking-/Kollaborations-Graph (Top-Venues, -DJs, geteilte Bookings) |
+| `collaborations` | Wer arbeitet/bucht am meisten mit wem (Ranking + Beziehungen) |
 | `sentiment` | Lexikon-Sentiment über Community-Text einer Entität (kein Schreiben) |
 | `export` | Alle Entitäten als CSV exportieren (Summary + Dimensionspunkte) |
 | `retention` | Veraltete Community-/Personendaten redigieren (GDPR) |
@@ -191,6 +192,15 @@ Baut aus der `networking`-Dimension den Booking-/Kollaborations-Graphen und zeig
 Top-Venues (nach Artists), meistgebuchte DJs und geteilte Bookings (Orgs mit gemeinsamen
 DJs). `--export` schreibt den vollständigen Graphen (Knoten/Kanten) als JSON. Details:
 [Graph](graph.md).
+
+## `collaborations`
+```bash
+scoredclub collaborations [ENTITY_ID] [--top N] [--config PATH]
+```
+Ohne Argument: Rangliste „wer arbeitet/bucht am meisten mit wem" (gewichtete Paare) plus die
+kollaborativsten Akteure. Mit `ENTITY_ID`: die Beziehungen dieser Entität (bucht / gebucht
+von / kollaboriert / Cross-Promo / Venues / geteilte Bookings). Pendant zur API
+`GET /collaborations` und `GET /entities/{id}/relationships`. Details: [Graph](graph.md).
 
 ## `compare`
 ```bash
