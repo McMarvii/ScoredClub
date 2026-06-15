@@ -2,7 +2,7 @@
 
 Stand: v1 + großer Teil von v2 sind in `main` (Scoring, Trending, A/B-Testing, Backend-API
 mit Auth/async, Postgres/Alembic, Dashboard mit Listen-/Karten-/Trending-Ansicht,
-CI/Pages/Monthly-Automatisierung, ausführliche Doku, 289 Tests). Dieses Dokument hält die
+CI/Pages/Monthly-Automatisierung, ausführliche Doku, 296 Tests). Dieses Dokument hält die
 Richtung fest. Es ist ein lebendes Planungsdokument, kein Vertrag — Reihenfolge und Umfang
 werden iterativ angepasst. P3 (unten) ergänzt eine Wettbewerbs-/Domänen-Recherche.
 
@@ -237,11 +237,12 @@ wem was, und was ist davon das Beste**".
 
 ### Mehr Tools
 
-- **Steckbrief / Dossier** je DJ, Venue oder Kollektiv → 🟡 in Arbeit. Eine verdichtete
+- **Steckbrief / Dossier** je DJ, Venue oder Kollektiv → ✅ umgesetzt. Eine verdichtete
   Profilseite mit **Top-10-Songs**, **Top-5-Sets**, **max. Top-20 gespielten/besuchten
-  Partys**, Kernzahlen (Score/Tier/Konfidenz/Follower-Echtheit) und den wichtigsten
-  Beziehungen. `scoredclub.dossier`, CLI `dossier`, API `GET /entities/{id}/dossier`,
-  Dashboard-Sektion.
+  Partys**, Kernzahlen (Score/Tier/Follower-Echtheit) und den wichtigsten Beziehungen.
+  Schema-Felder `top_tracks`/`top_sets`/`parties`, `scoredclub.dossier`, CLI `dossier`, API
+  `GET /entities/{id}/dossier`, Dashboard-Sektion. Siehe [Steckbrief](dossier.md). **Offen:**
+  Musik-Collectors (SoundCloud/Mixcloud) zum automatischen Befüllen.
 - **Kollaborations-/Beziehungs-Ranking** → ✅ umgesetzt. Erweitert den
   [Booking-Graphen](graph.md): „**wer arbeitet/bucht am meisten mit wem**" (gewichtete
   Paar-Rangliste aus direkten Kanten + geteilten DJs/Venues), die kollaborativsten Akteure

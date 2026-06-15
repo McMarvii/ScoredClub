@@ -110,6 +110,42 @@ class FollowerPoint(_Base):
     followers: int
 
 
+class Track(_Base):
+    """A released track for an entity's dossier (top songs)."""
+
+    title: str
+    artist: str | None = None
+    label: str | None = None
+    url: str | None = None
+    plays: int | None = None
+    released: str | None = None  # "YYYY" or "YYYY-MM-DD"
+    rank: int | None = None      # explicit editorial rank (1 = best), if known
+    source: str | None = None
+
+
+class DJSet(_Base):
+    """A recorded/notable DJ set (top sets)."""
+
+    title: str
+    venue: str | None = None
+    date: dt.date | None = None
+    url: str | None = None
+    plays: int | None = None
+    duration_min: int | None = None
+    source: str | None = None
+
+
+class PartyAppearance(_Base):
+    """A party/event an entity played or hosted (most-visited parties)."""
+
+    name: str
+    venue: str | None = None
+    date: dt.date | None = None
+    role: str | None = None  # e.g. headliner | support | resident | host
+    url: str | None = None
+    source: str | None = None
+
+
 class FollowerAudit(_Base):
     """Verified follower-quality data pulled from an *external* audit dataset.
 
@@ -285,6 +321,10 @@ class EntityProfile(_Base):
     follower_history: dict[str, list[FollowerPoint]] = Field(default_factory=dict)
     # Verified follower-quality data from an external audit dataset (optional).
     follower_audit: FollowerAudit | None = None
+    # Dossier / Steckbrief content (optional): top songs, sets, played parties.
+    top_tracks: list[Track] = Field(default_factory=list)
+    top_sets: list[DJSet] = Field(default_factory=list)
+    parties: list[PartyAppearance] = Field(default_factory=list)
     press: PressInfo = Field(default_factory=PressInfo)
     community: CommunityInfo = Field(default_factory=CommunityInfo)
     networking: NetworkingInfo = Field(default_factory=NetworkingInfo)

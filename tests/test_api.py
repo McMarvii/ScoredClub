@@ -171,6 +171,14 @@ def test_feed_endpoint(client):
     assert root.tag == "rss"  # valid even with no alerts
 
 
+def test_dossier_endpoint(client):
+    d = client.get("/entities/testclub/dossier").json()
+    assert d["name"] == "Testclub"
+    assert "top_tracks" in d and "top_sets" in d and "parties" in d
+    assert "relationships" in d and "follower_authenticity" in d
+    assert client.get("/entities/nope/dossier").status_code == 404
+
+
 def test_collaborations_endpoint(client):
     data = client.get("/collaborations").json()
     assert "top_collaborations" in data

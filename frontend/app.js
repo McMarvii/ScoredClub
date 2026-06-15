@@ -547,6 +547,36 @@ function listSection(title, items, mapper) {
   return el("div", {}, [el("h3", { text: title }), ul]);
 }
 
+// Steckbrief: top songs / sets / parties, ranked + capped like dossier.py.
+const _ord = (d) => (d ? Date.parse(d) || 0 : 0);
+function dossierSection(e) {
+  const tracks = [...(e.top_tracks || [])]
+    .sort((a, b) => (a.rank ?? 1e9) - (b.rank ?? 1e9) || (b.plays || 0) - (a.plays || 0))
+    .slice(0, 10);
+  const sets = [...(e.top_sets || [])]
+    .sort((a, b) => (b.plays || 0) - (a.plays || 0) || _ord(b.date) - _ord(a.date))
+    .slice(0, 5);
+  const parties = [...(e.parties || [])]
+    .sort((a, b) => _ord(b.date) - _ord(a.date))
+    .slice(0, 20);
+  if (!tracks.length && !sets.length && !parties.length) return null;
+
+  const children = [el("h3", { text: "Steckbrief" })];
+  const sub = (title, items, fmt) => {
+    if (!items.length) return;
+    children.push(el("h4", { text: title }));
+    const ul = el("ul");
+    for (const it of items) ul.appendChild(el("li", { text: fmt(it) }));
+    children.push(ul);
+  };
+  sub("Top-Songs", tracks, (t) => t.title + (t.label ? ` — ${t.label}` : "") +
+    (t.plays ? ` · ${fmtFollowers(t.plays) || t.plays} Plays` : ""));
+  sub("Top-Sets", sets, (s) => s.title + (s.venue ? ` @ ${s.venue}` : "") + (s.date ? ` (${s.date})` : ""));
+  sub("Gespielte Partys", parties, (p) => (p.date ? `${p.date} · ` : "") + p.name +
+    (p.venue ? ` @ ${p.venue}` : "") + (p.role ? ` [${p.role}]` : ""));
+  return el("div", { class: "dossier" }, children);
+}
+
 function openModal(e) {
   const body = document.getElementById("modal-body");
   const score = e.score || {};
@@ -604,6 +634,7 @@ function openModal(e) {
 
   const sections = [
     sparkBlock,
+    dossierSection(e),
     authenticityBlock(e),
     listSection(gigTitle, gigItems, (s) => String(s)),
     listSection("Besonderheiten", score.bonus_items, (s) => String(s)),

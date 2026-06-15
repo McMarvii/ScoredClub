@@ -180,6 +180,9 @@ def merge_profiles(existing: EntityProfile, incoming: EntityProfile) -> EntityPr
     merged.displacement_signals = _union(
         existing.displacement_signals, incoming.displacement_signals
     )
+    merged.top_tracks = _union(existing.top_tracks, incoming.top_tracks)
+    merged.top_sets = _union(existing.top_sets, incoming.top_sets)
+    merged.parties = _union(existing.parties, incoming.parties)
     # Event-demand: newer non-null wins; follower history merges per platform.
     if incoming.demand is not None and (merged.demand is None or incoming_newer):
         merged.demand = incoming.demand

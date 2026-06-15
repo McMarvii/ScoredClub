@@ -579,6 +579,49 @@ def graph(
 
 
 @app.command()
+def dossier(
+    entity_id: str = typer.Argument(..., help="Entität für den Steckbrief"),
+    config: str = typer.Option(None, help="Path to config JSON"),
+) -> None:
+    """Steckbrief: Top-Songs, Top-Sets, gespielte Partys + Beziehungen einer Entität."""
+    from scoredclub.dossier import build_dossier_from_db
+
+    settings = _settings(config)
+    init_db(settings.database_url)
+    with get_session(settings.database_url) as session:
+        d = build_dossier_from_db(session, entity_id)
+    if d is None:
+        typer.secho(f"Entity '{entity_id}' not found", fg=typer.colors.RED)
+        raise typer.Exit(code=1)
+
+    typer.secho(f"=== {d['name']} ({d['type']}) ===", fg=typer.colors.CYAN, bold=True)
+    score = f"{d['score']:.0f}" if d["score"] is not None else "—"
+    typer.echo(f"Score {score} {d['tier'] or ''} · Bezirk {d['district'] or '—'} · "
+               f"Follower: {d['follower_authenticity']['verdict']}")
+    if d["top_tracks"]:
+        typer.secho(f"\nTop-Songs ({d['counts']['tracks']}):", fg=typer.colors.GREEN)
+        for i, t in enumerate(d["top_tracks"], 1):
+            plays = f" · {t['plays']:,} Plays".replace(",", ".") if t["plays"] else ""
+            typer.echo(f"  {i:2d}. {t['title']}" + (f" — {t['label']}" if t['label'] else "") + plays)
+    if d["top_sets"]:
+        typer.secho(f"\nTop-Sets ({d['counts']['sets']}):", fg=typer.colors.GREEN)
+        for i, s in enumerate(d["top_sets"], 1):
+            where = f" @ {s['venue']}" if s["venue"] else ""
+            typer.echo(f"  {i}. {s['title']}{where}" + (f" ({s['date']})" if s["date"] else ""))
+    if d["parties"]:
+        typer.secho(f"\nGespielte Partys ({d['counts']['parties']}, Top {len(d['parties'])}):", fg=typer.colors.GREEN)
+        for p in d["parties"]:
+            where = f" @ {p['venue']}" if p["venue"] else ""
+            role = f" [{p['role']}]" if p["role"] else ""
+            typer.echo(f"  {p['date'] or '—'}  {p['name']}{where}{role}")
+    rel = d["relationships"] or {}
+    works = [r["label"] for r in (rel.get("books", []) + rel.get("collaborates_with", []))]
+    if works:
+        typer.secho("\nArbeitet mit:", fg=typer.colors.CYAN)
+        typer.echo("  " + ", ".join(dict.fromkeys(works)))
+
+
+@app.command()
 def collaborations(
     entity_id: str = typer.Argument(None, help="Beziehungen einer Entität (Standard: Ranking)"),
     top: int = typer.Option(15, help="Anzahl je Rangliste"),
