@@ -7,18 +7,19 @@ Parse-Fehler werden zu Warnungen, ein Lauf wird nie abgebrochen.
 ## Überblick
 
 ```
-LLM-Research (research.json)  ──┐
-Clubcommission-Collector        ├─► Dedup/Merge ─► DB ─► Scoring ─► Reports
-Resident-Advisor-Collector      │
-Reddit-Collector (Enrichment)   │
-Bandsintown-Collector (Artists) │
-Sentiment-Collector (offline)   ┘
+LLM-Research (research.json)     ──┐
+Clubcommission-Collector           ├─► Dedup/Merge ─► DB ─► Scoring ─► Reports
+Resident-Advisor-Collector         │
+Reddit-Collector (Enrichment)      │
+Bandsintown/Songkick (Events)      │
+SoundCloud/Mixcloud (Musik/Sets)   │
+Sentiment-Collector (offline)      ┘
 ```
 
 Zwei Kategorien (siehe `src/scoredclub/collectors/__init__.py`):
 
 - **Discovery-Collector** dürfen neue Entitäten anlegen: `ClubcommissionCollector`, `ResidentAdvisorCollector`.
-- **Enrichment-Collector** reichern nur bestehende Entitäten an (legen keine neuen an): `LLMResearchCollector`, `RedditCollector`, `BandsintownCollector`, `SongkickCollector`, `SentimentCollector`, `FollowerAuditCollector`.
+- **Enrichment-Collector** reichern nur bestehende Entitäten an (legen keine neuen an): `LLMResearchCollector`, `RedditCollector`, `BandsintownCollector`, `SongkickCollector`, `SoundCloudCollector`, `MixcloudCollector`, `SentimentCollector`, `FollowerAuditCollector`.
 
 Die Pipeline führt erst Discovery, dann Enrichment aus.
 
@@ -153,14 +154,47 @@ Bandsintown. Pro Artist wird zunächst die Songkick-Artist-ID per Suche aufgelö
 `SONGKICK_API_KEY` setzen. No-op ohne Key oder ohne Artists; fehlertolerant; mit gemocktem
 Client getestet. Konfigurierbar: `sources.songkick_url`, `sources.songkick_max_artists`.
 
-## 6. Sentiment-Collector (Enrichment, offline)
+## 6. Musik-Collectors: SoundCloud & Mixcloud (Enrichment)
+
+Befüllen den [Steckbrief/Dossier](dossier.md) automatisch mit der Musik-Tiefe je Entität —
+für jede Entität (DJ, Venue, Kollektiv), die ein passendes Handle in `online.soundcloud`
+bzw. `online.mixcloud` trägt. Beide sind reine **Enrichment**-Collector, legen keine neuen
+Entitäten an, sind fehlertolerant (Abbruch nach wiederholten Fehlern) und mit gemocktem
+Client getestet.
+
+- **SoundCloud-Collector** → **Tracks/Releases**. Löst den User per `resolve`-Endpunkt auf,
+  holt dessen Tracks und reichert `top_tracks` an (Titel, Plays, Release-Datum, URL,
+  `source="soundcloud"`) sowie die SoundCloud-**Follower** (`online.soundcloud.followers` →
+  Online-Reichweite, **Dimension B**). **Setup:** SoundCloud-App unter
+  <https://developers.soundcloud.com/> registrieren und die Client-ID als
+  `SOUNDCLOUD_CLIENT_ID` setzen. **No-op ohne `SOUNDCLOUD_CLIENT_ID`** oder ohne
+  SoundCloud-Handle. Konfigurierbar: `sources.soundcloud_url`,
+  `sources.soundcloud_max_entities`, `sources.soundcloud_max_tracks`.
+- **Mixcloud-Collector** → **Sets/Mixes**. Holt die Cloudcasts des Users und reichert
+  `top_sets` an (Titel, Plays, Datum, Länge, URL, `source="mixcloud"`) plus die Mixcloud-
+  **Follower**. Mixclouds öffentliche API braucht **keinen Key**; damit der kanonische Lauf
+  reproduzierbar bleibt, ist der Collector daher **standardmäßig aus**
+  (`sources.mixcloud_enabled`) und ohne Mixcloud-Handle ein No-op. Konfigurierbar:
+  `sources.mixcloud_url`, `sources.mixcloud_max_entities`, `sources.mixcloud_max_sets`.
+
+```bash
+export SOUNDCLOUD_CLIENT_ID=...     # SoundCloud-Tracks anreichern
+scoredclub run                       # füllt top_tracks + soundcloud.followers
+```
+
+> Beim erneuten Lauf werden dieselben Tracks/Sets (gleicher Titel + URL) **in place
+> aktualisiert** statt dupliziert — die frischeren Play-Zahlen gewinnen (Merge-Dedup über
+> einen natürlichen Schlüssel, siehe unten). Schließt den offenen Punkt „Musik-Collectors"
+> aus der [Roadmap v3](roadmap-v2.md) / dem [Steckbrief](dossier.md).
+
+## 7. Sentiment-Collector (Enrichment, offline)
 
 Leitet den `community_sentiment_hint` deterministisch aus Reddit-Thread-Titeln + Notizen
 ab (Lexikon-Analyse, kein Netz/Modell) und ersetzt so den manuellen Hint. **Standardmäßig
 aus** (`sources.sentiment_enabled`); aktiviert füllt er nur *unbekannte* Hints und läuft
 nach dem Reddit-Collector. Details: [Sentiment](sentiment.md).
 
-## 7. Follower-Audit-Collector (Enrichment, extern)
+## 8. Follower-Audit-Collector (Enrichment, extern)
 
 Zieht einen *externen* Datensatz zur **Follower-Echtheit** (vermuteter Fake-Anteil,
 Engagement-Rate, historische Follower-Zahlen) und hängt ihn als `follower_audit` an die
@@ -183,6 +217,10 @@ Vor dem Einspielen werden Entitäten zusammengeführt (`src/scoredclub/normalize
 - **Merge-Politik:** neuere `last_verification` gewinnt pro Feld; Listen (Quellen,
   Vorfälle, Bookings, Presse) werden vereinigt; der Name einer Seed-Entität wird nie
   herabgestuft; `"unknown"`-Werte überschreiben keine echten Werte.
+- **Dossier-Listen** (`top_tracks`/`top_sets`/`parties`) werden über einen natürlichen
+  Schlüssel dedupliziert (Titel + URL bzw. Name + Venue + Datum) statt über die volle
+  Repräsentation — der frischere Eintrag gewinnt. So aktualisiert ein erneuter Musik-Fetch
+  geänderte Play-Zahlen **in place**, statt Near-Duplikate anzuhäufen.
 
 ## Collectors konfigurieren oder abschalten
 

@@ -111,6 +111,24 @@ def _union(a: list, b: list) -> list:
     return merged
 
 
+def _union_by_key(existing: list, incoming: list, key) -> list:
+    """Union two model lists, deduping by a natural ``key``; incoming wins.
+
+    Unlike :func:`_union` (which keys on the full repr) this keeps a single
+    entry per natural key and lets the *incoming* item win on a collision. The
+    dossier lists (tracks/sets/parties) use it so a re-fetch with updated play
+    counts updates in place instead of accumulating near-duplicate rows.
+    """
+    order: list = []
+    chosen: dict = {}
+    for item in [*existing, *incoming]:
+        k = key(item)
+        if k not in chosen:
+            order.append(k)
+        chosen[k] = item  # later (incoming) wins on collision
+    return [chosen[k] for k in order]
+
+
 def merge_profiles(existing: EntityProfile, incoming: EntityProfile) -> EntityProfile:
     """Merge an incoming profile into an existing one.
 
@@ -180,9 +198,20 @@ def merge_profiles(existing: EntityProfile, incoming: EntityProfile) -> EntityPr
     merged.displacement_signals = _union(
         existing.displacement_signals, incoming.displacement_signals
     )
-    merged.top_tracks = _union(existing.top_tracks, incoming.top_tracks)
-    merged.top_sets = _union(existing.top_sets, incoming.top_sets)
-    merged.parties = _union(existing.parties, incoming.parties)
+    # Dossier lists dedup by a natural key (not full repr) so re-fetched music
+    # data updates in place — incoming (fresher) play counts win.
+    merged.top_tracks = _union_by_key(
+        existing.top_tracks, incoming.top_tracks,
+        key=lambda t: (t.title.strip().lower(), (t.url or "").strip().lower()),
+    )
+    merged.top_sets = _union_by_key(
+        existing.top_sets, incoming.top_sets,
+        key=lambda s: (s.title.strip().lower(), (s.url or "").strip().lower()),
+    )
+    merged.parties = _union_by_key(
+        existing.parties, incoming.parties,
+        key=lambda p: (p.name.strip().lower(), (p.venue or "").strip().lower(), p.date),
+    )
     # Event-demand: newer non-null wins; follower history merges per platform.
     if incoming.demand is not None and (merged.demand is None or incoming_newer):
         merged.demand = incoming.demand

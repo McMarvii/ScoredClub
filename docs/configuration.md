@@ -50,6 +50,13 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "bandsintown_max_artists": 25,
     "songkick_url": "https://api.songkick.com/api/3.0",
     "songkick_max_artists": 25,
+    "soundcloud_url": "https://api.soundcloud.com",
+    "soundcloud_max_entities": 25,
+    "soundcloud_max_tracks": 10,
+    "mixcloud_enabled": false,
+    "mixcloud_url": "https://api.mixcloud.com",
+    "mixcloud_max_entities": 25,
+    "mixcloud_max_sets": 10,
     "sentiment_enabled": false,
     "funding_feed_path": "data/funding/berlin_funding.json",
     "follower_audit_url": "https://api.follower-audit.example/v1/audit",
@@ -81,7 +88,8 @@ für Laufzeit-/Geheimwerte Vorrang. Lader: `src/scoredclub/config.py` (pydantic-
     "forecast_epsilon": 0.5,
     "elite_percentile": 90.0,
     "established_percentile": 70.0,
-    "emerging_percentile": 40.0
+    "emerging_percentile": 40.0,
+    "residency_min_appearances": 3
   },
   "llm": {
     "enabled": false,
@@ -131,6 +139,8 @@ Details der Wirkung: [Scoring-Modell](scoring.md) (inkl. Datenkonfidenz).
 | `bandsintown_url` | Basis-URL der Bandsintown-Artists-API (Enrichment für `artist`-Entitäten). |
 | `bandsintown_max_artists` | Max. Artists pro Lauf, die über Bandsintown angereichert werden. |
 | `songkick_url` / `songkick_max_artists` | Songkick-API (zweite sanktionierte Event-Quelle für Artists). |
+| `soundcloud_url` / `soundcloud_max_entities` / `soundcloud_max_tracks` | SoundCloud-API: füllt `top_tracks` + Follower (no-op ohne `SOUNDCLOUD_CLIENT_ID` / ohne Handle). |
+| `mixcloud_enabled` / `mixcloud_url` / `mixcloud_max_entities` / `mixcloud_max_sets` | Mixcloud-API: füllt `top_sets` + Follower (off by default; braucht ein Mixcloud-Handle). |
 | `sentiment_enabled` | Offline-Sentiment-Collector an/aus (füllt nur unbekannte Hints). |
 | `funding_feed_path` | JSON-Datei des Förder-/Policy-Feeds (siehe [Förder-Feed](funding.md)). |
 | `follower_audit_url` / `follower_audit_max_entities` | Externer Follower-Audit-Provider (siehe [Follower-Echtheit](authenticity.md)). |
@@ -160,8 +170,9 @@ Details: [Trending](trending.md).
 | `growth_z` / `strong_z` / `explosive_z` | z-Schwellen der Breakout-Buckets. |
 | `forecast_epsilon` | Mindeststeigung für das „rising soon"-Flag. |
 | `elite_percentile` / `established_percentile` / `emerging_percentile` | Perzentil-Grenzen der Karrierephasen. |
+| `residency_min_appearances` | Mindestanzahl Auftritte an derselben Venue, ab der ein Artist als Resident gilt (Booking-Graph, Default 3). |
 
-Details: [Analytics](analytics.md).
+Details: [Analytics](analytics.md) · [Graph](graph.md).
 
 ### `retention`
 | Schlüssel | Bedeutung |

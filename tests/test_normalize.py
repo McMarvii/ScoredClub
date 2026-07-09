@@ -3,7 +3,13 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from scoredclub.normalize import find_match, merge_profiles, normalize_name
-from scoredclub.schemas import EntityProfile, EntityType, SocialPresence
+from scoredclub.schemas import (
+    DJSet,
+    EntityProfile,
+    EntityType,
+    SocialPresence,
+    Track,
+)
 from tests.conftest import make_minimal_profile, make_top_profile
 
 
@@ -118,3 +124,23 @@ class TestMerge:
         )
         merged = merge_profiles(seed, incoming)
         assert merged.type == EntityType.series
+
+    def test_dossier_lists_dedup_by_natural_key_incoming_wins(self):
+        # A re-fetch of the same track/set (same title+url) with updated plays
+        # updates in place instead of accumulating a near-duplicate row.
+        url = "https://soundcloud.com/dj/quicksand"
+        old = make_minimal_profile()
+        old.top_tracks = [Track(title="Quicksand", url=url, plays=5000)]
+        old.top_sets = [DJSet(title="Berghain Mix", url="m1", plays=100)]
+        new = make_minimal_profile()
+        new.top_tracks = [
+            Track(title="Quicksand", url=url, plays=7000),  # same key -> update
+            Track(title="Translation", url="t2", plays=400),  # new -> appended
+        ]
+        new.top_sets = [DJSet(title="Berghain Mix", url="m1", plays=250)]
+        merged = merge_profiles(old, new)
+        assert [(t.title, t.plays) for t in merged.top_tracks] == [
+            ("Quicksand", 7000),
+            ("Translation", 400),
+        ]
+        assert [(s.title, s.plays) for s in merged.top_sets] == [("Berghain Mix", 250)]

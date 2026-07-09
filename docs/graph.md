@@ -6,18 +6,40 @@
 
 ## Kanten
 
-| Quelle (`networking`-Feld) | Relation | Bedeutung |
-|----------------------------|----------|-----------|
-| `booked_djs` | `books` | Org bucht DJ/Artist (Club/Kollektiv → Artist) |
-| `collaborations` (bei `artist`) | `played_at` | Artist hat Venue bespielt |
-| `collaborations` (Orgs) | `collaborates` | Zusammenarbeit mit anderer Org |
-| `cross_promotions` | `cross_promotes` | gegenseitige Bewerbung |
+| Quelle | Relation | Bedeutung |
+|--------|----------|-----------|
+| `networking.booked_djs` | `books` | Org bucht DJ/Artist (Club/Kollektiv → Artist) |
+| `networking.collaborations` (bei `artist`) | `played_at` | Artist hat Venue bespielt |
+| `networking.collaborations` (Orgs) | `collaborates` | Zusammenarbeit mit anderer Org |
+| `networking.cross_promotions` | `cross_promotes` | gegenseitige Bewerbung |
+| `parties` (Gigography, ≥ N Auftritte) | `resident` | Artist ist Resident einer Venue |
 
 Referenzierte Namen werden – wo möglich – auf bestehende Entitäten aufgelöst
 (über die Normalisierung/Alias-Logik), sonst als leichte **externe Knoten**
 (`ext:<normalisiert>`) geführt. So verbinden sich die von [Bandsintown](data-collection.md)
 gelieferten Venues eines Artists mit den geseedeten Clubs. Kanten werden dedupliziert,
 Selbstbezüge verworfen.
+
+## Residency-Erkennung
+
+Eine **Residency** wird automatisch aus der Gigography (`parties`) abgeleitet: Erscheint ein
+`artist` mindestens `analytics.residency_min_appearances` Mal (Default: **3**) an derselben
+Venue, erhält das Paar eine `resident`-Kante im Graph. Die Erkennung ist deterministisch und
+läuft im kanonischen Lauf ohne externe Quellen — je mehr Gigography-Daten vorhanden sind
+(über [SoundCloud](data-collection.md#6-musik-collectors-soundcloud--mixcloud-enrichment),
+[Bandsintown](data-collection.md#5-bandsintown-collector-enrichment----für-djartist-entitäten)/
+Songkick oder `ingest`), desto besser die Auflösung.
+
+Die Residency-Kante ist eigenständig gegenüber `played_at` (die aus `networking.collaborations`
+kommt): Beide können für dasselbe Artist↔Venue-Paar gleichzeitig im Graphen erscheinen.
+
+```bash
+scoredclub collaborations berghain   # zeigt "residents" für Berghain
+scoredclub graph                     # zeigt "top_residencies" in den Metriken
+```
+
+Schwellwert tunen: In der [Konfiguration](configuration.md) unter
+`analytics.residency_min_appearances`.
 
 ## Metriken
 
@@ -27,6 +49,7 @@ Selbstbezüge verworfen.
 - **`top_djs`** — meistgebuchte DJs/Artists nach Anzahl bucherender Orgs (`books`).
 - **`top_connected`** — Knoten nach Grad (Degree-Zentralität).
 - **`shared_bookings`** — Org-Paare, die **denselben DJ** buchen (geteilte Talent-Links).
+- **`top_residencies`** — Venues nach Anzahl Resident-Artists (`resident`-Kanten).
 - **`components`** — Anzahl zusammenhängender Komponenten (Union-Find, ungerichtet).
 
 ## Kollaborations-/Beziehungs-Ranking
@@ -39,7 +62,8 @@ DJ** (2) und **gleiches bespieltes Venue** (1).
   `direct`/`shared_djs`/`shared_venues` und Gesamtgewicht.
 - **`most_collaborative`** — Akteure nach Anzahl Partner (und Gesamtgewicht).
 - **`entity_relationships`** — je Entität: `books` / `booked_by` / `collaborates_with` /
-  `cross_promotes` / `played_venues` / `played_by` / `shared_booking_partners`.
+  `cross_promotes` / `played_venues` / `played_by` / **`residencies`** (Artist → Venues als
+  Resident) / **`residents`** (Venue → resident Artists) / `shared_booking_partners`.
 
 DJs sind dabei vollwertige Akteure: Eine direkte Booking-Kante (Org → DJ) zählt als
 Zusammenarbeit, daher erscheinen vielbuchende Orgs und vielgebuchte DJs als „kollaborativ".

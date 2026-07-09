@@ -29,6 +29,9 @@ curl localhost:8000/entities/berghain/dossier
 ```
 
 Im Dashboard erscheint der Steckbrief als eigener Abschnitt im Detail-Dialog. Die Inhalte
-kommen über `ingest`/Research (Teil des Entitäts-Schemas) oder künftige Musik-Collectors
-(SoundCloud/Mixcloud, siehe [Roadmap v3](roadmap-v2.md)) — daher bleibt der kanonische Lauf
-stabil (leere Listen werden im Report-JSON weggelassen).
+kommen über `ingest`/Research (Teil des Entitäts-Schemas) **oder** automatisch über die
+Musik-Collectors **SoundCloud** (`top_tracks` + Follower) und **Mixcloud** (`top_sets` +
+Follower) — siehe [Datenerhebung](data-collection.md#6-musik-collectors-soundcloud--mixcloud-enrichment).
+Beide sind off by default bzw. an ein Handle gebunden, daher bleibt der kanonische Lauf
+stabil (leere Listen werden im Report-JSON weggelassen). Erneute Läufe aktualisieren
+dieselben Tracks/Sets in place (Dedup über Titel + URL), statt Duplikate anzuhäufen.
