@@ -1,8 +1,69 @@
 {
-  "last_run": "2026-07-01",
-  "next_run": "2026-07-31",
-  "entities_tracked": 52,
-  "new_entities_found": 0,
+  "last_run": "2026-08-01",
+  "next_run": "2026-08-31",
+  "entities_tracked": 62,
+  "new_entities_found": 10,
   "score_changes": [],
-  "alerts": []
+  "alerts": [
+    {
+      "entity_id": "alte-kantine",
+      "name": "Alte Kantine",
+      "reason": "new_entity",
+      "details": "Neue Entität entdeckt: Alte Kantine (Score 6.0)"
+    },
+    {
+      "entity_id": "badehaus-berlin",
+      "name": "Badehaus Berlin",
+      "reason": "new_entity",
+      "details": "Neue Entität entdeckt: Badehaus Berlin (Score 6.0)"
+    },
+    {
+      "entity_id": "dreihundert-event-ug",
+      "name": "dreihundert Event UG",
+      "reason": "new_entity",
+      "details": "Neue Entität entdeckt: dreihundert Event UG (Score 6.0)"
+    },
+    {
+      "entity_id": "frannz-club",
+      "name": "Frannz Club",
+      "reason": "new_entity",
+      "details": "Neue Entität entdeckt: Frannz Club (Score 6.0)"
+    },
+    {
+      "entity_id": "jazzberry-projects",
+      "name": "Jazzberry Projects",
+      "reason": "new_entity",
+      "details": "Neue Entität entdeckt: Jazzberry Projects (Score 6.0)"
+    },
+    {
+      "entity_id": "matrix",
+      "name": "Matrix",
+      "reason": "new_entity",
+      "details": "Neue Entität entdeckt: Matrix (Score 6.0)"
+    },
+    {
+      "entity_id": "mikropol",
+      "name": "Mikropol",
+      "reason": "new_entity",
+      "details": "Neue Entität entdeckt: Mikropol (Score 6.0)"
+    },
+    {
+      "entity_id": "rennbahn-hoppegarten",
+      "name": "Rennbahn Hoppegarten",
+      "reason": "new_entity",
+      "details": "Neue Entität entdeckt: Rennbahn Hoppegarten (Score 6.0)"
+    },
+    {
+      "entity_id": "studio-db",
+      "name": "Studio.dB",
+      "reason": "new_entity",
+      "details": "Neue Entität entdeckt: Studio.dB (Score 6.0)"
+    },
+    {
+      "entity_id": "zukunft-am-ostkreuz",
+      "name": "Zukunft am Ostkreuz",
+      "reason": "new_entity",
+      "details": "Neue Entität entdeckt: Zukunft am Ostkreuz (Score 6.0)"
+    }
+  ]
 }
