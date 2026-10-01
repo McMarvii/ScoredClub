@@ -1,63 +1,45 @@
 {
-  "last_run": "2026-09-01",
-  "next_run": "2026-10-01",
-  "entities_tracked": 71,
-  "new_entities_found": 9,
+  "last_run": "2026-10-01",
+  "next_run": "2026-10-31",
+  "entities_tracked": 77,
+  "new_entities_found": 6,
   "score_changes": [],
   "alerts": [
     {
-      "entity_id": "abraxas-party",
-      "name": "Abraxas Party",
+      "entity_id": "birgit-bier",
+      "name": "Birgit & Bier",
       "reason": "new_entity",
-      "details": "Neue Entität entdeckt: Abraxas Party (Score 6.0)"
+      "details": "Neue Entität entdeckt: Birgit & Bier (Score 6.0)"
     },
     {
-      "entity_id": "ava-club",
-      "name": "AVA CLUB",
+      "entity_id": "golgatha",
+      "name": "Golgatha",
       "reason": "new_entity",
-      "details": "Neue Entität entdeckt: AVA CLUB (Score 6.0)"
+      "details": "Neue Entität entdeckt: Golgatha (Score 6.0)"
     },
     {
-      "entity_id": "blank-it-open-air",
-      "name": "Blank It Open Air",
+      "entity_id": "jafe-entertainment",
+      "name": "JAFE Entertainment",
       "reason": "new_entity",
-      "details": "Neue Entität entdeckt: Blank It Open Air (Score 6.0)"
+      "details": "Neue Entität entdeckt: JAFE Entertainment (Score 6.0)"
     },
     {
-      "entity_id": "crack-bellmer",
-      "name": "Crack Bellmer",
+      "entity_id": "priority-artist-music-entertainment",
+      "name": "Priority Artist Music Entertainment",
       "reason": "new_entity",
-      "details": "Neue Entität entdeckt: Crack Bellmer (Score 6.0)"
+      "details": "Neue Entität entdeckt: Priority Artist Music Entertainment (Score 6.0)"
     },
     {
-      "entity_id": "gretchen",
-      "name": "Gretchen",
+      "entity_id": "schonheitstanz-studio",
+      "name": "Schönheitstanz Studio",
       "reason": "new_entity",
-      "details": "Neue Entität entdeckt: Gretchen (Score 6.0)"
+      "details": "Neue Entität entdeckt: Schönheitstanz Studio (Score 6.0)"
     },
     {
-      "entity_id": "monster-ronsons-ichiban-karaoke",
-      "name": "Monster Ronson’s Ichiban Karaoke",
+      "entity_id": "so36",
+      "name": "SO36",
       "reason": "new_entity",
-      "details": "Neue Entität entdeckt: Monster Ronson’s Ichiban Karaoke (Score 6.0)"
-    },
-    {
-      "entity_id": "mucha",
-      "name": "MUCHA",
-      "reason": "new_entity",
-      "details": "Neue Entität entdeckt: MUCHA (Score 6.0)"
-    },
-    {
-      "entity_id": "villa-neukolln",
-      "name": "Villa Neukölln",
-      "reason": "new_entity",
-      "details": "Neue Entität entdeckt: Villa Neukölln (Score 6.0)"
-    },
-    {
-      "entity_id": "void-club",
-      "name": "Void Club",
-      "reason": "new_entity",
-      "details": "Neue Entität entdeckt: Void Club (Score 6.0)"
+      "details": "Neue Entität entdeckt: SO36 (Score 6.0)"
     }
   ]
 }
